@@ -107,6 +107,7 @@ class GuildConfig:
 
         self.prefix = data.pop('prefix', '-')  # Emergency safe guard
         self.premium = data.pop('premium', False)  # Emergency safe guard
+        self.nsfw_enabled = data.pop('nsfw_enabled', True)  # Emergency safe guard
 
     def set_prefix(self, new_prefix) -> str:
         """
@@ -127,10 +128,16 @@ class GuildConfig:
         self._db.set_guild_config(self.guild_id, config=self.to_dict())
         return self.prefix
 
+    def toggle_nsfw(self):
+        self.nsfw_enabled = not self.nsfw_enabled
+        self._db.set_guild_config(self.guild_id, config=self.to_dict())
+        return self.nsfw_enabled
+
     def to_dict(self):
         return {
             'prefix': self.prefix,
-            'premium': self.premium
+            'premium': self.premium,
+            'nsfw_enabled': self.nsfw_enabled,
         }
 
 

@@ -13,7 +13,10 @@ from database import database
 with open('config.json', 'r') as file:
     config = json.load(file)
 
-DEFAULT_PREFIX = ['?']
+with open('default_settings.json', 'r') as file:
+    settings = json.load(file)
+
+DEFAULT_PREFIX = settings.get("prefix", "-")
 TOKEN = config.get("token")
 DEVELOPER_IDS = config.get("dev_ids")
 SHARD_COUNT = config.get("shard_count")
@@ -25,10 +28,10 @@ REQUIRED_CACHE = [
 
 class CrunchyBot(commands.Bot):
     def __init__(self, **options):
-        self.before_invoke(self.get_config)
         super().__init__(self.get_custom_prefix, **options)
+        self.before_invoke(self.get_config)
         self.owner_ids = DEVELOPER_IDS
-        self.colour = 0xe1552a
+        self.colour = 0xff6600
         self.icon = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
         self.database = MongoDatabase()
         self.cache = CacheManager()
@@ -47,12 +50,13 @@ class CrunchyBot(commands.Bot):
         for cog in cogs_list:
             try:
                 self.load_extension(f"cogs.{cog.replace('.py', '')}")
+                Logger.log_info(f"Loaded Extension {cog.replace('.py', '')}")
             except Exception as e:
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
     @classmethod
-    async def on_shard_ready(cls, shard_id):
+    async def on_ready(cls, shard_id=1):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
 
@@ -69,27 +73,29 @@ class CrunchyBot(commands.Bot):
         if context.guild is not None:
             guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
-                guild_data = database.GuildConfig(context.guild.id)
+                guild_data = database.GuildConfig(context.guild.id, database=self.database)
                 self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
         else:
             setattr(context, 'guild_config', None)
-        setattr(context, 'has_voted', self.has_voted(context.user.id))
+        setattr(context, 'has_voted', (await self.has_voted(context.author.id)))
         return context
 
     async def get_custom_prefix(self, bot, message: discord.Message):
         """ Fetches guild data either from cache or fetches it """
         if message.guild is not None:
-            guild_data = self.cache.get("GUILD", message.guild.id)
+            guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:
-                guild_data = database.GuildConfig(message.guild.id)
-                self.cache.store("GUILD", message.guild.id, guild_data)
+                guild_data = database.GuildConfig(message.guild.id, database=self.database)
+                self.cache.store("guilds", message.guild.id, guild_data)
             return guild_data.prefix
         else:
             return DEFAULT_PREFIX
 
     async def on_message(self, message):
         """ Used for some events later on """
+        if not self.is_ready():
+            return
         await self.process_commands(message=message)
 
 

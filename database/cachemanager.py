@@ -4,18 +4,24 @@ from datetime import datetime, timedelta
 class Store:
     def __init__(self, name: str, max_time: timedelta=timedelta(minutes=15)):
         self.name = name
-        self.store = {}
+        self._cache = {}
         self._temp = {}
         self.max_time = max_time
 
     def get(self, _id):
-        return self.store.get(_id, None)
+        resp = self._cache.get(_id, None)
+        if resp is not None:
+            data = resp['data']
+            self.store(_id=_id, _object=data)
+            return data
+        else:
+            return resp
 
     def store(self, _id, _object):
-        self.store[_id] = _object
+        self._cache[_id] = {'entered': datetime.now(), 'data': _object}
 
     def clear(self):
-        self.store = {}
+        self._cache = {}
 
     def check(self, item):
         if (datetime.now() - item[1]['entered']) > self.max_time:
@@ -28,10 +34,10 @@ class Store:
         return item
 
     def clean(self):
-        all_entries = self.store.items()
+        all_entries = self._cache.items()
         new = tuple(filter(self.check, all_entries))
         map(self.apply, new)
-        self.store = self._temp
+        self._cache = self._temp
 
     def __str__(self):
         return self.name
