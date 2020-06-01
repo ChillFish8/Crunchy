@@ -46,12 +46,14 @@ class CacheManager:
 
     def reset_cache_store(self, collection_name: str):
         collection: Store = self.collections[collection_name]
+        replacement = Store(name=collection.name, max_time=collection.max_time)
+        self.collections[collection_name] = replacement
 
     def remove_cache_store(self, collection_name: str) -> [Store, None]:
         return self.collections.pop(collection_name, None)
 
-    def get(self, store, *args, **kwargs):
-        pass
+    def get(self, collection_name: str, _id):
+        return self.collections[collection_name].get(_id=_id)
 
-    def store(self, store, *args, **kwargs):
-        pass
+    def store(self, collection_name: str, _id, data):
+        self.collections[collection_name].store(_id=_id, _object=data)
