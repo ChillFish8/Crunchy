@@ -17,15 +17,21 @@ with open('config.json', 'r') as file:
 with open('default_settings.json', 'r') as file:
     settings = json.load(file)
 
+# Some constants we need to define before everything else.
 DEFAULT_PREFIX = settings.get("prefix", "-")
 TOKEN = config.get("token")
 DEVELOPER_IDS = config.get("dev_ids")
 SHARD_COUNT = config.get("shard_count")
 
+# Setup required cache to run the bot
 REQUIRED_CACHE = [
     ['guilds', timedelta(minutes=15)],
     ['votes', timedelta(minutes=1)],
 ]
+
+# Configure logger
+Logger.LOG_CACHE = False
+
 
 class CrunchyBot(commands.Bot):
     def __init__(self, **options):
