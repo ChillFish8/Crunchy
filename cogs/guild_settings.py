@@ -1,5 +1,4 @@
 from discord.ext import commands
-import discord
 
 from database.database import GuildConfig
 
@@ -30,7 +29,7 @@ class Customisations(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     @commands.command(aliases=['togglensfw'])
-    async def set_prefix(self, ctx):
+    async def toggle_nsfw(self, ctx):
         """ Set a new prefix """
         config: GuildConfig = ctx.guild_config
         new = config.toggle_nsfw()

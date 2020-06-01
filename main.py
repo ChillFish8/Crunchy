@@ -1,6 +1,7 @@
 import discord
 import os
 import json
+import asyncio
 from discord.ext import commands
 from datetime import timedelta
 
@@ -37,6 +38,7 @@ class CrunchyBot(commands.Bot):
         self.cache = CacheManager()
         for collection in REQUIRED_CACHE:
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
+        asyncio.get_event_loop().create_task(self.cache.background_task())
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """

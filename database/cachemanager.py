@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import asyncio
 
 
 class Store:
@@ -63,3 +64,9 @@ class CacheManager:
 
     def store(self, collection_name: str, _id, data):
         self.collections[collection_name].store(_id=_id, _object=data)
+
+    async def background_task(self):
+        while True:
+            for key in self.collections:
+                self.collections[key].clean()
+            await asyncio.sleep(60)
