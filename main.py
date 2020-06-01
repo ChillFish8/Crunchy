@@ -6,6 +6,7 @@ from discord.ext import commands
 from database.database import MongoDatabase
 from database.cachemanager import CacheManager
 from logger import Logger
+from database import database
 
 
 with open('config.json', 'r') as file:
@@ -53,14 +54,20 @@ class CrunchyBot(commands.Bot):
         """ Log when we loose a shard or connection """
         Logger.log_shard_disconnect()
 
+    async def has_voted(self, user_id):
+        return False
+
     async def get_config(self, context):
         """ Assign guild settings to context """
         if context.guild is not None:
-            guild_data = self.cache.get("GUILD", context.guild.id)
+            guild_data = self.cache.get("guild", context.guild.id)
             if guild_data is None:
-                guild_data = self.database.fetch_guild(context.guild.id)
-                self.cache.store("GUILD", context.guild.id, guild_data)
-            setattr(context, 'config', guild_data)
+                guild_data = database.GuildConfig(context.guild.id)
+                self.cache.store("guild", context.guild.id, guild_data)
+            setattr(context, 'guild_config', guild_data)
+        else:
+            setattr(context, 'guild_config', None)
+        setattr(context, 'has_voted', self.has_voted(context.user.id))
         return context
 
     async def get_custom_prefix(self, bot, message: discord.Message):
@@ -68,7 +75,7 @@ class CrunchyBot(commands.Bot):
         if message.guild is not None:
             guild_data = self.cache.get("GUILD", message.guild.id)
             if guild_data is None:
-                guild_data = self.database.fetch_guild(message.guild.id)
+                guild_data = database.GuildConfig(message.guild.id)
                 self.cache.store("GUILD", message.guild.id, guild_data)
             return guild_data.prefix
         else:
