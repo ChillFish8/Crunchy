@@ -18,8 +18,9 @@ SHARD_COUNT = config.get("shard_count")
 
 
 class CrunchyBot(commands.Bot):
-    def __init__(self, command_prefix, **options):
-        super().__init__(command_prefix, **options)
+    def __init__(self, **options):
+        self.before_invoke(self.get_config)
+        super().__init__(self.get_custom_prefix, **options)
         self.owner_ids = DEVELOPER_IDS
         self.colour = 0xe1552a
         self.icon = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
@@ -78,6 +79,11 @@ class CrunchyBot(commands.Bot):
         await self.process_commands(message=message)
 
 
-Logger.log_shard_disconnect()
-Logger.log_shard_connect(1)
-Logger.log_info("Hello World!")
+if __name__ == "__main__":
+    crunchy = CrunchyBot(
+        case_insensitive=True,
+        fetch_offline_member=False,
+        shard_count=SHARD_COUNT,
+    )
+    crunchy.startup()
+    crunchy.run(TOKEN)
