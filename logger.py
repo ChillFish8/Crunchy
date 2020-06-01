@@ -12,6 +12,7 @@ class Logger:
     LOG_INFO = True
     LOG_DEBUG = False
     LOG_VOTES = True
+    LOG_DATABASE = True
 
     @classmethod
     def log_shard_connect(cls, shard_id):
@@ -34,7 +35,15 @@ class Logger:
     @classmethod
     def log_info(cls, msg):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
-                Fore.LIGHTGREEN_EX + "[ INFO ] " +
+                Fore.LIGHTGREEN_EX + "[ Info ] " +
                 Fore.WHITE + msg)
         if cls.LOG_INFO:
+            print(text)
+
+    @classmethod
+    def log_database(cls, msg):
+        text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
+                Fore.MAGENTA + "[ Database ] " +
+                Fore.WHITE + msg)
+        if cls.LOG_DATABASE:
             print(text)
