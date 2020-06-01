@@ -141,5 +141,51 @@ class GuildConfig:
         }
 
 
+class _BasicTracker:
+    """
+        Object representing a users's items to be tracked, this system can
+        be modified to expand settings as an when they are needed.
+        This also handles all DB interactions and self contains it.
+        :returns _BasicTracker object:
+    """
+
+    def __init__(self, user_id, database=None):
+        """
+        :param database: -> Optional
+        If database is None it falls back to a global var,
+        THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
+        """
+        self.user_id = user_id
+        self._db = db if database is None else database
+        self._contents = []
+
+    def add_content(self, data: dict):
+        return self._contents.append(data)
+
+    def remove_content(self, index: int):
+        return self._contents.pop(index)
+
+    def _generate_block(self):
+        pages, rem = divmod(len(self._contents), 10)
+        chunks = []
+        i = 0
+        for i in range(0, pages, 10):
+            chunks.append(self._contents[i:i + 10])
+        if rem != 0:
+            chunks.append(self._contents[i:i + rem])
+        return chunks
+
+    def get_block(self):
+        for block in self._generate_block():
+            yield block
+
+    def to_dict(self):
+        return {
+            'prefix': self.prefix,
+            'premium': self.premium,
+            'nsfw_enabled': self.nsfw_enabled,
+        }
+
+
 if __name__ == "__main__":
     db = MongoDatabase()
