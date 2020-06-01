@@ -157,7 +157,7 @@ class _BasicTracker:
         """
         self.user_id = user_id
         self._db = db if database is None else database
-        self._contents = []
+        self._contents = self._db.get_user_data()
 
     def add_content(self, data: dict):
         return self._contents.append(data)
@@ -166,9 +166,9 @@ class _BasicTracker:
         return self._contents.pop(index)
 
     def _generate_block(self):
+        """ This turns a list of X amount of side into 10 block chunks. """
         pages, rem = divmod(len(self._contents), 10)
-        chunks = []
-        i = 0
+        chunks, i = [], 0
         for i in range(0, pages, 10):
             chunks.append(self._contents[i:i + 10])
         if rem != 0:
@@ -176,15 +176,12 @@ class _BasicTracker:
         return chunks
 
     def get_block(self):
+        """ A generator to allow the bot to paginate large sets. """
         for block in self._generate_block():
             yield block
 
     def to_dict(self):
-        return {
-            'prefix': self.prefix,
-            'premium': self.premium,
-            'nsfw_enabled': self.nsfw_enabled,
-        }
+        return {'content': self._contents}
 
 
 if __name__ == "__main__":
