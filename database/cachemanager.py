@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import asyncio
-
+from logger import Logger
 
 class Store:
     def __init__(self, name: str, max_time: timedelta=timedelta(minutes=15)):
@@ -69,4 +69,5 @@ class CacheManager:
         while True:
             for key in self.collections:
                 self.collections[key].clean()
+            Logger.log_cache("[ BACKGROUND TASK ] | Cleaned up cache!")
             await asyncio.sleep(60)

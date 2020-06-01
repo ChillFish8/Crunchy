@@ -32,7 +32,7 @@ class CrunchyBot(commands.Bot):
         super().__init__(self.get_custom_prefix, **options)
         self.before_invoke(self.get_config)
         self.owner_ids = DEVELOPER_IDS
-        self.colour = 0xff6600
+        self.colour = 0xe87e15
         self.icon = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
         self.database = MongoDatabase()
         self.cache = CacheManager()

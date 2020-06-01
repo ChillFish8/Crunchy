@@ -13,6 +13,7 @@ class Logger:
     LOG_DEBUG = False
     LOG_VOTES = True
     LOG_DATABASE = True
+    LOG_CACHE = True
 
     @classmethod
     def log_shard_connect(cls, shard_id):
@@ -46,4 +47,12 @@ class Logger:
                 Fore.MAGENTA + "[ Database ] " +
                 Fore.WHITE + msg)
         if cls.LOG_DATABASE:
+            print(text)
+
+    @classmethod
+    def log_cache(cls, msg):
+        text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
+                Fore.LIGHTBLUE_EX + "[ Cache ] " +
+                Fore.WHITE + msg)
+        if cls.LOG_CACHE:
             print(text)
