@@ -40,7 +40,43 @@ class GuildData:
         return current_data['config'] if current_data is not None else Settings.settings
 
 
-class MongoDatabase(GuildData):
+class UserTracking:
+    """ User's Watchlist, Recommended etc... """
+
+    def __init__(self, db):
+        self.db = db
+        self.collections = {
+            "favourites": self.db["favouritelist"],
+            "watchlist": self.db["watchlist"],
+            "recommended": self.db["recommendedlist"],
+        }
+
+    def set_user_data(self, area: str, user_id: int, contents: list) -> [dict, int]:
+        current_data = self.collections[area].find_one({'_id': user_id})
+        Logger.log_database("SET-USER: User Content with Id: {} returned with results: {}".format(user_id, current_data))
+
+        if current_data is not None:
+            QUERY = {'_id': user_id}
+            new_data = {'contents': contents}
+            resp = self.collections[area].update_one(QUERY, {'$set': new_data})
+            return resp.raw_result
+        else:
+            data = {'_id': user_id, 'contents': contents}
+            resp = self.collections[area].insert_one(data)
+            return resp.inserted_id
+
+    def reset_user_data(self, area: str, user_id: int):
+        current_data = self.collections[area].find_one_and_delete({'_id': user_id})
+        Logger.log_database(
+            "DELETE-USER: Guild with Id: {} returned with results: {}".format(user_id, current_data))
+        return "COMPLETE"
+
+    def get_user_data(self, area: str, user_id: int) -> list:
+        current_data = self.collections[area].find_one({'_id': user_id})
+        return current_data['contents'] if current_data is not None else []
+
+
+class MongoDatabase(GuildData, UserTracking):
     """
         This is the main Mongo DB class, this pull data from config.json and
         connects to the remote mongoDB (Falls back to local host if config missing)
@@ -141,29 +177,34 @@ class GuildConfig:
         }
 
 
-class _BasicTracker:
+class BasicTracker:
     """
         Object representing a users's items to be tracked, this system can
         be modified to expand settings as an when they are needed.
         This also handles all DB interactions and self contains it.
-        :returns _BasicTracker object:
+        :returns BasicTracker object:
     """
 
-    def __init__(self, user_id, database=None):
+    def __init__(self, user_id, type_, database=None):
         """
         :param database: -> Optional
         If database is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id
+        self._type = type_
         self._db = db if database is None else database
-        self._contents = self._db.get_user_data()
+        self._contents = self._db.get_user_data(area=self._type, user_id=user_id)
 
     def add_content(self, data: dict):
-        return self._contents.append(data)
+        self._contents.append(data)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
+        return self._contents
 
     def remove_content(self, index: int):
-        return self._contents.pop(index)
+        self._contents.pop(index)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
+        return self._contents
 
     def _generate_block(self):
         """ This turns a list of X amount of side into 10 block chunks. """
@@ -182,6 +223,21 @@ class _BasicTracker:
 
     def to_dict(self):
         return {'content': self._contents}
+
+
+class UserFavourites(BasicTracker):
+    def __init__(self, user_id):
+        super().__init__(user_id, type_="favourites")
+
+
+class UserWatchlist(BasicTracker):
+    def __init__(self, user_id):
+        super().__init__(user_id, type_="watchlist")
+
+
+class UserRecommended(BasicTracker):
+    def __init__(self, user_id):
+        super().__init__(user_id, type_="recommended")
 
 
 if __name__ == "__main__":

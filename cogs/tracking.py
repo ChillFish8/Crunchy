@@ -7,5 +7,6 @@ class TrackingAnime(commands.Cog):
         self.bot = bot
 
 
+
 def setup(bot):
     bot.add_cog(TrackingAnime(bot))
