@@ -2,9 +2,10 @@ import discord
 import os
 import json
 from discord.ext import commands
+from datetime import timedelta
 
 from database.database import MongoDatabase
-from database.cachemanager import CacheManager
+from database.cachemanager import CacheManager, Store
 from logger import Logger
 from database import database
 
@@ -17,6 +18,10 @@ TOKEN = config.get("token")
 DEVELOPER_IDS = config.get("dev_ids")
 SHARD_COUNT = config.get("shard_count")
 
+REQUIRED_CACHE = [
+    ['guilds', timedelta(minutes=15)],
+    ['votes', timedelta(minutes=1)],
+]
 
 class CrunchyBot(commands.Bot):
     def __init__(self, **options):
@@ -27,6 +32,8 @@ class CrunchyBot(commands.Bot):
         self.icon = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
         self.database = MongoDatabase()
         self.cache = CacheManager()
+        for collection in REQUIRED_CACHE:
+            self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
@@ -60,10 +67,10 @@ class CrunchyBot(commands.Bot):
     async def get_config(self, context):
         """ Assign guild settings to context """
         if context.guild is not None:
-            guild_data = self.cache.get("guild", context.guild.id)
+            guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
                 guild_data = database.GuildConfig(context.guild.id)
-                self.cache.store("guild", context.guild.id, guild_data)
+                self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
         else:
             setattr(context, 'guild_config', None)

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 
 class Store:
-    def __init__(self, name, max_time=timedelta(minutes=15)):
+    def __init__(self, name: str, max_time: timedelta=timedelta(minutes=15)):
         self.name = name
         self.store = {}
         self._temp = {}
