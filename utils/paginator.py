@@ -21,7 +21,6 @@ class Paginator:
         self.colour = colour
 
     async def start(self):
-        print(self.embed_list)
         self.old_message = await self.channel.send(embed=self.embed_list[self.counter])
         for emoji in self.PAGINATION_EMOJI:
             await self.old_message.add_reaction(emoji)

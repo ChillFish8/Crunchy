@@ -1,6 +1,8 @@
 from discord.ext import commands
 import discord
 
+from utils.paginator import Paginator
+
 class HelpCog(commands.Cog):
     GENERAL_COMMANDS = [
         "`invite` **-** Invite me!",
@@ -56,6 +58,9 @@ class HelpCog(commands.Cog):
         if sub_sec is not None:
             return await self.get_sub_page(ctx, sub_sec)
         else:
+            embed1 = discord.Embed(description=f"Do `{ctx.prefix}help <command> for more info on each command`",
+                                  color=self.bot.colour)
+            embed1.set_author(name=f"{ctx.author.name} - Crunchy's Commands: | Page 1 / 2", icon_url=ctx.author.avatar_url)
             f1 = f"<:discord:642859572524220427>  **General Commands**  <:discord:642859572524220427>\n" \
                  f"" + "\n".join(self.GENERAL_COMMANDS)
 
@@ -64,6 +69,13 @@ class HelpCog(commands.Cog):
 
             f3 = f"<:CrunchyRollLogo:676087821596885013>  **Live Feeds**  <:CrunchyRollLogo:676087821596885013>\n" \
                  f"" + "\n".join(self.LIVE_COMMANDS)
+            embed1.add_field(name="\u200b", value=f1, inline=False)
+            embed1.add_field(name="\u200b", value=f2, inline=False)
+            embed1.add_field(name="\u200b", value=f3, inline=False)
+
+            embed2 = discord.Embed(description=f"Do `{ctx.prefix}help <command> for more info on each command`",
+                                   color=self.bot.colour)
+            embed2.set_author(name=f"{ctx.author.name} - Crunchy's Commands: | Page 2 / 2", icon_url=ctx.author.avatar_url)
 
             f4 = f"<:gelati_cute:704784002355036190>  **Watch List Commands & Favourites**  <:gelati_cute:704784002355036190>\n" \
                  f"" + "\n".join(self.TRACKING_COMMANDS)
@@ -71,27 +83,25 @@ class HelpCog(commands.Cog):
             f5 = f"<:HimeHappy:677852789074034691>  **Character Collection**  <:HimeHappy:677852789074034691>\n" \
                  f"" + "\n".join(self.CHARACTER_COMMANDS)
 
-            embed = discord.Embed(description=f"Do `{ctx.prefix}help <command> for more info on each command`",
-                                  color=self.bot.colour)
-            embed.set_author(name=f"{ctx.author.name} - Crunchy's Commands:", icon_url=ctx.author.avatar_url)
-
-            embed.add_field(name="\u200b", value=f1, inline=False)
-            embed.add_field(name="\u200b", value=f2, inline=False)
-            embed.add_field(name="\u200b", value=f3, inline=False)
-            embed.add_field(name="\u200b", value=f4, inline=False)
-            embed.add_field(name="\u200b", value=f5, inline=False)
+            embed2.add_field(name="\u200b", value=f4, inline=False)
+            embed2.add_field(name="\u200b", value=f5, inline=False)
 
             if ctx.guild_config is not None:
                 if ctx.guild_config.nsfw_enabled:
                     f6 = f"🔞  **NSFW**  🔞\n" \
                          f"" + "\n".join(self.NSFW_COMMANDS)
-                    embed.add_field(name="\u200b", value=f6, inline=False)
+                    embed2.add_field(name="\u200b", value=f6, inline=False)
             else:
                 f6 = f"🔞  **NSFW**  🔞\n" \
                      f"" + "\n".join(self.NSFW_COMMANDS)
-                embed.add_field(name="\u200b", value=f6, inline=False)
-            embed.set_footer(text="Part of the Crunchy the Crunchyroll Discord bot, Powered by CF8")
-            return await ctx.send(embed=embed)
+                embed2.add_field(name="\u200b", value=f6, inline=False)
+            embed1.set_footer(text="Part of the Crunchy the Crunchyroll Discord bot, Powered by CF8")
+            embed2.set_footer(text="Part of the Crunchy the Crunchyroll Discord bot, Powered by CF8")
+            pager = Paginator(embed_list=[embed1, embed2],
+                              bot=self.bot,
+                              message=ctx.message,
+                              colour=self.bot.colour)
+            return self.bot.loop.create_task(pager.start())
 
     async def get_sub_page(self, ctx, sub_sec):
         pass  # todo fill this
