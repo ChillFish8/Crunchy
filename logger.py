@@ -29,7 +29,7 @@ class Logger:
     def log_shard_disconnect(cls, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.LIGHTRED_EX + "[ Shard Disconnected ] " +
-                Fore.CYAN + f" Shard UNKOWN  | " +
+                Fore.CYAN + f" Shard UNKNOWN  | " +
                 Fore.WHITE + "LOST CONNECTION!")
         if cls.LOG_DISCONNECTS or error:
             print(text)

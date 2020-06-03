@@ -74,7 +74,7 @@ class CrunchyBot(commands.Bot):
         Logger.log_shard_disconnect()
 
     async def has_voted(self, user_id):
-        return False
+        return 0
 
     async def get_config(self, context):
         """ Assign guild settings to context """
