@@ -226,18 +226,18 @@ class BasicTracker:
 
 
 class UserFavourites(BasicTracker):
-    def __init__(self, user_id):
-        super().__init__(user_id, type_="favourites")
+    def __init__(self, user_id, database=None):
+        super().__init__(user_id, type_="favourites", database=database)
 
 
 class UserWatchlist(BasicTracker):
-    def __init__(self, user_id):
-        super().__init__(user_id, type_="watchlist")
+    def __init__(self, user_id, database=None):
+        super().__init__(user_id, type_="watchlist", database=database)
 
 
 class UserRecommended(BasicTracker):
-    def __init__(self, user_id):
-        super().__init__(user_id, type_="recommended")
+    def __init__(self, user_id, database=None):
+        super().__init__(user_id, type_="recommended", database=database)
 
 
 if __name__ == "__main__":
