@@ -171,6 +171,30 @@ class AddingAnime(commands.Cog):
                                   f"You didnt give me anything to add to {user.display_name}'s recommended list."
                                   f" Do `{ctx.prefix}help recommended` for more info.")
 
+        items = argument.split("url=", 1)
+        if len(items) > 1:
+            name, url = items
+            if name == '':
+                split = url.split(" ", 1)
+                if len(split) > 1:  # Reverse the order in case someone is a moron
+                    name, url = split[1], split[0]
+                else:
+                    return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
+                                          f"You didnt give a title but gave a url, "
+                                          f"please do `{ctx.prefix}help addanime` for more info.")
+            if not url.startswith("http"):
+                url = None
+        else:
+            name, url = items[0], None
+        if name.endswith(" "):
+            name = name[:len(name) - 1]
+
+        try:
+            user_area.add_content({'name': name, 'url': url})
+            return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
+                                  f""" I've added "{name}" to {user.name}'s recommended list.""")
+        except Exception as e:
+            return await ctx.send(f"Oh no! A error jumped out and scared me: {e}")
 
 
 def setup(bot):
