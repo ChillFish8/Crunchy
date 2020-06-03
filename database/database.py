@@ -74,10 +74,11 @@ class UserTracking:
     def get_user_data(self, area: str, user_id: int) -> list:
         current_data = self.collections[area].find_one({'_id': user_id})
         if area == "recommended":
-            return current_data if current_data is not None else {'public': True,
-                                                                  'list': [],
-                                                                  'blocked': [],
-                                                                  'bypass': []}
+            return current_data['contents'] if current_data is not None else {
+                'public': True,
+                'list': [],
+                'blocked': [],
+                'bypass': []}
         else:
             return current_data['contents'] if current_data is not None else []
 
