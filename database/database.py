@@ -74,7 +74,10 @@ class UserTracking:
     def get_user_data(self, area: str, user_id: int) -> list:
         current_data = self.collections[area].find_one({'_id': user_id})
         if area == "recommended":
-            return current_data if current_data is not None else {'public': True, 'list': []}
+            return current_data if current_data is not None else {'public': True,
+                                                                  'list': [],
+                                                                  'blocked': [],
+                                                                  'bypass': []}
         else:
             return current_data['contents'] if current_data is not None else []
 
@@ -253,6 +256,28 @@ class UserRecommended(BasicTracker):
 
     @property
     def is_public(self):
+        return self._contents['public']
+
+    def is_bypass(self, id_):
+        return id_ in self._contents['bypass']
+
+    def is_blocked(self, id_):
+        return id_ in self._contents['blocked']
+
+    def block(self, id_):
+        if id_ in self._contents['bypass']:
+            self._contents['bypass'].remove(id_)
+        if id_ not in self._contents['blocked']:
+            self._contents['blocked'].append(id_)
+
+    def bypass(self, id_):
+        if id_ in self._contents['blocked']:
+            self._contents['blocked'].remove(id_)
+        if id_ not in self._contents['bypass']:
+            self._contents['bypass'].append(id_)
+
+    def toggle_public(self):
+        self._contents['public'] = not self._contents['public']
         return self._contents['public']
 
     def add_content(self, data: dict):

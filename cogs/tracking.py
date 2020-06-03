@@ -162,9 +162,13 @@ class AddingAnime(commands.Cog):
                                   f"You didnt mention the person you wanted to recommend an Anime to.")
 
         user_area = UserRecommended(user_id=user.id, database=self.bot.database)
-        if not user_area.is_public:
+        if not user_area.is_public and not user_area.is_bypass(ctx.author.id):
             return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
                                   f"The user you mentioned has their recommended list set to private.")
+
+        if user_area.is_blocked(ctx.author.id):
+            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
+                                  f"The user you mentioned has blocked you from added content to their area.")
 
         if argument is None:
             return await ctx.send(f"<:HimeMad:676087826827444227> Oh no! "
@@ -188,13 +192,42 @@ class AddingAnime(commands.Cog):
             name, url = items[0], None
         if name.endswith(" "):
             name = name[:len(name) - 1]
-
         try:
             user_area.add_content({'name': name, 'url': url})
             return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
                                   f""" I've added "{name}" to {user.name}'s recommended list.""")
         except Exception as e:
             return await ctx.send(f"Oh no! A error jumped out and scared me: {e}")
+
+
+class UserSettings:
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(aliases=['allow'])
+    async def allow(self, ctx, user: discord.Member):
+        """ Allow a user to bypass the public/private system """
+        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+        user_area.bypass(user.id)
+        return await ctx.send(f":HimeHappy:677852789074034691> User {user.name} is now"
+                              f" whitelisted for your area.")
+
+    @commands.command(aliases=['disallow'])
+    async def disallow(self, ctx, user: discord.Member):
+        """ Disallow a user to bypass the public/private system """
+        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+        user_area.block(user.id)
+        return await ctx.send(f":HimeHappy:677852789074034691> User {user.name} is now"
+                              f" blocked from your area.")
+
+    @commands.command(aliases=['fw'])
+    async def firewall(self, ctx):
+        """ Toggle public/private system """
+        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+        mode = user_area.toggle_public()
+        return await ctx.send(f":HimeHappy:677852789074034691> Your recommended"
+                              f" list is now {'**public**' if mode else '**private**'}")
+
 
 
 def setup(bot):
