@@ -29,7 +29,7 @@ async def add_watchlist(ctx, bot, name, url):
                 }
     elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
-                           f"You've managed to add over 500 things to your watchlist area! "
+                           f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your watchlist area! "
                            f"However, you'll need to either delete some to add more or contact my developer"
                            f" you can find him here: https://discord.gg/tJmEzWM"
                 }
@@ -58,7 +58,7 @@ async def add_favourites(ctx, bot, name, url):
                 }
     elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
-                           f"You've managed to add over 500 things to your favourites area! "
+                           f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your favourites area! "
                            f"However, you'll need to either delete some to add more or contact my developer"
                            f" you can find him here: https://discord.gg/tJmEzWM"
                 }
