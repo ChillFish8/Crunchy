@@ -70,7 +70,6 @@ class LiveFeedBroadcasts(commands.Cog):
             await self.callbacks[item['type']](item['rss'])
 
     async def release_callback(self, rss: dict):
-        print(rss)
         first = rss['title'].split(" - ")[0]
         terms = first.lower().split(" ")
         details = await self.get_release_info(terms=terms)
@@ -79,7 +78,6 @@ class LiveFeedBroadcasts(commands.Cog):
         else:
             anime_details = details['details']['data']
             embed = self.make_release_embed(anime_details, rss, first)
-
 
     @staticmethod
     def make_release_embed(details: dict, rss: dict, first):
@@ -128,8 +126,6 @@ class LiveFeedBroadcasts(commands.Cog):
 
     async def news_callback(self, rss: dict):
         pass
-
-
 
 
 class LiveFeedCommands(commands.Cog):
