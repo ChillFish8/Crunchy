@@ -251,6 +251,42 @@ class UserRecommended(BasicTracker):
     def __init__(self, user_id, database=None):
         super().__init__(user_id, type_="recommended", database=database)
 
+    @property
+    def is_public(self):
+        return self._contents['public']
+
+    def add_content(self, data: dict):
+        self._contents['list'].append(data)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
+        return self._contents['list']
+
+    def remove_content(self, index: int):
+        self._contents['list'].pop(index)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
+        return self._contents['list']
+
+    def _generate_block(self):
+        """ This turns a list of X amount of side into 10 block chunks. """
+        pages, rem = divmod(len(self._contents['list']), 10)
+        chunks, i = [], 0
+        for i in range(0, pages, 10):
+            chunks.append(self._contents['list'][i:i + 10])
+        if rem != 0:
+            chunks.append(self._contents['list'][i:i + rem])
+        return chunks
+
+    def get_block(self):
+        """ A generator to allow the bot to paginate large sets. """
+        for block in self._generate_block():
+            yield block
+
+    @property
+    def amount_of_items(self):
+        return len(self._contents['list'])
+
+    def to_dict(self):
+        return {'content': self._contents}
+
 
 if __name__ == "__main__":
     db = MongoDatabase()

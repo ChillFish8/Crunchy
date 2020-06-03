@@ -155,9 +155,21 @@ class AddingAnime(commands.Cog):
                                           f""" I've added "{name}" to both your watchlist and favourites!""")
 
     @commands.command(aliases=['recc'])
-    async def recommend(self, ctx, user: discord.Member, *, argument: str):
+    async def recommend(self, ctx, user: discord.Member = None, *, argument: str = None):
         """ Add Anime to to someone's recommended list """
+        if user is None:
+            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
+                                  f"You didnt mention the person you wanted to recommend an Anime to.")
 
+        user_area = UserRecommended(user_id=user.id, database=self.bot.database)
+        if not user_area.is_public:
+            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
+                                  f"The user you mentioned has their recommended list set to private.")
+
+        if argument is None:
+            return await ctx.send(f"<:HimeMad:676087826827444227> Oh no! "
+                                  f"You didnt give me anything to add to {user.display_name}'s recommended list."
+                                  f" Do `{ctx.prefix}help recommended` for more info.")
 
 
 
