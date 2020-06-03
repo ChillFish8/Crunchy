@@ -77,10 +77,9 @@ async def add_both(*args, **kwargs):
     return (await add_favourites(*args, **kwargs)), (await add_watchlist(*args, **kwargs))
 
 
-class TrackingAnime(commands.Cog):
+class AddingAnime(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.url_re = re.compile("""url=(["'])(?:(?=(\\?))\2.)*?\1""")
         self.options = {0: add_favourites, 1: add_watchlist, 2: add_both}
 
     @commands.command(aliases=['aa', 'addanime'])
@@ -153,8 +152,14 @@ class TrackingAnime(commands.Cog):
                 else:
                     await message.delete()
                     return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
-                                          f" I've added {name} to both your watchlist and favourites!")
+                                          f""" I've added "{name}" to both your watchlist and favourites!""")
+
+    @commands.command(aliases=['recc'])
+    async def recommend(self, ctx, user: discord.Member, *, argument: str):
+        """ Add Anime to to someone's recommended list """
+
+
 
 
 def setup(bot):
-    bot.add_cog(TrackingAnime(bot))
+    bot.add_cog(AddingAnime(bot))

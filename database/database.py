@@ -66,14 +66,17 @@ class UserTracking:
             return resp.inserted_id
 
     def reset_user_data(self, area: str, user_id: int):
-        current_data = self.collections[area].find_one_and_delete({'_id': user_id})
+        _ = self.collections[area].find_one_and_delete({'_id': user_id})
         Logger.log_database(
             "DELETE-USER: Guild with Id: {} returned.".format(user_id))
         return "COMPLETE"
 
     def get_user_data(self, area: str, user_id: int) -> list:
         current_data = self.collections[area].find_one({'_id': user_id})
-        return current_data['contents'] if current_data is not None else []
+        if area == "recommended":
+            return current_data if current_data is not None else {'public': True, 'list': []}
+        else:
+            return current_data['contents'] if current_data is not None else []
 
 
 class MongoDatabase(GuildData, UserTracking):
