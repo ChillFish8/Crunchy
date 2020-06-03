@@ -221,6 +221,10 @@ class BasicTracker:
         for block in self._generate_block():
             yield block
 
+    @property
+    def amount_of_items(self):
+        return len(self._contents)
+
     def to_dict(self):
         return {'content': self._contents}
 

@@ -1,19 +1,81 @@
 import re
 import discord
 import asyncio
-
+import json
 from discord.ext import commands
 
 from database.database import UserFavourites, UserRecommended, UserWatchlist
 
-async def add_watchlist(ctx, name, url):
-    pass
+with open("command_settings.json", "r") as file:
+    COMMAND_SETTINGS = json.load(file)
 
-async def add_favourites(ctx, name, url):
-    pass
+FALSE_PREMIUM_MAX_IN_STORE = COMMAND_SETTINGS.get("nopremium_max_per_storage")
+TRUE_PREMIUM_MAX_IN_STORE = COMMAND_SETTINGS.get("premium_max_per_storage")
+PREMIUM_URL = COMMAND_SETTINGS.get("premium_url")
+
+
+async def add_watchlist(ctx, bot, name, url):
+    user_tracker: UserWatchlist = UserWatchlist(user_id=ctx.author.id, database=bot.database)
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted == 0):
+        return {'content': "<:HimeMad:676087826827444227> Oh no! "
+                           "You dont have enough space in your watchlist "
+                           "to add this, get more storage by voting here "
+                           "https://top.gg/bot/656598065532239892/vote"
+                }
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted == 1):
+        return {'content': f"<:HimeMad:676087826827444227> Oh no! "
+                           f"You seem to have maxed out your watchlist, you can get more by"
+                           f" buying premium here to help support my development: {PREMIUM_URL}"
+                }
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
+        return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
+                           f"You've managed to add over 500 things to your watchlist area! "
+                           f"However, you'll need to either delete some to add more or contact my developer"
+                           f" you can find him here: https://discord.gg/tJmEzWM"
+                }
+    else:
+        try:
+            user_tracker.add_content({'name': name, 'url': url})
+            return {
+                'content': f"<:HimeHappy:677852789074034691> Success!"
+                           f" I've added {name} to your watchlist!"
+            }
+        except (ValueError, TypeError, IndexError):
+            return False
+
+async def add_favourites(ctx, bot, name, url):
+    user_tracker: UserFavourites = UserFavourites(user_id=ctx.author.id, database=bot.database)
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted == 0):
+        return {'content': "<:HimeMad:676087826827444227> Oh no! "
+                           "You dont have enough space in your favourites "
+                           "to add this, get more storage by voting here "
+                           "https://top.gg/bot/656598065532239892/vote"
+                }
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted == 1):
+        return {'content': f"<:HimeMad:676087826827444227> Oh no! "
+                           f"You seem to have maxed out your favourites, you can get more by"
+                           f" buying premium here to help support my development: {PREMIUM_URL}"
+                }
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
+        return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
+                           f"You've managed to add over 500 things to your favourites area! "
+                           f"However, you'll need to either delete some to add more or contact my developer"
+                           f" you can find him here: https://discord.gg/tJmEzWM"
+                }
+    else:
+        try:
+            user_tracker.add_content({'name': name, 'url': url})
+            return {
+                'content': f"<:HimeHappy:677852789074034691> Success!"
+                           f" I've added {name} to your favourites!"
+            }
+        except (ValueError, TypeError, IndexError):
+            return False
+
 
 async def add_both(*args, **kwargs):
-    return (await add_favourites(*args, **kwargs)), (await add_watchlist(*args, **kwargs))
+    return iter(((await add_favourites(*args, **kwargs)), (await add_watchlist(*args, **kwargs))))
+
 
 class TrackingAnime(commands.Cog):
     def __init__(self, bot):
@@ -70,7 +132,7 @@ class TrackingAnime(commands.Cog):
             await message.clear_reactions()
             return await message.edit(content="The selection period has expired.")
 
-        results = await self.options[BASE_EMOJIS.index(str(reaction.emoji))](ctx, name, url)
+        results = await self.options[BASE_EMOJIS.index(str(reaction.emoji))](ctx, self.bot, name, url)
         if len(results) < 2:
             if not results:
                 return await ctx.send(
