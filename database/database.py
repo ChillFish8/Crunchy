@@ -53,7 +53,7 @@ class UserTracking:
 
     def set_user_data(self, area: str, user_id: int, contents: list) -> [dict, int]:
         current_data = self.collections[area].find_one({'_id': user_id})
-        Logger.log_database("SET-USER: User Content with Id: {} returned with results: {}".format(user_id, current_data))
+        Logger.log_database("SET-USER: User Content with Id: {} returned.".format(user_id))
 
         if current_data is not None:
             QUERY = {'_id': user_id}
@@ -68,7 +68,7 @@ class UserTracking:
     def reset_user_data(self, area: str, user_id: int):
         current_data = self.collections[area].find_one_and_delete({'_id': user_id})
         Logger.log_database(
-            "DELETE-USER: Guild with Id: {} returned with results: {}".format(user_id, current_data))
+            "DELETE-USER: Guild with Id: {} returned.".format(user_id))
         return "COMPLETE"
 
     def get_user_data(self, area: str, user_id: int) -> list:
@@ -110,6 +110,11 @@ class MongoDatabase(GuildData, UserTracking):
         print(f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
 
         self.db = self.client["Crunchy"]
+        self.collections = {
+            "favourites": self.db["favouritelist"],
+            "watchlist": self.db["watchlist"],
+            "recommended": self.db["recommendedlist"],
+        }
         super().__init__(self.db)
 
     def close_conn(self):

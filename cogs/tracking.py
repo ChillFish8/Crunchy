@@ -74,7 +74,7 @@ async def add_favourites(ctx, bot, name, url):
 
 
 async def add_both(*args, **kwargs):
-    return iter(((await add_favourites(*args, **kwargs)), (await add_watchlist(*args, **kwargs))))
+    return (await add_favourites(*args, **kwargs)), (await add_watchlist(*args, **kwargs))
 
 
 class TrackingAnime(commands.Cog):
@@ -129,23 +129,31 @@ class TrackingAnime(commands.Cog):
         try:
             reaction, _ = await self.bot.wait_for('reaction_add', check=check, timeout=30)
         except asyncio.TimeoutError:
-            await message.clear_reactions()
-            return await message.edit(content="The selection period has expired.")
+            await message.delete()
+            return await ctx.send(content="The selection period has expired.")
 
         results = await self.options[BASE_EMOJIS.index(str(reaction.emoji))](ctx, self.bot, name, url)
-        if len(results) < 2:
+        if not isinstance(results, tuple):
             if not results:
+                await message.delete()
                 return await ctx.send(
                     "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to your list!")
             else:
+                await message.delete()
                 return await ctx.send(**results)
         else:
             if not results[0] or not results[1]:
+                await message.delete()
                 return await ctx.send(
                     "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to your list!")
             else:
-                return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
-                                      f" I've added {name} to both your watchlist and favourites!")
+                for res in results:
+                    if not res['content'].startswith("<:HimeHappy:677852789074034691>"):
+                        return await ctx.send(**res)
+                else:
+                    await message.delete()
+                    return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
+                                          f" I've added {name} to both your watchlist and favourites!")
 
 
 def setup(bot):
