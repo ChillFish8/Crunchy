@@ -40,6 +40,44 @@ class GuildData:
         return current_data['config'] if current_data is not None else Settings.settings
 
 
+class GuildWebhooks:
+    """ Custom Guild settings """
+
+    def __init__(self, db):
+        self.db = db
+        self.guild_configs = self.db["guilds"]
+
+    def set_guild_webhooks(self, guild_id: int, config: dict) -> [dict, int]:
+        current_data = self.guild_configs.find_one({'_id': guild_id})
+        Logger.log_database("SET-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+
+        if current_data is not None:
+            QUERY = {'_id': guild_id}
+            new_data = {'config': config}
+            resp = self.guild_configs.update_one(QUERY, {'$set': new_data})
+            return resp.raw_result
+        else:
+            data = {'_id': guild_id, 'config': config}
+            resp = self.guild_configs.insert_one(data)
+            return resp.inserted_id
+
+    def reset_guild_config(self, guild_id: int):
+        current_data = self.guild_configs.find_one_and_delete({'_id': guild_id})
+        Logger.log_database(
+            "DELETE-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+        return "COMPLETE"
+
+    def get_guild_config(self, guild_id: int) -> dict:
+        current_data = self.guild_configs.find_one({'_id': guild_id})
+        return current_data['config'] if current_data is not None else {'news': None,
+                                                                        'release':
+                                                                            {
+                                                                                'mention': [],
+                                                                                'url': None
+                                                                            }
+                                                                        }
+
+
 class UserTracking:
     """ User's Watchlist, Recommended etc... """
 
@@ -83,7 +121,7 @@ class UserTracking:
             return current_data['contents'] if current_data is not None else []
 
 
-class MongoDatabase(GuildData, UserTracking):
+class MongoDatabase(GuildData, UserTracking, GuildWebhooks):
     """
         This is the main Mongo DB class, this pull data from config.json and
         connects to the remote mongoDB (Falls back to local host if config missing)
