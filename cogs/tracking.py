@@ -229,6 +229,5 @@ class UserSettings:
                               f" list is now {'**public**' if mode else '**private**'}")
 
 
-
 def setup(bot):
     bot.add_cog(AddingAnime(bot))

@@ -269,15 +269,18 @@ class UserRecommended(BasicTracker):
             self._contents['bypass'].remove(id_)
         if id_ not in self._contents['blocked']:
             self._contents['blocked'].append(id_)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
 
     def bypass(self, id_):
         if id_ in self._contents['blocked']:
             self._contents['blocked'].remove(id_)
         if id_ not in self._contents['bypass']:
             self._contents['bypass'].append(id_)
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
 
     def toggle_public(self):
         self._contents['public'] = not self._contents['public']
+        self._db.set_user_data(area=self._type, user_id=self.user_id, contents=self._contents)
         return self._contents['public']
 
     def add_content(self, data: dict):
