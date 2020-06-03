@@ -3,6 +3,7 @@ import discord
 import asyncio
 import json
 from discord.ext import commands
+from datetime import datetime
 
 from database.database import UserFavourites, UserRecommended, UserWatchlist
 from utils.paginator import Paginator
@@ -252,20 +253,21 @@ class ViewTracked(commands.Cog):
             pages += 1
 
         embeds = []
-        for i, chunk in enumerate(area.get_blocks(self)):
-            embed = discord.Embed(
-                title=f"{user.name}'s {area.type} | Page {i + 1} / {pages}",
-                color=self.bot.colour
-            ).set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
-            desc = ""
+        for i, chunk in enumerate(area.get_blocks()):
+            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
+                .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
                 if item['url'] is not None:
-                    desc += f"** {x + 1} ) - [{item['name']}]({item['url']})**\n"
+                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
+                                    name="\u200b",
+                                    inline=False)
                 else:
-                    desc += f"** {x + 1} ) - {item['name']}**\n"
-            embed.description = desc
+                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                                    name="\u200b",
+                                    inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
-            embeds.append(embeds)
+            embed.set_author(name=f"{user.name}'s {area.type}", icon_url=user.avatar_url)
+            embeds.append(embed)
         return embeds
 
     @commands.command(aliases=['myw', 'watchlist'])
@@ -278,13 +280,12 @@ class ViewTracked(commands.Cog):
             user_ = ctx.author
             user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
         if user_area.amount_of_items <= 0:
-            embed = discord.Embed(
-                title=f"{user.name}'s {user_area.type}",
-                color=self.bot.colour
-            ).set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+            embed = discord.Embed(color=self.bot.colour) \
+                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in their list, lets get them filling list!"
+                                f"have anything in their watchlist,\n lets get them filling list!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
+            embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
         else:
             embeds = await self.generate_embeds(user=user_, area=user_area)
@@ -297,13 +298,58 @@ class ViewTracked(commands.Cog):
     @commands.command(aliases=['myf', 'favourites'])
     async def my_favourites(self, ctx, user: discord.Member=None):
         """ Get your or someone else's favourites list """
+        if user is not None:
+            user_ = user
+            user_area = UserFavourites(user_id=user.id, database=self.bot.database)
+        else:
+            user_ = ctx.author
+            user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
+        if user_area.amount_of_items <= 0:
+            embed = discord.Embed(color=self.bot.colour) \
+                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
+                                f"have anything in their favourites,\n lets get them filling list!"
+            embed.set_thumbnail(url=random.choice(SAD_URL))
+            embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
+            return await ctx.send(embed=embed)
+        else:
+            embeds = await self.generate_embeds(user=user_, area=user_area)
+            pager = Paginator(embed_list=embeds,
+                              bot=self.bot,
+                              message=ctx.message,
+                              colour=self.bot.colour)
+            return asyncio.get_event_loop().create_task(pager.start())
 
     @commands.command(aliases=['myr', 'recommended'])
     async def my_recommended(self, ctx, user: discord.Member=None):
         """ Get your or someone else's recommended list """
+        if user is not None:
+            user_ = user
+            user_area = UserRecommended(user_id=user.id, database=self.bot.database)
+        else:
+            user_ = ctx.author
+            user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+        if user_area.amount_of_items <= 0:
+            embed = discord.Embed(color=self.bot.colour)\
+                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
+                                f"have anything in their recommended,\n lets get them filling list!"
+            embed.set_thumbnail(url=random.choice(SAD_URL))
+            embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
+            return await ctx.send(embed=embed)
+        else:
+            embeds = await self.generate_embeds(user=user_, area=user_area)
+            if len(embeds) > 1:
+                pager = Paginator(embed_list=embeds,
+                                  bot=self.bot,
+                                  message=ctx.message,
+                                  colour=self.bot.colour)
+                return self.bot.loop.create_task(pager.start())
+            else:
+                return await ctx.send(embed=embeds[0])
 
 
 def setup(bot):
     bot.add_cog(AddingAnime(bot))
     bot.add_cog(UserSettings(bot))
-
+    bot.add_cog(ViewTracked(bot))

@@ -11,7 +11,7 @@ class Paginator:
 
     PAGINATION_EMOJI = [FIRST_EMOJI, LEFT_EMOJI, DELETE_EMOJI, RIGHT_EMOJI, LAST_EMOJI]
 
-    def __init__(self, embed_list: list, message: discord.Message, bot, colour):
+    def __init__(self, embed_list, message: discord.Message, bot, colour):
         self.embed_list = embed_list
         self.channel = message.channel
         self.message = message
@@ -21,6 +21,7 @@ class Paginator:
         self.colour = colour
 
     async def start(self):
+        print(self.embed_list)
         self.old_message = await self.channel.send(embed=self.embed_list[self.counter])
         for emoji in self.PAGINATION_EMOJI:
             await self.old_message.add_reaction(emoji)

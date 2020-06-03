@@ -304,7 +304,7 @@ class UserRecommended(BasicTracker):
             chunks.append(self._contents['list'][i:i + rem])
         return chunks
 
-    def get_block(self):
+    def get_blocks(self):
         """ A generator to allow the bot to paginate large sets. """
         for block in self._generate_block():
             yield block
