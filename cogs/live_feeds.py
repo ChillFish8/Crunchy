@@ -396,7 +396,7 @@ class LiveFeedCommands(commands.Cog):
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="releases")
             guild_data.add_webhook(webhook=webhook, feed_type="releases")
-            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i go though!")
+            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
             return await to_edit.edit(content=f'All set! I will now send releases to <#{webhook.channel_id}>')
         except discord.Forbidden:
             return await to_edit.edit(content="I am missing permissions to create a webhook. "
@@ -421,7 +421,7 @@ class LiveFeedCommands(commands.Cog):
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="news")
             guild_data.add_webhook(webhook=webhook, feed_type="news")
-            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i go though!")
+            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
             return await to_edit.edit(content=f'All set! I will now send payload to <#{webhook.channel_id}>')
         except discord.Forbidden:
             return await to_edit.edit(content="I am missing permissions to create a webhook. "
