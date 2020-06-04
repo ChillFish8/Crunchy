@@ -40,7 +40,7 @@ class GuildWebhook:
 
 
 class WebhookBroadcast:
-    def __init__(self, embed: discord.Embed, web_hooks: list, name="Crunchy", type_):
+    def __init__(self, embed: discord.Embed, web_hooks: list, type_, name="Crunchy"):
         self.embed = embed
         self.web_hooks = web_hooks
         self.failed_to_send = []
