@@ -34,9 +34,12 @@ RANDOM_THUMBS = [
 
 
 class GuildWebhook:
-    def __init__(self, guild_id, url):
+    def __init__(self, guild_id, url, mentions=None):
         self.guild_id = guild_id
         self.url = url
+        if mentions is not None:
+            mentions = "__**Release Ping**__" + ", ".join(mentions)
+        self.content = mentions
 
 
 class WebhookBroadcast:
@@ -53,12 +56,13 @@ class WebhookBroadcast:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        Logger.log_broadcast(f"Cleaning up broadcast, deleting {len(self.failed_to_send)} hooks.")
         await self.session.close()
 
     async def send_func(self, hook: GuildWebhook):
         try:
             webhook = Webhook.from_url(hook.url, adapter=AsyncWebhookAdapter(self.session))
-            await webhook.send(embed=self.embed, username=self.name)
+            await webhook.send(embed=self.embed, content=hook.content, username=self.name)
 
         except discord.InvalidArgument:
             self.failed_to_send.append(hook.guild_id)
@@ -76,8 +80,9 @@ class WebhookBroadcast:
         Logger.log_broadcast(f"[ {self.type} ]             {len(self.web_hooks)} messages sent!")
 
 
-def map_objects(data):
-    return GuildWebhook(data['guild_id'], data['url'])
+def map_objects_releases(data):
+    guild = GuildWebhook(data['guild_id'], data['release'])
+    return guild
 
 
 class LiveFeedBroadcasts(commands.Cog):
@@ -128,7 +133,7 @@ class LiveFeedBroadcasts(commands.Cog):
             anime_details = details['details']['data']
             embed = self.make_release_embed(anime_details, rss, first)
             guilds = self.bot.database
-            web_hooks = list(map(map_objects, guilds))
+            web_hooks = list(map(map_objects_releases, guilds))
             async with WebhookBroadcast(embed=embed, web_hooks=web_hooks, type_="RELEASE") as broadcast:
                 await broadcast.broadcast()
 

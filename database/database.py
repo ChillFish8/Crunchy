@@ -69,12 +69,9 @@ class GuildWebhooks:
 
     def get_guild_config(self, guild_id: int) -> dict:
         current_data = self.guild_configs.find_one({'_id': guild_id})
-        return current_data['config'] if current_data is not None else {'news': None,
-                                                                        'release':
-                                                                            {
-                                                                                'mention': [],
-                                                                                'url': None
-                                                                            }
+        return current_data['config'] if current_data is not None else {'guild_id': guild_id,
+                                                                        'news': None,
+                                                                        'release': None
                                                                         }
 
 
@@ -126,6 +123,9 @@ class MongoDatabase(GuildData, UserTracking, GuildWebhooks):
         This is the main Mongo DB class, this pull data from config.json and
         connects to the remote mongoDB (Falls back to local host if config missing)
         + Class Inherits:
+            - GuildData
+            - UserTracking
+            - GuildWebhooks
         """
 
     with open(r'database_config.json', 'r') as file:
