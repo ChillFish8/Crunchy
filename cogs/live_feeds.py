@@ -46,7 +46,7 @@ class MicroGuildWebhook:
 
 
 class WebhookBroadcast:
-    def __init__(self, embed: discord.Embed, web_hooks: list, type_, title, name="Crunchy"):
+    def __init__(self, database: MongoDatabase, embed: discord.Embed, web_hooks: list, type_: str, title: str, name="Crunchy"):
         self.embed = embed
         self.web_hooks = web_hooks
         self.failed_to_send = []
@@ -55,6 +55,7 @@ class WebhookBroadcast:
         self.type = type_
         self.successful = 0
         self.title = title
+        self.database = database
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -62,6 +63,9 @@ class WebhookBroadcast:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         Logger.log_broadcast(f"Cleaning up broadcast, deleting {len(self.failed_to_send)} hooks.")
+        for fail in self.failed_to_send:
+            hook_object = GuildWebhooks(guild_id=fail, database=self.database)
+            hook_object.delete_webhook(feed_type=self.type.lower())
         await self.session.close()
 
     async def send_func(self, hook: MicroGuildWebhook):
@@ -235,7 +239,7 @@ class LiveFeedCommands(commands.Cog):
         guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="releases")
-            guild_data.add_webhook()
+            guild_data.add_webhook(webhook=webhook, feed_type="releases")
             return await ctx.send(f'All set! I will now send releases to <#{webhook.channel_id}>')
         except discord.Forbidden:
             return await ctx.send(
@@ -250,7 +254,26 @@ class LiveFeedCommands(commands.Cog):
     @commands.has_guild_permissions(administrator=True)
     @commands.command(name="addnewschannel", aliases=['acc', 'addnews'])
     async def add_news_channel(self, ctx, channel: discord.TextChannel):
-        pass
+        existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
+        check = self.check_exists(name="Crunchyroll News", hooks=existing_hooks)
+        if check:
+            return await ctx.send(
+                f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
+                f"Please delete the original release webhook first.")
+
+        guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+        try:
+            webhook = await self.make_webhook(channel=channel, feed_type="news")
+            guild_data.add_webhook(webhook=webhook, feed_type="news")
+            return await ctx.send(f'All set! I will now send news to <#{webhook.channel_id}>')
+        except discord.Forbidden:
+            return await ctx.send(
+                "I am missing permissions to create a webhook. "
+                "I need the permission `MANAGE_WEBHOOKS`.")
+        except AttributeError:
+            return await ctx.send(
+                "Sorry but something went wrong when trying to make this webhook."
+                " Please try a different channel.")
 
 
 def setup(bot):

@@ -78,11 +78,8 @@ class GuildWebhooks:
         :param database: -> Optional
         If data is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
-        On creation the class calls the data getting the guild settings
-        if prefix is None it reverts back to `-`, this should never happen
-        under normal circumstances.
-        Premium by default is False and will default to False in case of
-        failure.
+        On creation the class calls the data getting the guild webhooks
+        this includes News and Release webhooks
         """
         self.guild_id = guild_id
         self._db = db if database is None else database
@@ -90,7 +87,7 @@ class GuildWebhooks:
         self.news = self.data['news']
         self.release = self.data['release']
 
-    async def add_webhook(self, webhook: discord.Webhook, feed_type: str):
+    def add_webhook(self, webhook: discord.Webhook, feed_type: str):
         if feed_type == "releases":
             self.release = webhook.url
         elif feed_type == "news":
@@ -99,7 +96,7 @@ class GuildWebhooks:
             raise NotImplementedError("No webhook option for {} type".format(feed_type))
         self._db.set_guild_webhooks(self.guild_id, self.to_dict())
 
-    async def delete_webhook(self, feed_type: str):
+    def delete_webhook(self, feed_type: str):
         if feed_type == "releases":
             self.release = None
         elif feed_type == "news":
