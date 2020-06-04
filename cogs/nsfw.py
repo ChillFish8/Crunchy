@@ -7,6 +7,7 @@ from discord.ext import commands
 
 CRUNCHY_API_BASE = "https://crunchy-bot.live/api"
 NEKO_API_BASE = "https://nekobot.xyz/api{}"  # todo replace with Crunchy api
+THUMB_IMG = "https://cdn.discordapp.com/emojis/717784142053507082.png?v=1"
 
 
 class ApiCollectors:
@@ -120,12 +121,13 @@ class NSFW(commands.Cog):
         embed.set_footer(text="https://nekobot.xyz/api/")
         await ctx.send(embed=embed)
 
-    @staticmethod
-    async def send_vote(ctx):
-        return await ctx.send("<:cheeky:717784139226546297> You need to vote get access to NSFW and other "
-                              "awesome perks!\n"
-                              "Vote here to get access to NSFW and more for 24 hours:\n"
-                              "https://top.gg/bot/656598065532239892/vote")
+    async def send_vote(self, ctx):
+        embed = discord.Embed(color=self.bot.colour,
+                              title="Vote to support us! ",
+                              description="Vote here to get access to NSFW and more for 24 hours:\n"
+                                          "**[Vote for me](https://top.gg/bot/656598065532239892/vote)**\n")
+        embed.set_thumbnail(url=THUMB_IMG)
+        return await ctx.send(embed=embed)
 
 
 def setup(bot):
