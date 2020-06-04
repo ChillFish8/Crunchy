@@ -7,7 +7,7 @@ with open("config.json") as file:
     config = json.load(file)
 
 
-class Search(commands.Cog):
+class WebhookLogging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.GUILD_URL = config.get("guild_webhook")
@@ -65,4 +65,4 @@ class Search(commands.Cog):
             f"**New Upvote**  |  User: `{data['user']}`")
 
 def setup(bot):
-    bot.add_cog(Search(bot))
+    bot.add_cog(WebhookLogging(bot))

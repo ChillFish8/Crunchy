@@ -87,6 +87,11 @@ class CrunchyBot(commands.Bot):
         await self.error_handler.process_error(ctx, exception)
 
     def has_voted(self, user_id):
+        has_voted = self.cache.get("votes", user_id)
+        if has_voted is None:
+            has_voted = self.database.get_vote(user_id)
+            if has_voted is not None:
+                self.cache.store("votes", user_id, has_voted)
         if self.database.get_vote(user_id) is not None:
             return 1
         return 0

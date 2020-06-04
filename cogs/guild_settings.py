@@ -8,7 +8,7 @@ class Customisations(commands.Cog):
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    @commands.command(name=['setprefix'])
+    @commands.command(name='setprefix')
     async def set_prefix(self, ctx, *, prefix: str):
         """ Set a new prefix """
         config: GuildConfig = ctx.guild_config
@@ -18,7 +18,7 @@ class Customisations(commands.Cog):
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
-    @commands.command(name=['resetprefix'])
+    @commands.command(name='resetprefix')
     async def reset_prefix(self, ctx):
         """ If you wanna go back to default """
         config: GuildConfig = ctx.config
@@ -28,7 +28,7 @@ class Customisations(commands.Cog):
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    @commands.command(name=['togglensfw'])
+    @commands.command(name='togglensfw')
     async def toggle_nsfw(self, ctx):
         """ Set a new prefix """
         config: GuildConfig = ctx.guild_config

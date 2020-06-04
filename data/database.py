@@ -188,6 +188,7 @@ class MongoDatabase(GuildData, UserTracking, GuildWebhooks, Votes):
             "recommended": self.db["recommendedlist"],
         }
         self.guild_web_hooks = self.db["webhooks"]
+        self.votes = self.db['votes']
         super().__init__(self.db)
 
     def close_conn(self):
