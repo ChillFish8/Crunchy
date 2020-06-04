@@ -5,10 +5,10 @@ import asyncio
 from discord.ext import commands
 from datetime import timedelta
 
-from database.database import MongoDatabase
-from database.cachemanager import CacheManager, Store
+from data.database import MongoDatabase
+from data.cachemanager import CacheManager, Store
 from logger import Logger
-from database import database
+from data import database
 
 
 with open('config.json', 'r') as file:

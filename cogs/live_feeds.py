@@ -8,6 +8,7 @@ from discord.ext import commands
 from discord import Webhook, AsyncWebhookAdapter
 from colorama import Fore
 
+from data.database import MongoDatabase
 from logger import Logger
 
 # Urls
@@ -93,6 +94,7 @@ class LiveFeedBroadcasts(commands.Cog):
         self.sent = []
         self.processed = []
         self.callbacks = {'release': self.release_callback, 'news': self.news_callback}
+        self.loop.create_task(self.background_checker())
 
     async def background_checker(self):
         while True:

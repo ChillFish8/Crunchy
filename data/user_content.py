@@ -1,4 +1,4 @@
-from database.database import MongoDatabase
+from data.database import MongoDatabase
 
 
 class BasicTracker:
@@ -12,7 +12,7 @@ class BasicTracker:
     def __init__(self, user_id, type_, database=None):
         """
         :param database: -> Optional
-        If database is None it falls back to a global var,
+        If data is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id

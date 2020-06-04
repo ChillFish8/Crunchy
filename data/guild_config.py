@@ -1,5 +1,5 @@
 import json
-from database.database import MongoDatabase
+from data.database import MongoDatabase
 
 
 class Settings:
@@ -19,9 +19,9 @@ class GuildConfig:
         """
         :param guild_id:
         :param database: -> Optional
-        If database is None it falls back to a global var,
+        If data is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
-        On creation the class calls the database getting the guild settings
+        On creation the class calls the data getting the guild settings
         if prefix is None it reverts back to `-`, this should never happen
         under normal circumstances.
         Premium by default is False and will default to False in case of
