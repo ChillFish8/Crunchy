@@ -45,34 +45,38 @@ class GuildWebhooks:
 
     def __init__(self, db):
         self.db = db
-        self.guild_configs = self.db["guilds"]
+        self.guild_web_hooks = self.db["webhooks"]
 
     def set_guild_webhooks(self, guild_id: int, config: dict) -> [dict, int]:
-        current_data = self.guild_configs.find_one({'_id': guild_id})
-        Logger.log_database("SET-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+        current_data = self.guild_web_hooks.find_one({'_id': guild_id})
+        Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
 
         if current_data is not None:
             QUERY = {'_id': guild_id}
             new_data = {'config': config}
-            resp = self.guild_configs.update_one(QUERY, {'$set': new_data})
+            resp = self.guild_web_hooks.update_one(QUERY, {'$set': new_data})
             return resp.raw_result
         else:
             data = {'_id': guild_id, 'config': config}
-            resp = self.guild_configs.insert_one(data)
+            resp = self.guild_web_hooks.insert_one(data)
             return resp.inserted_id
 
-    def reset_guild_config(self, guild_id: int):
-        current_data = self.guild_configs.find_one_and_delete({'_id': guild_id})
+    def reset_guild_webhooks(self, guild_id: int):
+        current_data = self.guild_web_hooks.find_one_and_delete({'_id': guild_id})
         Logger.log_database(
-            "DELETE-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+            "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
         return "COMPLETE"
 
-    def get_guild_config(self, guild_id: int) -> dict:
-        current_data = self.guild_configs.find_one({'_id': guild_id})
+    def get_guild_webhooks(self, guild_id: int) -> dict:
+        current_data = self.guild_web_hooks.find_one({'_id': guild_id})
         return current_data['config'] if current_data is not None else {'guild_id': guild_id,
                                                                         'news': None,
                                                                         'release': None
                                                                         }
+
+    def get_all_webhooks(self):
+        all_ = self.guild_web_hooks.find({}, {'config': 1})
+        return list(all_)
 
 
 class UserTracking:

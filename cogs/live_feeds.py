@@ -132,7 +132,7 @@ class LiveFeedBroadcasts(commands.Cog):
         else:
             anime_details = details['details']['data']
             embed = self.make_release_embed(anime_details, rss, first)
-            guilds = self.bot.database
+            guilds = self.bot.database.get_all_webhooks()
             web_hooks = list(map(map_objects_releases, guilds))
             async with WebhookBroadcast(embed=embed, web_hooks=web_hooks, type_="RELEASE") as broadcast:
                 await broadcast.broadcast()
