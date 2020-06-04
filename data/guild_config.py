@@ -84,13 +84,13 @@ class GuildWebhooks:
         self.guild_id = guild_id
         self._db = db if database is None else database
         self.data = self._db.get_guild_webhooks(guild_id=guild_id)
-        self.news = self.data['payload']
+        self.news = self.data['news']
         self.release = self.data['release']
 
     def add_webhook(self, webhook: discord.Webhook, feed_type: str):
         if feed_type == "releases":
             self.release = webhook.url
-        elif feed_type == "payload":
+        elif feed_type == "news":
             self.news = webhook.url
         else:
             raise NotImplementedError("No webhook option for {} type".format(feed_type))
@@ -99,7 +99,7 @@ class GuildWebhooks:
     def delete_webhook(self, feed_type: str):
         if feed_type == "releases":
             self.release = None
-        elif feed_type == "payload":
+        elif feed_type == "news":
             self.news = None
         else:
             raise NotImplementedError("No webhook option for {} type".format(feed_type))
@@ -110,7 +110,7 @@ class GuildWebhooks:
 
     def to_dict(self):
         return {'guild_id': self.guild_id,
-                'payload': self.news,
+                'news': self.news,
                 'release': self.release
                 }
 

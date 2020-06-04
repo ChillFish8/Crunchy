@@ -41,6 +41,12 @@ RANDOM_THUMBS = [
     'https://cdn.discordapp.com/attachments/680350705038393344/717784215986634953/cheeky.png',
     'https://cdn.discordapp.com/attachments/680350705038393344/717784211771097179/thank_you.png'
 ]
+RANDOM_EMOJIS = [
+    '<:thank_you:717784142053507082>',
+    '<:cheeky:717784139226546297>',
+    '<:exitment:717784139641651211>',
+]
+
 PFP_PATH = r'resources/photos/crunchy_image.png'
 
 
@@ -54,8 +60,8 @@ class MicroGuildWebhook:
 
 
 class WebhookBroadcast:
-    def __init__(self, database: MongoDatabase, embed: discord.Embed, web_hooks: list, type_: str, title: str,
-                 name="Crunchy"):
+    def __init__(self, database: MongoDatabase, embed: discord.Embed,
+                 web_hooks: list, type_: str, title: str, name="Crunchy", buffer=None):
         self.embed = embed
         self.web_hooks = web_hooks
         self.failed_to_send = []
@@ -65,6 +71,7 @@ class WebhookBroadcast:
         self.successful = 0
         self.title = title
         self.database = database
+        self.buffer = buffer
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -80,7 +87,12 @@ class WebhookBroadcast:
     async def send_func(self, hook: MicroGuildWebhook):
         try:
             webhook = Webhook.from_url(hook.url, adapter=AsyncWebhookAdapter(self.session))
-            await webhook.send(embed=self.embed, content=hook.content, username=self.name)
+            if self.buffer is not None:
+                self.buffer.seek(0)
+                file = discord.File(fp=self.buffer, filename="NewNews.png")
+            else:
+                file = None
+            await webhook.send(embed=self.embed, file=file, content=hook.content, username=self.name)
             self.successful += 1
 
         except discord.InvalidArgument:
@@ -94,20 +106,26 @@ class WebhookBroadcast:
         for i in range(chunks):
             tasks = []
             for guild in self.web_hooks.pop[i * 250:i * 250 + 250]:
-                tasks.append(self.send_func(hook=guild))
+                if guild.url is not None:
+                    tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
         else:
             tasks = []
             for guild in self.web_hooks[::-1][:remaining]:
-                tasks.append(self.send_func(hook=guild))
+                if guild.url is not None:
+                    tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
-
-        Logger.log_broadcast(f"[ {self.type} ] Completed broadcast of {self.title}!")
+        self.title = self.title.replace('\n', '')
+        Logger.log_broadcast(f'[ {self.type} ] Completed broadcast of "{self.title}"!')
         Logger.log_broadcast(f"[ {self.type} ]          {self.successful} messages sent!")
 
 
 def map_objects_releases(data):
     guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
+    return guild
+
+def map_objects_news(data):
+    guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['news'])
     return guild
 
 
@@ -238,13 +256,32 @@ class LiveFeedBroadcasts(commands.Cog):
             'img_url': img_url,
             'summary': summary,
             'brief': brief,
+            'url': rss['id']
         }
         start = time.time()
         with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
             buffer = await self.loop.run_in_executor(pool, self.generate_news_image, payload)
         delta = time.time() - start
         Timer.timings['LiveFeedBroadcasts.news_callback'] = delta
-        print(Timer.timings)
+
+        embed = discord.Embed(
+            description=f"[Read More]({payload['url']}) | "
+                        f""
+                        f" [Vote for Crunchy](https://top.gg/bot/656598065532239892)\n",
+            color=0xe87e15,
+            timestamp=datetime.now())
+        embed.set_footer(text="Part of Crunchy, the Crunchyroll bot. Powered by CF8")
+        embed.set_author(name="Crunchyroll Anime News! - Click for more!",
+                         icon_url="https://cdn.discordapp.com/emojis/656236139862032394.png?v=1",
+                         url=f"{payload['url']}")
+        embed.set_image(url="attachment://NewNews.png")
+
+        guilds = self.bot.database.get_all_webhooks()
+        web_hooks = list(map(map_objects_news, guilds))
+        async with WebhookBroadcast(
+                embed=embed, web_hooks=web_hooks, type_="NEWS",
+                title=payload['title'], database=self.bot.database, buffer=buffer) as broadcast:
+            await broadcast.broadcast()
 
     @staticmethod
     def generate_news_image(payload):
@@ -359,6 +396,7 @@ class LiveFeedCommands(commands.Cog):
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="releases")
             guild_data.add_webhook(webhook=webhook, feed_type="releases")
+            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i go though!")
             return await to_edit.edit(content=f'All set! I will now send releases to <#{webhook.channel_id}>')
         except discord.Forbidden:
             return await to_edit.edit(content="I am missing permissions to create a webhook. "
@@ -376,13 +414,14 @@ class LiveFeedCommands(commands.Cog):
         check = self.check_exists(name="Crunchyroll News", hooks=existing_hooks)
         if check:
             return await ctx.send(
-                f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
+                f"<:HimeSad:676087829557936149> Oops! Already have a news webhook (`{check}`) active.\n"
                 f"Please delete the original release webhook first.")
         to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
         guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
         try:
-            webhook = await self.make_webhook(channel=channel, feed_type="payload")
-            guild_data.add_webhook(webhook=webhook, feed_type="payload")
+            webhook = await self.make_webhook(channel=channel, feed_type="news")
+            guild_data.add_webhook(webhook=webhook, feed_type="news")
+            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i go though!")
             return await to_edit.edit(content=f'All set! I will now send payload to <#{webhook.channel_id}>')
         except discord.Forbidden:
             return await to_edit.edit(content="I am missing permissions to create a webhook. "
