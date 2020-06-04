@@ -12,7 +12,7 @@ class Logger:
     LOG_DISCONNECTS = True
     LOG_INFO = True
     LOG_DEBUG = False
-    LOG_VOTES = True
+    LOG_DBL = True
     LOG_DATABASE = True
     LOG_CACHE = True
     LOG_RSS = True
@@ -72,6 +72,14 @@ class Logger:
     def log_broadcast(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.YELLOW + "[ BROADCASTS ] " +
+                Fore.WHITE + msg + Fore.WHITE)
+        if cls.LOG_BROADCASTS or error:
+            print(text)
+
+    @classmethod
+    def log_dbl(cls, msg, error=False):
+        text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
+                Fore.LIGHTMAGENTA_EX + "[ TOP.GG ] " +
                 Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_BROADCASTS or error:
             print(text)

@@ -41,7 +41,7 @@ class GuildData:
 
 
 class GuildWebhooks:
-    """ Custom Guild settings """
+    """ Custom Guild webhooks """
 
     def __init__(self, db):
         self.db = db
@@ -126,7 +126,26 @@ class UserTracking:
             return current_data['contents'] if current_data is not None else []
 
 
-class MongoDatabase(GuildData, UserTracking, GuildWebhooks):
+class Votes:
+    """ Tracking on vote events for rewards"""
+
+    def __init__(self, db):
+        self.db = db
+        self.votes: pymongo.collection.Collection = self.db['votes']
+
+    def get_vote(self, user_id):
+        return self.votes.find({'_id': user_id})
+
+    def add_vote(self, user_id, expires_in):
+        self.votes.insert_one({'_id': user_id, 'expires_in': expires_in})
+        Logger.log_database("SET-VOTE: User Content with Id: {} returned.".format(user_id))
+
+    def remove_vote(self, user_id):
+        self.votes.find_one_and_delete({'_id': user_id})
+        Logger.log_database("DELETE-VOTE: User Content with Id: {} returned.".format(user_id))
+
+
+class MongoDatabase(GuildData, UserTracking, GuildWebhooks, Votes):
     """
         This is the main Mongo DB class, this pull data from config.json and
         connects to the remote mongoDB (Falls back to local host if config missing)

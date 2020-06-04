@@ -62,6 +62,9 @@ class CrunchyBot(commands.Bot):
         if '__pycache__' in cogs_list:
             cogs_list.remove('__pycache__')
 
+        if not config.get("dbl_voting_enabled", False):
+            cogs_list.remove('top_gg_votes.py')
+
         for cog in cogs_list:
             try:
                 self.load_extension(f"cogs.{cog.replace('.py', '')}")

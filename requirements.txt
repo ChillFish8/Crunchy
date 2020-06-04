@@ -5,4 +5,5 @@ feedparser~=5.2.1
 aiohttp~=3.6.2
 beautifulsoup4~=4.9.1
 lxml
+dblpy
 Pillow~=7.1.2
