@@ -9,6 +9,7 @@ from discord import Webhook, AsyncWebhookAdapter
 from colorama import Fore
 
 from data.database import MongoDatabase
+from data.guild_config import GuildWebhooks
 from logger import Logger
 
 # Urls
@@ -34,7 +35,7 @@ RANDOM_THUMBS = [
 ]
 
 
-class GuildWebhook:
+class MicroGuildWebhook:
     def __init__(self, guild_id, url, mentions=None):
         self.guild_id = guild_id
         self.url = url
@@ -62,7 +63,7 @@ class WebhookBroadcast:
         Logger.log_broadcast(f"Cleaning up broadcast, deleting {len(self.failed_to_send)} hooks.")
         await self.session.close()
 
-    async def send_func(self, hook: GuildWebhook):
+    async def send_func(self, hook: MicroGuildWebhook):
         try:
             webhook = Webhook.from_url(hook.url, adapter=AsyncWebhookAdapter(self.session))
             await webhook.send(embed=self.embed, content=hook.content, username=self.name)
@@ -85,7 +86,7 @@ class WebhookBroadcast:
 
 
 def map_objects_releases(data):
-    guild = GuildWebhook(data['guild_id'], data['release'])
+    guild = MicroGuildWebhook(data['guild_id'], data['release'])
     return guild
 
 
@@ -147,6 +148,7 @@ class LiveFeedBroadcasts(commands.Cog):
             async with WebhookBroadcast(
                     embed=embed, web_hooks=web_hooks, type_="RELEASE", title=anime_details['title']) as broadcast:
                 await broadcast.broadcast()
+            self.sent.append(rss['id'])
 
     @staticmethod
     def make_release_embed(details: dict, rss: dict, first):
@@ -220,8 +222,8 @@ class LiveFeedCommands(commands.Cog):
                 "<:HimeSad:676087829557936149> Oops! Already have a release webhook active,\n "
                 "please delete the original release webhook first.")
 
-
-
+        guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+        print(guild_data.data)
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
@@ -231,8 +233,9 @@ class LiveFeedCommands(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(LiveFeedBroadcasts(bot))
     bot.add_cog(LiveFeedCommands(bot))
+    bot.add_cog(LiveFeedBroadcasts(bot))
+
 
 
 # Testing area only:
