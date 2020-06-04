@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from data.database import GuildConfig
+from data.guild_config import GuildConfig
 
 class Customisations(commands.Cog):
     def __init__(self, bot):
