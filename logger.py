@@ -74,3 +74,15 @@ class Logger:
                 Fore.WHITE + msg)
         if cls.LOG_BROADCASTS or error:
             print(text)
+
+
+class Timer:
+    timings = {}
+
+    @classmethod
+    def fetch_timings(cls):
+        return cls.timings
+
+    @classmethod
+    def reset_timings(cls):
+        cls.timings = {}
