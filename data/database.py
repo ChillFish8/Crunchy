@@ -73,7 +73,7 @@ class GuildWebhooks:
     @Timer.timeit
     def get_guild_webhooks(self, guild_id: int) -> dict:
         current_data = self.guild_web_hooks.find_one({'_id': guild_id})
-        return current_data['config'] if current_data is not None else {'guild_id': guild_id,
+        return current_data['config'] if current_data is not None else {'user_id': guild_id,
                                                                         'news': None,
                                                                         'release': None
                                                                         }

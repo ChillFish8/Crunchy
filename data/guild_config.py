@@ -109,7 +109,7 @@ class GuildWebhooks:
             self._db.set_guild_webhooks(self.guild_id, self.to_dict())
 
     def to_dict(self):
-        return {'guild_id': self.guild_id,
+        return {'user_id': self.guild_id,
                 'news': self.news,
                 'release': self.release
                 }
