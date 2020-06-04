@@ -39,13 +39,13 @@ class Search(commands.Cog):
                                               "I couldn't find what you were search for.")
                     else:
                         async with sess.get(details_url.format(results['result_id'])) as resp_2:
-                            if resp.status != 200:
+                            if resp_2.status != 200:
                                 return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                                       "Something seems to have gone wrong when searching for that."
                                                       " Please try again later!")
                             else:
-                                details = await resp.json()
-                                details = details['data']
+                                details = await resp_2.json()
+                                details = details['details']['data']
         embed = discord.Embed(
             title=f"<:CrunchyRollLogo:676087821596885013>  {details['title']}  <:CrunchyRollLogo:676087821596885013>",
             url=f"https://www.crunchyroll.com/{details['title'].lower().replace(' ', '-')}",
@@ -58,9 +58,8 @@ class Search(commands.Cog):
 
         embed.description = f"⭐ **Rating** {details['reviews']} / 5 stars\n" \
                             f"\n" \
-                            f"***Description:**\n {details['desc_long']}\n"
+                            f"__**Description:**__\n {details['desc_long']}\n"
         return await ctx.send(embed=embed)
-
 
 
 def setup(bot):
