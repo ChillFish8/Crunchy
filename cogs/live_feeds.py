@@ -6,6 +6,8 @@ import random
 import textwrap
 import concurrent.futures
 import io
+import time
+import requests
 
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
@@ -111,7 +113,7 @@ def map_objects_releases(data):
 
 class LiveFeedBroadcasts(commands.Cog):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot = bot
         self.loop = asyncio.get_event_loop()
         self.to_send = []
         self.sent = []
@@ -123,9 +125,9 @@ class LiveFeedBroadcasts(commands.Cog):
     async def background_checker(self):
         while True:
             await self.bot.wait_until_ready()
-            if self.first_start:
-                await asyncio.sleep(600)
-                self.first_start = False
+            #if self.first_start:
+            #    await asyncio.sleep(600)
+            #    self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
@@ -223,11 +225,11 @@ class LiveFeedBroadcasts(commands.Cog):
                     return
 
     async def news_callback(self, rss: dict):
-        title = "\n".join(textwrap.wrap(rss['title'], width=50))
+        title = "\n".join(textwrap.wrap(rss['title'], width=42))
         soup = BeautifulSoup(rss['summary'].replace("<br/>", "||", 1).replace("\xa0", " "), 'lxml')
         split = soup.text.split("||", 1)
         summary, brief = split
-        brief = "\n".join(textwrap.wrap(brief, width=50)[:3])
+        brief = "\n".join(textwrap.wrap(brief, width=50)[:6])
         brief += "..."
         img_url = soup.find('img').get('src')
 
@@ -237,62 +239,46 @@ class LiveFeedBroadcasts(commands.Cog):
             'summary': summary,
             'brief': brief,
         }
-
+        start = time.time()
         with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
-            buffer = await self.loop.run_in_executor(pool, self.generate_news_image, (payload,))
+            buffer = await self.loop.run_in_executor(pool, self.generate_news_image, payload)
+        delta = time.time() - start
+        Timer.timings['LiveFeedBroadcasts.news_callback'] = delta
+        print(Timer.timings)
 
     @staticmethod
-    @Timer.timeit
     def generate_news_image(payload):
-        original = Image.open("BroadCasts/images/background.png")
+        original = Image.open("resources/webhooks/images/background.png")
 
         edited = ImageDraw.Draw(original)
 
-        y_pos_diff = 0
-        if len(payload['title']) > 60:
-            title = payload['title'].split(" ")
-            mid = len(title) // 2
-            title_1 = " ".join(title[:mid + 1])
-            title_2 = " ".join((title[mid + 1:]))
-            title = "\n".join([title_1, title_2])
-            y_pos_diff = 35
-        else:
-            title = payload['title']
+        y_pos_diff = 35 * payload['title'].count("\n")
+        title = payload['title']
 
         # Title
         edited.text((20, 20),
                     text=title,
                     fill="black",
                     font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial/Arial.ttf",
+                        r"resources/webhooks/fonts/Arial/Arial.ttf",
                         size=32)
                     )
 
         # Episode / payload summary
         edited.text((20, (60 + y_pos_diff)),
-                    text=f'''"{payload['brief']}"''',
+                    text=f'''"{payload['summary']}"''',
                     fill=(102, 102, 102),
                     font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial Italic/Arial Italic.ttf",
+                        r"resources/webhooks/fonts/Arial Italic/Arial Italic.ttf",
                         size=16)
                     )
 
-        # Who post is by
-        edited.text((20, (90 + y_pos_diff)),
-                    text=f"By{payload['by']}",
-                    fill=(223, 99, 0),
-                    font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial/Arial.ttf",
-                        size=18)
-                    )
-
         # Timestamp
-        time = datetime.now()
         edited.text((20, (120 + y_pos_diff)),
-                    text=time.strftime('%B, %d %Y %I:%M%p BST'),
+                    text=datetime.now().strftime('%B, %d %Y %I:%M%p BST'),
                     fill="black",
                     font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial/Arial.ttf",
+                        r"resources/webhooks/fonts/Arial/Arial.ttf",
                         size=18)
                     )
 
@@ -302,7 +288,7 @@ class LiveFeedBroadcasts(commands.Cog):
                     width=1)
 
         # icon
-        r = requests.get(payload['img'])
+        r = requests.get(payload['img_url'])
         buffer = io.BytesIO()
         buffer.write(r.content)
         buffer.seek(0)
@@ -310,18 +296,17 @@ class LiveFeedBroadcasts(commands.Cog):
         original.paste(icon, (20, 160 + y_pos_diff))
 
         # desc
-        desc = textwrap.wrap(payload['desc'], width=50)
-        desc = "\n".join(desc)
+        desc = payload['brief']
         edited.text((195, (160 + y_pos_diff)),
                     text=str(desc),
                     fill="black",
                     font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial/Arial.ttf",
+                        r"resources/webhooks/fonts/Arial/Arial.ttf",
                         size=18)
                     )
 
         # Crunchy logo n stuff
-        icon = Image.open(r"BroadCasts/images/Crunchy_image.png")
+        icon = Image.open(r"resources/webhooks/images/crunchy_image.png")
         icon = icon.resize((60, 60))
         original.paste(icon, (620, (70 + y_pos_diff)), icon)
 
@@ -329,15 +314,13 @@ class LiveFeedBroadcasts(commands.Cog):
                     text="Powered by Crunchy Discord bot.",
                     fill="black",
                     font=ImageFont.truetype(
-                        r"BroadCasts/fonts/Arial/Arial.ttf",
+                        r"resources/webhooks/fonts/Arial/Arial.ttf",
                         size=18)
                     )
 
         buffer = io.BytesIO()
         original.save(buffer, "png")
-
         return buffer
-
 
 
 class LiveFeedCommands(commands.Cog):
