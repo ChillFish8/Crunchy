@@ -116,9 +116,9 @@ class LiveFeedBroadcasts(commands.Cog):
 
     async def background_checker(self):
         while True:
-            # if self.first_start:   todo unindent
-            #    await asyncio.sleep(600)
-            #    self.first_start = False
+            if self.first_start:
+                await asyncio.sleep(600)
+                self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
@@ -126,9 +126,7 @@ class LiveFeedBroadcasts(commands.Cog):
                         release_parser = feedparser.parse(content)['entries'][3]
                         if not any([item in release_parser['title'].lower() for item in EXCLUDE_IN_TITLE]):
                             if release_parser['id'] not in self.processed:
-                                print(release_parser['id'])
                                 self.processed.append(release_parser['id'])
-                                print(self.processed)
                                 self.to_send.append({'type': 'release', 'rss': release_parser})
                                 Logger.log_rss(
                                     """[ RELEASE ]  Added "{}" to be sent!""".format(release_parser['title']))
@@ -148,6 +146,7 @@ class LiveFeedBroadcasts(commands.Cog):
     async def process_payloads(self):
         for item in self.to_send:
             await self.callbacks[item['type']](item['rss'])
+        self.to_send = []
 
     async def release_callback(self, rss: dict):
         first = rss['title'].split(" - ")[0]

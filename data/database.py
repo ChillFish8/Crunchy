@@ -1,6 +1,6 @@
 import pymongo
 import json
-from logger import Logger
+from logger import Logger, Timer
 
 
 class Settings:
@@ -74,6 +74,7 @@ class GuildWebhooks:
                                                                         'release': None
                                                                         }
 
+    @Timer.timeit
     def get_all_webhooks(self):
         all_ = self.guild_web_hooks.find({}, {'_id': 0})
         return list(all_)

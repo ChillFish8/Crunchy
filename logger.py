@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from datetime import datetime
 import colorama
+import time
 colorama.init()
 
 
@@ -86,3 +87,13 @@ class Timer:
     @classmethod
     def reset_timings(cls):
         cls.timings = {}
+
+    @classmethod
+    def timeit(cls, func):
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            output = func(*args, **kwargs)
+            end_time = time.time()
+            cls.timings[str(func.__qualname__)] = end_time - start_time
+            return output
+        return wrapper
