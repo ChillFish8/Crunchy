@@ -15,6 +15,7 @@ class Logger:
     LOG_DATABASE = True
     LOG_CACHE = True
     LOG_RSS = True
+    LOG_BROADCASTS = True
 
     @classmethod
     def log_shard_connect(cls, shard_id, error=False):
@@ -63,5 +64,13 @@ class Logger:
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.YELLOW + "[ RSS ] " +
                 Fore.WHITE + msg)
-        if cls.LOG_CACHE or error:
+        if cls.LOG_RSS or error:
+            print(text)
+
+    @classmethod
+    def log_broadcast(cls, msg, error=False):
+        text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
+                Fore.YELLOW + "[ BROADCASTS ] " +
+                Fore.WHITE + msg)
+        if cls.LOG_BROADCASTS or error:
             print(text)

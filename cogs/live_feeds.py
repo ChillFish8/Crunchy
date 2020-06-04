@@ -5,6 +5,7 @@ import feedparser
 import random
 
 from discord.ext import commands
+from discord import Webhook, AsyncWebhookAdapter
 from colorama import Fore
 
 from logger import Logger
@@ -30,6 +31,54 @@ RANDOM_THUMBS = [
     'https://cdn.discordapp.com/attachments/680350705038393344/717784215986634953/cheeky.png',
     'https://cdn.discordapp.com/attachments/680350705038393344/717784211771097179/thank_you.png'
 ]
+
+
+class GuildWebhook:
+    def __init__(self, guild_id, url):
+        self.guild_id = guild_id
+        self.url = url
+
+
+class WebhookBroadcast:
+    def __init__(self, embed: discord.Embed, web_hooks: list, name="Crunchy", type_):
+        self.embed = embed
+        self.web_hooks = web_hooks
+        self.failed_to_send = []
+        self.session = None
+        self.name = name
+        self.type = type_
+
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.session.close()
+
+    async def send_func(self, hook: GuildWebhook):
+        try:
+            webhook = Webhook.from_url(hook.url, adapter=AsyncWebhookAdapter(self.session))
+            await webhook.send(embed=self.embed, username=self.name)
+
+        except discord.InvalidArgument:
+            self.failed_to_send.append(hook.guild_id)
+
+        except discord.NotFound:
+            self.failed_to_send.append(hook.guild_id)
+
+    async def broadcast(self):
+        for i in range(1, len(self.web_hooks), 250):
+            tasks = []
+            for guild in self.web_hooks[i:i + 250]:
+                tasks.append(self.send_func(hook=guild))
+            await asyncio.gather(*tasks)
+        Logger.log_broadcast(f"[ {self.type} ] Completed broadcast!")
+        Logger.log_broadcast(f"[ {self.type} ]             {len(self.web_hooks)} messages sent!")
+
+
+def map_objects(data):
+    return GuildWebhook(data['guild_id'], data['url'])
+
 
 class LiveFeedBroadcasts(commands.Cog):
     def __init__(self, bot):
@@ -78,6 +127,10 @@ class LiveFeedBroadcasts(commands.Cog):
         else:
             anime_details = details['details']['data']
             embed = self.make_release_embed(anime_details, rss, first)
+            guilds = self.bot.database
+            web_hooks = list(map(map_objects, guilds))
+            async with WebhookBroadcast(embed=embed, web_hooks=web_hooks, type_="RELEASE") as broadcast:
+                await broadcast.broadcast()
 
     @staticmethod
     def make_release_embed(details: dict, rss: dict, first):
