@@ -143,9 +143,9 @@ class LiveFeedBroadcasts(commands.Cog):
     async def background_checker(self):
         while True:
             await self.bot.wait_until_ready()
-            #if self.first_start:
-            #    await asyncio.sleep(600)
-            #    self.first_start = False
+            if self.first_start:
+                await asyncio.sleep(600)
+                self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
