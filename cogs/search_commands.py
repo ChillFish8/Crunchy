@@ -1,10 +1,18 @@
 import discord
 import aiohttp
+import random
 
 from discord.ext import commands
 
 
 BASE_URL = "https://crunchy-bot.live/api"
+RANDOM_THUMBS = [
+    'https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png',
+    'https://cdn.discordapp.com/attachments/680350705038393344/717784643117777006/wow.png',
+    'https://cdn.discordapp.com/attachments/680350705038393344/717784215986634953/cheeky.png',
+    'https://cdn.discordapp.com/attachments/680350705038393344/717784211771097179/thank_you.png'
+]
+
 
 class Search(commands.Cog):
     def __init__(self, bot):
@@ -37,6 +45,21 @@ class Search(commands.Cog):
                                                       " Please try again later!")
                             else:
                                 details = await resp.json()
+                                details = details['data']
+        embed = discord.Embed(
+            title=f"<:CrunchyRollLogo:676087821596885013>  {details['title']}  <:CrunchyRollLogo:676087821596885013>",
+            url=f"https://www.crunchyroll.com/{details['title'].lower().replace(' ', '-')}",
+            color=self.bot.colour
+        )
+        embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
+        embed.set_image(url=details['thumb_img'])
+        embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
+                         icon_url=ctx.author.avatar_url)
+
+        embed.description = f"⭐ **Rating** {details['reviews']} / 5 stars\n" \
+                            f"\n" \
+                            f"***Description:**\n {details['desc_long']}\n"
+        return await ctx.send(embed=embed)
 
 
 
