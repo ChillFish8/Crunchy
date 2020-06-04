@@ -46,7 +46,8 @@ class MicroGuildWebhook:
 
 
 class WebhookBroadcast:
-    def __init__(self, database: MongoDatabase, embed: discord.Embed, web_hooks: list, type_: str, title: str, name="Crunchy"):
+    def __init__(self, database: MongoDatabase, embed: discord.Embed, web_hooks: list, type_: str, title: str,
+                 name="Crunchy"):
         self.embed = embed
         self.web_hooks = web_hooks
         self.failed_to_send = []
@@ -81,17 +82,24 @@ class WebhookBroadcast:
             self.failed_to_send.append(hook.guild_id)
 
     async def broadcast(self):
-        for i in range(1, len(self.web_hooks), 250):
+        chunks, remaining = divmod(len(self.web_hooks), 250)
+        for i in range(chunks):
             tasks = []
-            for guild in self.web_hooks[i:i + 250]:
+            for guild in self.web_hooks.pop[i * 250:i * 250 + 250]:
                 tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
+        else:
+            tasks = []
+            for guild in self.web_hooks[::-1][:remaining]:
+                tasks.append(self.send_func(hook=guild))
+            await asyncio.gather(*tasks)
+
         Logger.log_broadcast(f"[ {self.type} ] Completed broadcast of {self.title}!")
         Logger.log_broadcast(f"[ {self.type} ]          {self.successful} messages sent!")
 
 
 def map_objects_releases(data):
-    guild = MicroGuildWebhook(data['guild_id'], data['release'])
+    guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
     return guild
 
 
@@ -149,11 +157,11 @@ class LiveFeedBroadcasts(commands.Cog):
             return
         else:
             anime_details = details['details']['data']
-            embed = self.make_release_embed(anime_details, rss, first)
+            embed = self.make_release_embed(anime_details, rss, rss['title'].split(" - "))
             guilds = self.bot.database.get_all_webhooks()
             web_hooks = list(map(map_objects_releases, guilds))
             async with WebhookBroadcast(
-                    embed=embed, web_hooks=web_hooks, type_="RELEASE",
+                    embed=embed, web_hooks=web_hooks, type_="RELEASES",
                     title=anime_details['title'], database=self.bot.database) as broadcast:
                 await broadcast.broadcast()
 
@@ -165,7 +173,7 @@ class LiveFeedBroadcasts(commands.Cog):
                f"[Read the reviews here!]" \
                f"({'https://www.crunchyroll.com/{}/reviews'.format(details['title'].lower().replace(' ', '-'))})\n" \
                f"\n" \
-               f"**[{first[1]}]({rss['id']})**\n" \
+               f"📌 **[{first[1]}]({rss['id']})**\n" \
                f"\n" \
                f"**Description:**\n" \
                f"{details['desc_long']}\n"
@@ -237,19 +245,19 @@ class LiveFeedCommands(commands.Cog):
                 f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
                 f"Please delete the original release webhook first.")
 
+        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
         guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="releases")
             guild_data.add_webhook(webhook=webhook, feed_type="releases")
-            return await ctx.send(f'All set! I will now send releases to <#{webhook.channel_id}>')
+            return await to_edit.edit(content=f'All set! I will now send releases to <#{webhook.channel_id}>')
         except discord.Forbidden:
-            return await ctx.send(
-                "I am missing permissions to create a webhook. "
-                "I need the permission `MANAGE_WEBHOOKS`.")
+            return await to_edit.edit(content="I am missing permissions to create a webhook. "
+                                              "I need the permission `MANAGE_WEBHOOKS`.")
         except AttributeError:
-            return await ctx.send(
-                "Sorry but something went wrong when trying to make this webhook."
-                " Please try a different channel.")
+            return await to_edit.edit(
+                content="Sorry but something went wrong when trying to make this webhook."
+                        " Please try a different channel.")
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
@@ -261,26 +269,24 @@ class LiveFeedCommands(commands.Cog):
             return await ctx.send(
                 f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
                 f"Please delete the original release webhook first.")
-
+        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
         guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
         try:
             webhook = await self.make_webhook(channel=channel, feed_type="news")
             guild_data.add_webhook(webhook=webhook, feed_type="news")
-            return await ctx.send(f'All set! I will now send news to <#{webhook.channel_id}>')
+            return await to_edit.edit(content=f'All set! I will now send news to <#{webhook.channel_id}>')
         except discord.Forbidden:
-            return await ctx.send(
-                "I am missing permissions to create a webhook. "
-                "I need the permission `MANAGE_WEBHOOKS`.")
+            return await to_edit.edit(content="I am missing permissions to create a webhook. "
+                                              "I need the permission `MANAGE_WEBHOOKS`.")
         except AttributeError:
-            return await ctx.send(
-                "Sorry but something went wrong when trying to make this webhook."
-                " Please try a different channel.")
+            return await to_edit.edit(
+                content="Sorry but something went wrong when trying to make this webhook."
+                        " Please try a different channel.")
 
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
     bot.add_cog(LiveFeedBroadcasts(bot))
-
 
 
 # Testing area only:

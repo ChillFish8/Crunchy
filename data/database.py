@@ -49,7 +49,7 @@ class GuildWebhooks:
 
     def set_guild_webhooks(self, guild_id: int, config: dict) -> [dict, int]:
         current_data = self.guild_web_hooks.find_one({'_id': guild_id})
-        Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+        Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
 
         if current_data is not None:
             QUERY = {'_id': guild_id}
@@ -61,10 +61,10 @@ class GuildWebhooks:
             resp = self.guild_web_hooks.insert_one(data)
             return resp.inserted_id
 
-    def reset_guild_webhooks(self, guild_id: int):
+    def delete_guild_webhooks(self, guild_id: int):
         current_data = self.guild_web_hooks.find_one_and_delete({'_id': guild_id})
         Logger.log_database(
-            "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+            "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         return "COMPLETE"
 
     def get_guild_webhooks(self, guild_id: int) -> dict:
@@ -75,7 +75,7 @@ class GuildWebhooks:
                                                                         }
 
     def get_all_webhooks(self):
-        all_ = self.guild_web_hooks.find({}, {'config': 1})
+        all_ = self.guild_web_hooks.find({}, {'_id': 0})
         return list(all_)
 
 

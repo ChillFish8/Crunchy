@@ -103,7 +103,10 @@ class GuildWebhooks:
             self.news = None
         else:
             raise NotImplementedError("No webhook option for {} type".format(feed_type))
-        self._db.set_guild_webhooks(self.guild_id, self.to_dict())
+        if self.news is None and self.release is None:
+            self._db.delete_guild_webhooks(guild_id=self.guild_id)
+        else:
+            self._db.set_guild_webhooks(self.guild_id, self.to_dict())
 
     def to_dict(self):
         return {'guild_id': self.guild_id,
