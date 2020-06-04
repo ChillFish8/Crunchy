@@ -5,7 +5,7 @@ import json
 from discord.ext import commands
 from datetime import datetime
 
-from database.database import UserFavourites, UserRecommended, UserWatchlist
+from database.user_content import UserFavourites, UserRecommended, UserWatchlist
 from utils.paginator import Paginator
 
 with open("command_settings.json", "r") as file:
