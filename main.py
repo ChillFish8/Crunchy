@@ -88,13 +88,18 @@ class CrunchyBot(commands.Bot):
 
     def has_voted(self, user_id):
         has_voted = self.cache.get("votes", user_id)
-        if has_voted is None:
-            has_voted = self.database.get_vote(user_id)
-            if has_voted is not None:
-                self.cache.store("votes", user_id, has_voted)
         if has_voted is not None:
-            return 1
-        return 0
+            if has_voted['expires'] is not None:
+                return 1
+            else:
+                return 0
+        else:
+            has_voted = self.database.get_vote(user_id)
+            self.cache.store("votes", user_id, has_voted)
+            if has_voted['expires'] is not None:
+                return 1
+            else:
+                return 0
 
     async def get_config(self, context):
         """ Assign guild settings to context """

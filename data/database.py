@@ -134,7 +134,8 @@ class Votes:
         self.votes: pymongo.collection.Collection = self.db['votes']
 
     def get_vote(self, user_id):
-        return self.votes.find_one({'_id': user_id})
+        returned = self.votes.find_one({'_id': user_id})
+        return returned if returned is not None else {'user_id': user_id, 'expires': None}
 
     def add_vote(self, user_id, expires_in):
         self.votes.insert_one({'_id': user_id, 'expires_in': expires_in})
