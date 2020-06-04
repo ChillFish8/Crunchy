@@ -1,9 +1,13 @@
 import json
+import discord
+
 from data.database import MongoDatabase
 
 
+SETTINGS_PATH = 'default_settings.json'
+
 class Settings:
-    with open('default_settings.json', 'r') as file:
+    with open(SETTINGS_PATH, 'r') as file:
         settings = json.load(file)
 
 
@@ -83,6 +87,32 @@ class GuildWebhooks:
         self.guild_id = guild_id
         self._db = db if database is None else database
         self.data = self._db.get_guild_webhooks(guild_id=guild_id)
+        self.news = self.data['news']
+        self.release = self.data['release']
+
+    async def add_webhook(self, webhook: discord.Webhook, feed_type: str):
+        if feed_type == "releases":
+            self.release = webhook.url
+        elif feed_type == "news":
+            self.news = webhook.url
+        else:
+            raise NotImplementedError("No webhook option for {} type".format(feed_type))
+        self._db.set_guild_webhooks(self.guild_id, self.to_dict())
+
+    async def delete_webhook(self, feed_type: str):
+        if feed_type == "releases":
+            self.release = None
+        elif feed_type == "news":
+            self.news = None
+        else:
+            raise NotImplementedError("No webhook option for {} type".format(feed_type))
+        self._db.set_guild_webhooks(self.guild_id, self.to_dict())
+
+    def to_dict(self):
+        return {'guild_id': self.guild_id,
+                'news': self.news,
+                'release': self.release
+                }
 
 
 if __name__ == "__main__":

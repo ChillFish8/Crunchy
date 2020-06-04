@@ -33,6 +33,7 @@ RANDOM_THUMBS = [
     'https://cdn.discordapp.com/attachments/680350705038393344/717784215986634953/cheeky.png',
     'https://cdn.discordapp.com/attachments/680350705038393344/717784211771097179/thank_you.png'
 ]
+PFP_PATH = r'resources/photos/crunchy_image.png'
 
 
 class MicroGuildWebhook:
@@ -113,7 +114,9 @@ class LiveFeedBroadcasts(commands.Cog):
                         release_parser = feedparser.parse(content)['entries'][3]
                         if not any([item in release_parser['title'].lower() for item in EXCLUDE_IN_TITLE]):
                             if release_parser['id'] not in self.processed:
+                                print(release_parser['id'])
                                 self.processed.append(release_parser['id'])
+                                print(self.processed)
                                 self.to_send.append({'type': 'release', 'rss': release_parser})
                                 Logger.log_rss(
                                     """[ RELEASE ]  Added "{}" to be sent!""".format(release_parser['title']))
@@ -148,7 +151,6 @@ class LiveFeedBroadcasts(commands.Cog):
             async with WebhookBroadcast(
                     embed=embed, web_hooks=web_hooks, type_="RELEASE", title=anime_details['title']) as broadcast:
                 await broadcast.broadcast()
-            self.sent.append(rss['id'])
 
     @staticmethod
     def make_release_embed(details: dict, rss: dict, first):
@@ -204,31 +206,50 @@ class LiveFeedCommands(commands.Cog):
         self.bot = bot
 
     @classmethod
-    async def check_exists(cls, name, hooks):
+    def check_exists(cls, name, hooks):
         """ Getting current web hooks """
         for hook in hooks:
             if name.lower().replace(" ", "") in hook.name.lower().replace(" ", ""):
-                return True
+                return hook.name
         else:
             return False
+
+    @classmethod
+    async def make_webhook(cls, channel, feed_type):
+        with open(PFP_PATH, 'rb') as file:
+            new_webhook = await channel.create_webhook(
+                name=f'Crunchyroll {feed_type.capitalize()}', avatar=file.read())
+            return new_webhook
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     @commands.command(name="addreleasechannel", aliases=['arc', 'addrelease'])
     async def add_release_channel(self, ctx, channel: discord.TextChannel):
         existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
-        if self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks):
+        check = self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks)
+        if check:
             return await ctx.send(
-                "<:HimeSad:676087829557936149> Oops! Already have a release webhook active,\n "
-                "please delete the original release webhook first.")
+                f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
+                f"Please delete the original release webhook first.")
 
         guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
-        print(guild_data.data)
+        try:
+            webhook = await self.make_webhook(channel=channel, feed_type="releases")
+            guild_data.add_webhook()
+            return await ctx.send(f'All set! I will now send releases to <#{webhook.channel_id}>')
+        except discord.Forbidden:
+            return await ctx.send(
+                "I am missing permissions to create a webhook. "
+                "I need the permission `MANAGE_WEBHOOKS`.")
+        except AttributeError:
+            return await ctx.send(
+                "Sorry but something went wrong when trying to make this webhook."
+                " Please try a different channel.")
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     @commands.command(name="addnewschannel", aliases=['acc', 'addnews'])
-    async def add_release_channel(self, ctx, channel: discord.TextChannel):
+    async def add_news_channel(self, ctx, channel: discord.TextChannel):
         pass
 
 
