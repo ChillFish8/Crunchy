@@ -86,7 +86,9 @@ class CrunchyBot(commands.Bot):
     async def on_command_error(self, ctx, exception):
         await self.error_handler.process_error(ctx, exception)
 
-    async def has_voted(self, user_id):
+    def has_voted(self, user_id):
+        if self.database.get_vote(user_id) is not None:
+            return 1
         return 0
 
     async def get_config(self, context):
@@ -99,7 +101,7 @@ class CrunchyBot(commands.Bot):
             setattr(context, 'guild_config', guild_data)
         else:
             setattr(context, 'guild_config', None)
-        setattr(context, 'has_voted', (await self.has_voted(context.author.id)))
+        setattr(context, 'has_voted', (self.has_voted(context.author.id)))
         return context
 
     async def get_custom_prefix(self, bot, message: discord.Message):
