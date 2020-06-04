@@ -2,6 +2,10 @@ import discord
 import os
 import json
 import asyncio
+import aiohttp
+import traceback
+
+from discord import Webhook, AsyncWebhookAdapter
 from discord.ext import commands
 from datetime import timedelta
 
@@ -22,6 +26,8 @@ DEFAULT_PREFIX = settings.get("prefix", "-")
 TOKEN = config.get("token")
 DEVELOPER_IDS = config.get("dev_ids")
 SHARD_COUNT = config.get("shard_count")
+COLOUR = 0xe87e15
+ICON = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
 
 # Setup required cache to run the bot
 REQUIRED_CACHE = [
@@ -38,10 +44,11 @@ class CrunchyBot(commands.Bot):
         super().__init__(self.get_custom_prefix, **options)
         self.before_invoke(self.get_config)
         self.owner_ids = DEVELOPER_IDS
-        self.colour = 0xe87e15
-        self.icon = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png"
+        self.colour = COLOUR
+        self.icon = ICON
         self.database = MongoDatabase()
         self.cache = CacheManager()
+        self.error_handler = ErrorHandler()
         for collection in REQUIRED_CACHE:
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
@@ -72,6 +79,9 @@ class CrunchyBot(commands.Bot):
     async def on_disconnect(cls):
         """ Log when we loose a shard or connection """
         Logger.log_shard_disconnect()
+
+    async def on_command_error(self, ctx, exception):
+        await self.error_handler.process_error(ctx, exception)
 
     async def has_voted(self, user_id):
         return 0
@@ -105,6 +115,61 @@ class CrunchyBot(commands.Bot):
         if not self.is_ready():
             return
         await self.process_commands(message=message)
+
+
+class ErrorHandler:
+    def __init__(self):
+        self.session = None
+        self.ERROR_WEBHOOK_URL = config.get("error_webhook")
+        self.webhook = None
+
+    async def process_error(self, ctx, error):
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
+            if self.webhook is None:
+                self.webhook = Webhook.from_url(self.ERROR_WEBHOOK_URL, adapter=AsyncWebhookAdapter(self.session))
+
+        if isinstance(error, commands.CommandNotFound):
+            return
+
+        elif isinstance(error, commands.NoPrivateMessage):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Sorry >_< I cant do that command in private messages.")
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            try:
+                return await ctx.author.send(
+                    "<:HimeSad:676087829557936149> Sorry! It appears i cant send messages in that channel as i "
+                    "am missing the permission `SEND_MESSAGES`")
+            except discord.Forbidden:
+                pass
+
+        elif ctx.command not in (
+                'addreleasechannel', 'addnewschannel', 'server_settings',
+                'setprefix', 'resetprefix', 'togglensfw'):
+            err = error.original
+
+            if str(type(err).__name__) == "Forbidden" and "403" in str(err):
+                return
+
+            short_error_embed = discord.Embed(
+                title=f"It appears an error has occurred trying to run {ctx.command}.",
+                color=COLOUR)
+            short_error_embed.set_footer(text="This error has been reported to my owner.")
+            await ctx.send(embed=short_error_embed)
+
+            _traceback = traceback.format_tb(err.__traceback__)
+            _traceback = ''.join(_traceback)
+            full_error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content, _traceback, err)
+
+            embed = discord.Embed(description=f"Command: {ctx.command}\n"
+                                              f"Full Message: {ctx.message.content}\n"
+                                              f"{full_error}",
+                                  color=COLOUR)
+            embed.set_author(name="Command Error.",
+                             icon_url="https://cdn.discordapp.com/emojis/588404204369084456.png"
+                             )
+            await self.webhook.send(embed=embed)
 
 
 if __name__ == "__main__":

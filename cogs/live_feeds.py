@@ -431,6 +431,13 @@ class LiveFeedCommands(commands.Cog):
                 content="Sorry but something went wrong when trying to make this webhook."
                         " Please try a different channel.")
 
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Sorry! You're missing the require permission `ADMINISTRATOR`"
+                f"to use this command (`{ctx.command}`)")
+
+
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
