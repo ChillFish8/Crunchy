@@ -135,6 +135,7 @@ class Votes:
 
     def get_vote(self, user_id):
         returned = self.votes.find_one({'_id': user_id})
+        Logger.log_database("GET-VOTE: User Content with Id: {} returned.".format(user_id))
         return returned if returned is not None else {'user_id': user_id, 'expires': None}
 
     def add_vote(self, user_id, expires_in):
