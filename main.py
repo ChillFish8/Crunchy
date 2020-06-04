@@ -92,8 +92,10 @@ class CrunchyBot(commands.Bot):
             has_voted = self.database.get_vote(user_id)
             if has_voted is not None:
                 self.cache.store("votes", user_id, has_voted)
-        if self.database.get_vote(user_id) is not None:
+        if has_voted is not None:
+            print(has_voted)
             return 1
+        print(has_voted)
         return 0
 
     async def get_config(self, context):
