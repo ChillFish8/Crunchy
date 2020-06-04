@@ -24,12 +24,14 @@ class ApiCollectors:
                 return result
 
     async def get_from_crunchy(self, tag=None, type_="hentai"):
+        print("wew")
         url = CRUNCHY_API_BASE + f"/nsfw/{type_}"
         if tag is not None:
             url += f"/{tag}"
         async with self.session as sess:
             async with sess.get(url) as r:
                 result = await r.json()
+                print(result)
                 return result
 
 class NSFW(commands.Cog):
@@ -53,7 +55,7 @@ class NSFW(commands.Cog):
         if not ctx.channel.is_nsfw():
             return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
 
-        if ctx.has_voted >= 1:
+        if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
@@ -64,51 +66,66 @@ class NSFW(commands.Cog):
             embed.set_image(url=resp['url'])
             embed.set_footer(text="https://crunchy-bot.live/api/endpoints")
             await ctx.send(embed=embed)
+        else:
+            await self.send_vote(ctx)
 
     @commands.command()
     async def ass(self, ctx):
         if not ctx.channel.is_nsfw():
             return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
 
-        if ctx.has_voted >= 1:
+        if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="ass")
             await self.send_embed(ctx, resp['url'])
+        else:
+            await self.send_vote(ctx)
 
     @commands.command()
     async def pussy(self, ctx):
         if not ctx.channel.is_nsfw():
             return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
 
-        if ctx.has_voted >= 1:
+        if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="pussy")
             await self.send_embed(ctx, resp['url'])
+        else:
+            await self.send_vote(ctx)
 
     @commands.command(name="gonewild")
     async def gone_wild(self, ctx):
         if not ctx.channel.is_nsfw():
             return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
 
-        if ctx.has_voted >= 1:
+        if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="gonewild")
             await self.send_embed(ctx, resp['url'])
+        else:
+            await self.send_vote(ctx)
 
     async def send_embed(self, ctx, url):
         embed = discord.Embed(color=self.bot.colour)
         embed.set_image(url=url)
         embed.set_footer(text="https://nekobot.xyz/api/")
         await ctx.send(embed=embed)
+
+    @staticmethod
+    async def send_vote(ctx):
+        return await ctx.send("<:cheeky:717784139226546297> You need to vote get access to NSFW and other "
+                              "awesome perks!\n"
+                              "Vote here to get access to NSFW and more for 24 hours:\n"
+                              "https://top.gg/bot/656598065532239892/vote")
 
 
 def setup(bot):

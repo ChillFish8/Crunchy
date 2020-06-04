@@ -37,6 +37,7 @@ class GuildData:
 
     def get_guild_config(self, guild_id: int) -> dict:
         current_data = self.guild_configs.find_one({'_id': guild_id})
+        Logger.log_database("GET-GUILD: User Content with Id: {} returned.".format(guild_id))
         return current_data['config'] if current_data is not None else Settings.settings
 
 

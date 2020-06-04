@@ -30,15 +30,10 @@ class Store:
         else:
             return item
 
-    def apply(self, item):
-        self._temp[item[0]] = item[1]
-        return item
-
     def clean(self):
         all_entries = self._cache.items()
-        new = tuple(filter(self.check, all_entries))
-        map(self.apply, new)
-        self._cache = self._temp
+        new = list(filter(self.check, all_entries))
+        self._cache = dict(new)
 
     def __str__(self):
         return self.name
@@ -69,5 +64,5 @@ class CacheManager:
         while True:
             for key in self.collections:
                 self.collections[key].clean()
-            Logger.log_cache("[ BACKGROUND TASK ] | Cleaned up cache!")
-            await asyncio.sleep(60)
+                Logger.log_cache("[ BACKGROUND TASK ] | Cleaned up cache {}!".format(key))
+            await asyncio.sleep(10)

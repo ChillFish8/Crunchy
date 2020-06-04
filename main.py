@@ -111,7 +111,7 @@ class CrunchyBot(commands.Bot):
             setattr(context, 'guild_config', guild_data)
         else:
             setattr(context, 'guild_config', None)
-        setattr(context, 'has_voted', (self.has_voted(context.author.id)))
+        setattr(context, 'has_voted', self.has_voted)
         return context
 
     async def get_custom_prefix(self, bot, message: discord.Message):
