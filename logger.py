@@ -40,7 +40,7 @@ class Logger:
     def log_info(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.LIGHTGREEN_EX + "[ Info ] " +
-                Fore.WHITE + msg)
+                Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_INFO or error:
             print(text)
 
@@ -48,7 +48,7 @@ class Logger:
     def log_database(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.MAGENTA + "[ Database ] " +
-                Fore.WHITE + msg)
+                Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_DATABASE or error:
             print(text)
 
@@ -56,7 +56,7 @@ class Logger:
     def log_cache(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.LIGHTBLUE_EX + "[ Cache ] " +
-                Fore.WHITE + msg)
+                Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_CACHE or error:
             print(text)
 
@@ -64,7 +64,7 @@ class Logger:
     def log_rss(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.YELLOW + "[ RSS ] " +
-                Fore.WHITE + msg)
+                Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_RSS or error:
             print(text)
 
@@ -72,7 +72,7 @@ class Logger:
     def log_broadcast(cls, msg, error=False):
         text = (Style.BRIGHT + Fore.BLUE + f"[{datetime.now().strftime('%a %m %b | %H:%M:%S')}]" +
                 Fore.YELLOW + "[ BROADCASTS ] " +
-                Fore.WHITE + msg)
+                Fore.WHITE + msg + Fore.WHITE)
         if cls.LOG_BROADCASTS or error:
             print(text)
 

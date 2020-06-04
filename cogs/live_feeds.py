@@ -13,7 +13,7 @@ from data.guild_config import GuildWebhooks
 from logger import Logger
 
 # Urls
-RELEASE_RSS = "http://feeds.feedburner.com/crunchyroll/rss"
+RELEASE_RSS = "http://feeds.feedburner.com/crunchyroll/rss/anime"
 NEWS_RSS = "http://feeds.feedburner.com/crunchyroll/animenews"
 API_BASE = "https://crunchy-bot.live/api/anime"
 
@@ -116,14 +116,14 @@ class LiveFeedBroadcasts(commands.Cog):
 
     async def background_checker(self):
         while True:
-            if self.first_start:
-                await asyncio.sleep(600)
-                self.first_start = False
+            #if self.first_start:
+            #    await asyncio.sleep(600)
+            #    self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
                         content = await resp_release.text()
-                        release_parser = feedparser.parse(content)['entries'][3]
+                        release_parser = feedparser.parse(content)['entries'][0]
                         if not any([item in release_parser['title'].lower() for item in EXCLUDE_IN_TITLE]):
                             if release_parser['id'] not in self.processed:
                                 self.processed.append(release_parser['id'])
@@ -191,9 +191,15 @@ class LiveFeedBroadcasts(commands.Cog):
             async with sess.get(url) as resp:
                 if resp.status == 200:
                     result = await resp.json()
+                    if result['status'] == 404:
+                        Logger.log_rss(
+                            Fore.RED + f"[ ERROR ] "
+                            f"Api GET request failed to returned searched anime.",
+                            error=True)
+                        return
                 else:
                     Logger.log_rss(
-                        Fore.RED + f"[ ERROR ] " + Fore.WHITE +
+                        Fore.RED + f"[ ERROR ] "
                         f"Api GET request failed with status {resp.status}",
                         error=True)
                     return
@@ -210,7 +216,7 @@ class LiveFeedBroadcasts(commands.Cog):
                     return
 
     async def news_callback(self, rss: dict):
-        pass
+        print(rss)
 
 
 class LiveFeedCommands(commands.Cog):
