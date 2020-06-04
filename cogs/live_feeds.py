@@ -17,7 +17,7 @@ NEWS_RSS = "http://feeds.feedburner.com/crunchyroll/animenews"
 API_BASE = "https://crunchy-bot.live/api/anime"
 
 # Black list
-EXCLUDE_IN_TITLE =[
+EXCLUDE_IN_TITLE = [
     'dub)',
     '(russian',
     '(spanish',
@@ -44,13 +44,15 @@ class GuildWebhook:
 
 
 class WebhookBroadcast:
-    def __init__(self, embed: discord.Embed, web_hooks: list, type_, name="Crunchy"):
+    def __init__(self, embed: discord.Embed, web_hooks: list, type_, title, name="Crunchy"):
         self.embed = embed
         self.web_hooks = web_hooks
         self.failed_to_send = []
         self.session = None
         self.name = name
         self.type = type_
+        self.successful = 0
+        self.title = title
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -64,6 +66,7 @@ class WebhookBroadcast:
         try:
             webhook = Webhook.from_url(hook.url, adapter=AsyncWebhookAdapter(self.session))
             await webhook.send(embed=self.embed, content=hook.content, username=self.name)
+            self.successful += 1
 
         except discord.InvalidArgument:
             self.failed_to_send.append(hook.guild_id)
@@ -77,8 +80,8 @@ class WebhookBroadcast:
             for guild in self.web_hooks[i:i + 250]:
                 tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
-        Logger.log_broadcast(f"[ {self.type} ] Completed broadcast!")
-        Logger.log_broadcast(f"[ {self.type} ]             {len(self.web_hooks)} messages sent!")
+        Logger.log_broadcast(f"[ {self.type} ] Completed broadcast of {self.title}!")
+        Logger.log_broadcast(f"[ {self.type} ]          {self.successful} messages sent!")
 
 
 def map_objects_releases(data):
@@ -95,9 +98,13 @@ class LiveFeedBroadcasts(commands.Cog):
         self.processed = []
         self.callbacks = {'release': self.release_callback, 'news': self.news_callback}
         self.loop.create_task(self.background_checker())
+        self.first_start = True
 
     async def background_checker(self):
         while True:
+            # if self.first_start:   todo unindent
+            #    await asyncio.sleep(600)
+            #    self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
@@ -107,7 +114,8 @@ class LiveFeedBroadcasts(commands.Cog):
                             if release_parser['id'] not in self.processed:
                                 self.processed.append(release_parser['id'])
                                 self.to_send.append({'type': 'release', 'rss': release_parser})
-                                Logger.log_rss("""[ RELEASE ]  Added "{}" to be sent!""".format(release_parser['title']))
+                                Logger.log_rss(
+                                    """[ RELEASE ]  Added "{}" to be sent!""".format(release_parser['title']))
 
                 async with sess.get(NEWS_RSS) as resp_news:
                     if resp_release.status == 200:
@@ -136,7 +144,8 @@ class LiveFeedBroadcasts(commands.Cog):
             embed = self.make_release_embed(anime_details, rss, first)
             guilds = self.bot.database.get_all_webhooks()
             web_hooks = list(map(map_objects_releases, guilds))
-            async with WebhookBroadcast(embed=embed, web_hooks=web_hooks, type_="RELEASE") as broadcast:
+            async with WebhookBroadcast(
+                    embed=embed, web_hooks=web_hooks, type_="RELEASE", title=anime_details['title']) as broadcast:
                 await broadcast.broadcast()
 
     @staticmethod
@@ -192,6 +201,34 @@ class LiveFeedCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @classmethod
+    async def check_exists(cls, name, hooks):
+        """ Getting current web hooks """
+        for hook in hooks:
+            if name.lower().replace(" ", "") in hook.name.lower().replace(" ", ""):
+                return True
+        else:
+            return False
+
+    @commands.guild_only()
+    @commands.has_guild_permissions(administrator=True)
+    @commands.command(name="addreleasechannel", aliases=['arc', 'addrelease'])
+    async def add_release_channel(self, ctx, channel: discord.TextChannel):
+        existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
+        if self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Oops! Already have a release webhook active,\n "
+                "please delete the original release webhook first.")
+
+
+
+
+    @commands.guild_only()
+    @commands.has_guild_permissions(administrator=True)
+    @commands.command(name="addnewschannel", aliases=['acc', 'addnews'])
+    async def add_release_channel(self, ctx, channel: discord.TextChannel):
+        pass
+
 
 def setup(bot):
     bot.add_cog(LiveFeedBroadcasts(bot))
@@ -202,6 +239,7 @@ def setup(bot):
 async def main():
     test = LiveFeedBroadcasts("owo")
     await test.background_checker()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

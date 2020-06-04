@@ -164,6 +164,7 @@ class MongoDatabase(GuildData, UserTracking, GuildWebhooks):
             "watchlist": self.db["watchlist"],
             "recommended": self.db["recommendedlist"],
         }
+        self.guild_web_hooks = self.db["webhooks"]
         super().__init__(self.db)
 
     def close_conn(self):

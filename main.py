@@ -8,7 +8,7 @@ from datetime import timedelta
 from data.database import MongoDatabase
 from data.cachemanager import CacheManager, Store
 from logger import Logger
-from data import database
+from data import database, guild_config
 
 
 with open('config.json', 'r') as file:
@@ -81,7 +81,7 @@ class CrunchyBot(commands.Bot):
         if context.guild is not None:
             guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
-                guild_data = database.GuildConfig(context.guild.id, database=self.database)
+                guild_data = guild_config.GuildConfig(context.guild.id, database=self.database)
                 self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
         else:
@@ -94,7 +94,7 @@ class CrunchyBot(commands.Bot):
         if message.guild is not None:
             guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:
-                guild_data = database.GuildConfig(message.guild.id, database=self.database)
+                guild_data = guild_config.GuildConfig(message.guild.id, database=self.database)
                 self.cache.store("guilds", message.guild.id, guild_data)
             return guild_data.prefix
         else:

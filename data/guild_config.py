@@ -66,5 +66,24 @@ class GuildConfig:
             'nsfw_enabled': self.nsfw_enabled,
         }
 
+
+class GuildWebhooks:
+    def __init__(self, guild_id, database=None):
+        """
+        :param guild_id:
+        :param database: -> Optional
+        If data is None it falls back to a global var,
+        THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
+        On creation the class calls the data getting the guild settings
+        if prefix is None it reverts back to `-`, this should never happen
+        under normal circumstances.
+        Premium by default is False and will default to False in case of
+        failure.
+        """
+        self.guild_id = guild_id
+        self._db = db if database is None else database
+        self.data = self._db.get_guild_webhooks(guild_id=guild_id)
+
+
 if __name__ == "__main__":
     db = MongoDatabase()
