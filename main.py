@@ -57,7 +57,6 @@ class CrunchyBot(commands.Bot):
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
         self.started = False
-        self.change_presence.start()
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
