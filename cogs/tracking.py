@@ -60,6 +60,7 @@ async def add_watchlist(ctx, bot, name, url):
         except (ValueError, TypeError, IndexError):
             return False
 
+
 async def add_favourites(ctx, bot, name, url):
     user_tracker: UserFavourites = UserFavourites(user_id=ctx.author.id, database=bot.database)
     if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted(ctx.author.id) == 0):
@@ -223,8 +224,8 @@ class UserSettings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    #@commands.command()
-    #async def allow(self, ctx, user: discord.Member):
+    # @commands.command()
+    # async def allow(self, ctx, user: discord.Member):
     #    """ Allow a user to bypass the public/private system """
     #    if ctx.author.id == user.id:
     #        return await ctx.send(f"<:HimeMad:676087826827444227> You can't whitelist yourself silly!")
@@ -233,8 +234,8 @@ class UserSettings(commands.Cog):
     #    return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
     #                          f" whitelisted for your area.")
 
-    #@commands.command(aliases=['block'])
-    #async def disallow(self, ctx, user: discord.Member):
+    # @commands.command(aliases=['block'])
+    # async def disallow(self, ctx, user: discord.Member):
     #    """ Disallow a user to bypass the public/private system """
     #    if ctx.author.id == user.id:
     #        return await ctx.send(f"<:HimeMad:676087826827444227> You can't block yourself silly!")
@@ -283,15 +284,15 @@ class ViewTracked(commands.Cog):
 
         embeds = []
         for i, chunk in enumerate(area.get_blocks()):
-            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
+            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
                 if item['url'] is not None:
-                    embed.add_field(value=f"** {x + i*10 + 1} ) - [{item['name']}]({item['url']})**",
+                    embed.add_field(value=f"** {x + i * 10 + 1} ) - [{item['name']}]({item['url']})**",
                                     name="\u200b",
                                     inline=False)
                 else:
-                    embed.add_field(value=f"** {x + i*10 + 1} ) - {item['name']}**",
+                    embed.add_field(value=f"** {x + i * 10 + 1} ) - {item['name']}**",
                                     name="\u200b",
                                     inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
@@ -300,7 +301,7 @@ class ViewTracked(commands.Cog):
         return embeds
 
     @commands.command(aliases=['myw', 'watchlist'])
-    async def my_watchlist(self, ctx, user: discord.Member=None):
+    async def my_watchlist(self, ctx, user: discord.Member = None):
         """ Get your or someone else's watch list """
         if user is not None:
             user_ = user
@@ -330,7 +331,7 @@ class ViewTracked(commands.Cog):
                 return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myf', 'favourites'])
-    async def my_favourites(self, ctx, user: discord.Member=None):
+    async def my_favourites(self, ctx, user: discord.Member = None):
         """ Get your or someone else's favourites list """
         if user is not None:
             user_ = user
@@ -361,7 +362,7 @@ class ViewTracked(commands.Cog):
                 return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myr', 'recommended'])
-    async def my_recommended(self, ctx, user: discord.Member=None):
+    async def my_recommended(self, ctx, user: discord.Member = None):
         """ Get your or someone else's recommended list """
         if user is not None:
             user_ = user
@@ -372,7 +373,7 @@ class ViewTracked(commands.Cog):
             if not user_area.is_public:
                 return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         if user_area.amount_of_items <= 0:
-            embed = discord.Embed(color=self.bot.colour)\
+            embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
                                 f"have anything in {'your' if user is None else 'their'} recommended,\n" \
@@ -424,7 +425,7 @@ class RemoveTracked(commands.Cog):
 
     async def show_area(self, ctx, area):
         if area.amount_of_items <= 0:
-            embed = discord.Embed(color=self.bot.colour)\
+            embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! you dont " \
                                 f"have anything in your recommended,\n lets get them filling it!"
