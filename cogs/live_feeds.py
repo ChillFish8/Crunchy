@@ -121,17 +121,19 @@ class WebhookBroadcast:
 
 
 def map_objects_releases(data):
+    data = data['config']
     try:
-        guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
+        guild = MicroGuildWebhook(data['guid_id'], data['release'])
     except:
-        guild = MicroGuildWebhook(data['config']['user_id'], data['config']['release'])
+        guild = MicroGuildWebhook(data['user_id'], data['release'])
     return guild
 
 def map_objects_news(data):
+    data = data['config']
     try:
-        guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['news'])
+        guild = MicroGuildWebhook(data['guid_id'], data['news'])
     except:
-        guild = MicroGuildWebhook(data['config']['user_id'], data['config']['news'])
+        guild = MicroGuildWebhook(data['user_id'], data['news'])
     return guild
 
 
@@ -149,9 +151,9 @@ class LiveFeedBroadcasts(commands.Cog):
     async def background_checker(self):
         while True:
             await self.bot.wait_until_ready()
-            if self.first_start:
-                await asyncio.sleep(600)
-                self.first_start = False
+            #if self.first_start:
+            #    await asyncio.sleep(600)
+            #    self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:

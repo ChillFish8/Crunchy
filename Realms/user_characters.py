@@ -135,7 +135,8 @@ class UserCharacters:
     @property
     def expires_in(self):
         if self._expires_in is not None:
-            hours, seconds = divmod(self._expires_in.total_seconds(), 3600)
+            delta = datetime.now() - self._expires_in
+            hours, seconds = divmod(delta.total_seconds(), 3600)
             minutes, seconds = divmod(seconds, 60)
             return f"{hours}h, {minutes}m, {seconds}s"
         return self._expires_in
