@@ -148,20 +148,15 @@ class Customisations(commands.Cog):
             embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
-                if item['url'] is not None:
-                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
-                                    name="\u200b",
-                                    inline=False)
-                else:
-                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
-                                    name="\u200b",
-                                    inline=False)
+                embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                                name="\u200b",
+                                inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
             embed.set_author(name=f"{user.name}'s collected characters", icon_url=user.avatar_url)
             embeds.append(embed)
         return embeds
 
-    @commands.command(name="mycharacters", aliases=['myc'])
+    @commands.command(name="mycharacters", aliases=['myc', 'characters'])
     async def my_characters(self, ctx, user: discord.User=None):
         if user is not None:
             user_ = user
@@ -197,12 +192,15 @@ class Customisations(commands.Cog):
             embed.set_author(name=f"{user_.name}'s collected characters", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
         else:
-            embeds = await self.generate_embeds(user=user_, area=user_characters)
-            pager = Paginator(embed_list=embeds,
-                              bot=self.bot,
-                              message=ctx.message,
-                              colour=self.bot.colour)
-            return asyncio.get_event_loop().create_task(pager.start())
+            embeds = await self.generate_embeds(user=user_, area=user_area)
+            if len(embeds) > 1:
+                pager = Paginator(embed_list=embeds,
+                                  bot=self.bot,
+                                  message=ctx.message,
+                                  colour=self.bot.colour)
+                return self.bot.loop.create_task(pager.start())
+            else:
+                return await ctx.send(embed=embeds[0])
 
 class Checks:
     @classmethod

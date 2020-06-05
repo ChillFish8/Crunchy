@@ -289,11 +289,14 @@ class ViewTracked(commands.Cog):
             return await ctx.send(embed=embed)
         else:
             embeds = await self.generate_embeds(user=user_, area=user_area)
-            pager = Paginator(embed_list=embeds,
-                              bot=self.bot,
-                              message=ctx.message,
-                              colour=self.bot.colour)
-            return asyncio.get_event_loop().create_task(pager.start())
+            if len(embeds) > 1:
+                pager = Paginator(embed_list=embeds,
+                                  bot=self.bot,
+                                  message=ctx.message,
+                                  colour=self.bot.colour)
+                return self.bot.loop.create_task(pager.start())
+            else:
+                return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myf', 'favourites'])
     async def my_favourites(self, ctx, user: discord.Member=None):
@@ -314,11 +317,14 @@ class ViewTracked(commands.Cog):
             return await ctx.send(embed=embed)
         else:
             embeds = await self.generate_embeds(user=user_, area=user_area)
-            pager = Paginator(embed_list=embeds,
-                              bot=self.bot,
-                              message=ctx.message,
-                              colour=self.bot.colour)
-            return asyncio.get_event_loop().create_task(pager.start())
+            if len(embeds) > 1:
+                pager = Paginator(embed_list=embeds,
+                                  bot=self.bot,
+                                  message=ctx.message,
+                                  colour=self.bot.colour)
+                return self.bot.loop.create_task(pager.start())
+            else:
+                return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myr', 'recommended'])
     async def my_recommended(self, ctx, user: discord.Member=None):
