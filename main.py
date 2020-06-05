@@ -33,6 +33,7 @@ ICON = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c
 REQUIRED_CACHE = [
     ['guilds', timedelta(minutes=15)],
     ['votes', timedelta(minutes=1)],
+    ['characters', timedelta(minutes=1)],
 ]
 
 # Configure logger

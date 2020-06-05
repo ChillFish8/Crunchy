@@ -1,11 +1,13 @@
 import json
 import random
+import discord
 
 from discord.ext import commands
 from discord.ext import tasks
 
-# from realms.character import Character
+from realms.character import Character
 from realms.user_characters import UserCharacters
+
 
 class Customisations(commands.Cog):
     with open(r"../resources/archieve/waifus.json", "r") as file:
@@ -24,11 +26,41 @@ class Customisations(commands.Cog):
 
     @commands.command(aliases=['c'])
     async def character(self, ctx):
+        user_characters: UserCharacters = self.bot.cahce.get('characters', ctx.user.id)
+        if user_characters is None:
+            user_characters = UserCharacters(user_id=ctx.user.id)
+
+        if not Checks.has_rolls(user_characters):
+            if ctx.has_voted():
+                return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                                      " come back in 12 hours when ive found some more characters!")
+            else:
+                return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                                      " upvote Crunchy to get more rolls and other awesome perks!\n"
+                                      "https://top.gg/bot/656598065532239892/vote")
+
+        name, url = random.choice(self.group)
+        character_obj = Character(name=name, icon=url)
+        embed = discord.Embed(
+            title=character_obj.name,
+            description=f"💪 **Power:** {character_obj.power}\n"
+                        f"⚔️ **Attack:** {character_obj.attack}\n"
+                        f"🛡️ **Defense:** {character_obj.defense}\n",
+            color=self.bot.colour)
+        embed.set_image(url=character_obj.icon)
+        embed.set_footer(text=f"You have {user_characters.rolls_left} rolls left!")
+        message = await ctx.send(embed=embed)
+        await self.submit_wait_for(message, character_obj)
+
+    async def submit_wait_for(self, message: discord.Message, character_obj: Character):
+        pass
+
 
 
 class Checks:
     @classmethod
-    async def has_rolls(cls, user: UserCharacters):
+    def has_rolls(cls, user: UserCharacters):
+        return user.rolls_left > 0
 
 
 
