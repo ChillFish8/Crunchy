@@ -30,7 +30,6 @@ class WebhookLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        print("Joined Guild")
         if self.guild_webhook is None:
             return
         desc = "💜"
@@ -43,7 +42,6 @@ class WebhookLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        print("Left Guild")
         if self.guild_webhook is None:
             return
         desc = "💔"
