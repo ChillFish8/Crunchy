@@ -219,7 +219,6 @@ if __name__ == "__main__":
     crunchy = CrunchyBot(
         case_insensitive=True,
         fetch_offline_member=False,
-        guild_subscriptions=False,
         shard_count=SHARD_COUNT,
     )
     crunchy.startup()
