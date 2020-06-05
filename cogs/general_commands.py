@@ -22,7 +22,8 @@ class GeneralCommands(commands.Cog):
         """ Invite Crunchy """
         await ctx.send(embed=discord.Embed(
             title="Invite me!",
-            url="https://discordapp.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=1678109696"
+            url="https://discordapp.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=1678109696",
+            color=self.bot.colour
         ))
 
     @commands.guild_only()

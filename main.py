@@ -84,6 +84,7 @@ class CrunchyBot(commands.Bot):
 
     async def on_shard_ready(self, shard_id):
         """ Log any shard connects """
+        print(shard_id)
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
             await self.on_ready_once()
@@ -141,15 +142,6 @@ class CrunchyBot(commands.Bot):
         if not self.is_ready():
             return
         await self.process_commands(message=message)
-
-    @tasks.loop(minutes=2)
-    async def change_presence(self):
-        await self.wait_until_ready()
-        try:
-            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                                 name=f"{choice(WATCHLIST)}"))
-        except Exception as e:
-            print(e)
 
 
 class ErrorHandler:
@@ -214,11 +206,23 @@ class ErrorHandler:
             await self.webhook.send(embed=embed)
 
 
+@tasks.loop(minutes=2)
+async def change_presence(bot: CrunchyBot):
+    await bot.wait_until_ready()
+    try:
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                            name=f"{choice(WATCHLIST)}"))
+    except Exception as e:
+        print(e)
+
+
 if __name__ == "__main__":
     crunchy = CrunchyBot(
         case_insensitive=True,
         fetch_offline_member=False,
+        guild_subscriptions=False,
         shard_count=SHARD_COUNT,
     )
     crunchy.startup()
+    change_presence.start(crunchy)
     crunchy.run(TOKEN)

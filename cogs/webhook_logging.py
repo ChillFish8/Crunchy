@@ -1,5 +1,6 @@
 import json
 import aiohttp
+import asyncio
 
 from discord.ext import commands
 from discord import Webhook, AsyncWebhookAdapter
@@ -19,7 +20,7 @@ class WebhookLogging(commands.Cog):
         self.guild_webhook = None
         self.vote_webhook = None
         self.command_webhook = None
-        self.bot.loop.create_task(self.boot())
+        asyncio.get_event_loop().create_task(self.boot())
 
     async def boot(self):
         self.session = aiohttp.ClientSession()
@@ -29,6 +30,7 @@ class WebhookLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
+        print("Joined Guild")
         if self.guild_webhook is None:
             return
         desc = "💜"
@@ -41,6 +43,7 @@ class WebhookLogging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
+        print("Left Guild")
         if self.guild_webhook is None:
             return
         desc = "💔"
