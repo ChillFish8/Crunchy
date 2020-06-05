@@ -125,7 +125,10 @@ def map_objects_releases(data):
     return guild
 
 def map_objects_news(data):
-    guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['news'])
+    try:
+        guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['news'])
+    except:
+        print(data)
     return guild
 
 

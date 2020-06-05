@@ -89,7 +89,7 @@ class Customisations(commands.Cog):
         if not Checks.has_rolls(user_characters):
             if ctx.has_voted(user_id=ctx.author.id):
                 return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
-                                      f" come back in {user_characters} hours when ive found some more characters!")
+                                      f" come back in {user_characters.expires_in} hours when ive found some more characters!")
             else:
                 return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
                                       " upvote Crunchy to get more rolls and other awesome perks!\n"
