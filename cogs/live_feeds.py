@@ -105,14 +105,16 @@ class WebhookBroadcast:
             print(e)
 
     async def broadcast(self):
-        chunks, remaining = divmod(len(self.web_hooks), 250)
+        chunks, remaining = divmod(len(self.web_hooks), 25)
         for i in range(chunks):
             tasks = []
-            for guild in self.web_hooks[i * 250:i * 250 + 250]:
+            for guild in self.web_hooks[i * 25:i * 25 + 25]:
                 if guild.url is not None:
                     tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
+            await asyncio.sleep(0.55)
         else:
+            await asyncio.sleep(0.55)
             tasks = []
             for guild in self.web_hooks[::-1][:remaining]:
                 if guild.url is not None:
@@ -150,9 +152,9 @@ class LiveFeedBroadcasts(commands.Cog):
     async def background_checker(self):
         while True:
             await self.bot.wait_until_ready()
-            # if self.first_start:
-            #    await asyncio.sleep(600)
-            #    self.first_start = False
+            if self.first_start:
+                await asyncio.sleep(600)
+                self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
@@ -179,7 +181,7 @@ class LiveFeedBroadcasts(commands.Cog):
                                 self.to_send.append({'type': 'payload', 'rss': news_parser})
                                 Logger.log_rss("""[ NEWS ]  Added "{}" to be sent!""".format(news_parser['title']))
             self.loop.create_task(self.process_payloads())
-            await asyncio.sleep(300)
+            await asyncio.sleep(600)
 
     async def process_payloads(self):
         for item in self.to_send:
@@ -455,7 +457,7 @@ class LiveFeedCommands(commands.Cog):
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
-    bot.add_cog(LiveFeedBroadcasts(bot))
+    #bot.add_cog(LiveFeedBroadcasts(bot))
 
 
 # Testing area only:
