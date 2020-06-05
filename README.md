@@ -3,6 +3,7 @@ Crunchy is a open source Bot inspired by [Crunchyroll](https://www.crunchyroll.c
 
 Crunchy is also able to track your watchlist, favourites and recommended animes where others can interact with the system to recommend you awesome Anime and keep the ones you love!
 
-You can invite [Crunchy Here](https://discord.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=1678109696)
+You can invite [Crunchy Here](https://discord.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=1678109696)\n
 You can view our [FREE API Here](https://crunchy-bot.live/api/endpoints) Which is in ongoing developement to become the largest public API for anyone to use.
+
 
