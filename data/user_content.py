@@ -19,7 +19,6 @@ class BasicTracker:
         self.type = type_
         self._db = db if database is None else database
         self.data = self._db.get_user_data(area=self.type, user_id=user_id)
-        print(self.data)
         self._contents = self.data.get("contents", [])
         self.public = self.data.get("firewall", True)
 
