@@ -19,7 +19,7 @@ class ApiCollectors:
         self.session = aiohttp.ClientSession()
 
     async def get_from_neko(self, type_):
-        async with self.session.get(NEKO_API_BASE + f"/image?type={type_}") as r:
+        async with self.session.get((NEKO_API_BASE + f"/image?type={type_}")) as r:
             result = await r.json()
             return result
 
@@ -77,7 +77,7 @@ class NSFW(commands.Cog):
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="ass")
-            await self.send_embed(ctx, resp['url'])
+            await self.send_embed(ctx, resp['message'])
         else:
             await self.send_vote(ctx)
 
@@ -92,7 +92,7 @@ class NSFW(commands.Cog):
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="pussy")
-            await self.send_embed(ctx, resp['url'])
+            await self.send_embed(ctx, resp['message'])
         else:
             await self.send_vote(ctx)
 
@@ -107,7 +107,7 @@ class NSFW(commands.Cog):
                     return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
                                           " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="gonewild")
-            await self.send_embed(ctx, resp['url'])
+            await self.send_embed(ctx, resp['message'])
         else:
             await self.send_vote(ctx)
 
