@@ -22,6 +22,13 @@ HAPPY_URL = [
 SAD_URL = [
     "https://cdn.discordapp.com/attachments/680350705038393344/717784461391167568/sad.png",
 ]
+RANDOM_EMOJIS = [
+    '<:cheeky:717784139226546297>',
+    '<:HimeHappy:677852789074034691>',
+    '<:ok:717784139943641088>',
+    '<:thank_you:717784142053507082>',
+    '<:exitment:717784139641651211>',
+]
 
 
 async def add_watchlist(ctx, bot, name, url):
@@ -283,7 +290,7 @@ class ViewTracked(commands.Cog):
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in their watchlist,\n lets get them filling list!"
+                                f"have anything in {'your' if user is None else 'their'} watchlist,\n lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
@@ -361,14 +368,17 @@ class RemoveTracked(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def generate_embeds(self, user: discord.User, area):
+    async def generate_embeds(self, user: discord.User, area, ctx):
         pages, rem = divmod(area.amount_of_items, 10)
         if rem != 0:
             pages += 1
 
         embeds = []
         for i, chunk in enumerate(area.get_blocks()):
-            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
+            embed = discord.Embed(color=self.bot.colour,
+                                  timestamp=datetime.now(),
+                                  description="**You need to specify a number to remove a item.**\n"
+                                              f"do `{ctx.prefix}help remove` for more info.") \
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
                 if item['url'] is not None:
@@ -394,7 +404,7 @@ class RemoveTracked(commands.Cog):
             embed.set_author(name=f"{ctx.author.name}'s {area.type}", icon_url=ctx.author.avatar_url)
             return await ctx.send(embed=embed)
         else:
-            embeds = await self.generate_embeds(user=ctx.author, area=area)
+            embeds = await self.generate_embeds(user=ctx.author, area=area, ctx=ctx)
             if len(embeds) > 1:
                 pager = Paginator(embed_list=embeds,
                                   bot=self.bot,
@@ -404,19 +414,29 @@ class RemoveTracked(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
-    @commands.command(name="removewatchlist", aliases=['rw', 'watchlist'])
+    @commands.command(name="removewatchlist", aliases=['rw'])
     async def remove_watchlist(self, ctx, index: int = None):
         """ Remove something from watch list """
         user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
             return await self.show_area(ctx, user_area)
+        if index < 0:
+            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+        if index - 1 in range(0, user_area.amount_of_items):
+            deleted = user_area.remove_content(index - 1)
+            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
-    @commands.command(name="removefavourite", aliases=['rf', 'favourites'])
+    @commands.command(name="removefavourite", aliases=['rf'])
     async def remove_favourites(self, ctx, index: int = None):
         """ Remove something from favourites list """
         user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
             return await self.show_area(ctx, user_area)
+        if index < 0:
+            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+        if index - 1 in range(0, user_area.amount_of_items):
+            deleted = user_area.remove_content(index - 1)
+            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
     @commands.command(name="removerecommended", aliases=['rr'])
     async def remove_recommended(self, ctx, index: int = None):
@@ -424,11 +444,15 @@ class RemoveTracked(commands.Cog):
         user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
             return await self.show_area(ctx, user_area)
-
-
+        if index < 0:
+            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+        if index - 1 in range(0, user_area.amount_of_items):
+            deleted = user_area.remove_content(index - 1)
+            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
 
 def setup(bot):
     bot.add_cog(AddingAnime(bot))
     bot.add_cog(UserSettings(bot))
     bot.add_cog(ViewTracked(bot))
+    bot.add_cog(RemoveTracked(bot))

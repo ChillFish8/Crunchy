@@ -26,9 +26,9 @@ class BasicTracker:
         return self._contents
 
     def remove_content(self, index: int):
-        self._contents.pop(index)
+        temp = self._contents.pop(index)
         self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-        return self._contents
+        return temp
 
     def _generate_block(self):
         """ This turns a list of X amount of side into 10 block chunks. """
