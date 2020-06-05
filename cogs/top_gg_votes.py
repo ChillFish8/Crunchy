@@ -22,6 +22,7 @@ class TopGG(commands.Cog):
                                    webhook_path='/dblwebhook',
                                    webhook_auth=config.get("dbl_password"),
                                    webhook_port=config.get("dbl_port"))
+        self.update_stats.start()
 
     @tasks.loop(minutes=30.0)
     async def update_stats(self):
@@ -34,6 +35,7 @@ class TopGG(commands.Cog):
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
+        data['user'] = int(data['user'])
         now = time.time()
         expires = now + timedelta(hours=24).total_seconds()
         self.bot.database.add_vote(data['user'], expires)
@@ -41,6 +43,7 @@ class TopGG(commands.Cog):
 
     @commands.Cog.listener()
     async def on_dbl_test(self, data):
+        data['user'] = int(data['user'])
         now = time.time()
         expires = now + timedelta(hours=24).total_seconds()
         self.bot.database.add_vote(int(data['user']), expires)

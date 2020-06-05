@@ -272,11 +272,11 @@ class ViewTracked(commands.Cog):
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
                 if item['url'] is not None:
-                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
+                    embed.add_field(value=f"** {x + i*10 + 1} ) - [{item['name']}]({item['url']})**",
                                     name="\u200b",
                                     inline=False)
                 else:
-                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                    embed.add_field(value=f"** {x + i*10 + 1} ) - {item['name']}**",
                                     name="\u200b",
                                     inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))

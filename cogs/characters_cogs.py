@@ -55,6 +55,7 @@ class Customisations(commands.Cog):
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
+        data['user'] = int(data['user'])
         if data['user'] in self.cool_down_checks:
             if self.cool_down_checks['user'].get_time_obj() is None:
                 self.cool_down_checks['user'].update_rolls(+25)
@@ -152,7 +153,7 @@ class Customisations(commands.Cog):
             embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
-                embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                embed.add_field(value=f"** {x + i*10 + 1} ) - {item['name']}**",
                                 name="\u200b",
                                 inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
