@@ -48,8 +48,8 @@ class HelpCog(commands.Cog):
 
     CONFIG_COMMANDS = [
         "`firewall` **-** Your recommended area between public and private.",
-        "`allow <user mention>` **-** Allow people to bypass the firewall command.",
-        "`block <user mention>` **-** Block people from adding and viewing your recommended.",
+        #"`allow <user mention>` **-** Allow people to bypass the firewall command.",
+        #"`block <user mention>` **-** Block people from adding and viewing your recommended.",
     ]
 
     CHARACTER_COMMANDS = [
