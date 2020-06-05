@@ -32,7 +32,7 @@ ICON = "https://cdn.discordapp.com/app-icons/656598065532239892/39344a26ba0c5b2c
 
 # Setup required cache to run the bot
 REQUIRED_CACHE = [
-    ['guilds', timedelta(minutes=15)],
+    ['guilds', timedelta(minutes=60)],
     ['votes', timedelta(minutes=1)],
     ['characters', timedelta(minutes=1)],
 ]
@@ -80,7 +80,7 @@ class CrunchyBot(commands.Bot):
     async def on_ready_once(self):
         change_presence.start(self)
 
-    async def on__shard_ready(self, shard_id=1):
+    async def on__shard_ready(self, shard_id):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
