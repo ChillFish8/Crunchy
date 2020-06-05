@@ -39,6 +39,7 @@ REQUIRED_CACHE = [
 
 # Configure logger
 Logger.LOG_CACHE = False
+Logger.LOG_DATABASE = False
 
 
 class CrunchyBot(commands.Bot):
@@ -97,7 +98,7 @@ class CrunchyBot(commands.Bot):
     def has_voted(self, user_id):
         has_voted = self.cache.get("votes", user_id)
         if has_voted is not None:
-            if has_voted['expires'] is not None:
+            if has_voted is not None:
                 return 1
             else:
                 return 0
