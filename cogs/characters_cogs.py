@@ -6,9 +6,9 @@ from datetime import datetime
 from discord.ext import commands
 from discord.ext import tasks
 
-from .realms.character import Character
-from .realms.user_characters import UserCharacters, MongoDatabase
-from .utils.paginator import Paginator
+from ..realms.character import Character
+from ..realms.user_characters import UserCharacters, MongoDatabase
+from ..utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 25
 VOTE_ROLLS_MOD = +25
