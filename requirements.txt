@@ -7,3 +7,4 @@ beautifulsoup4~=4.9.1
 lxml
 dblpy
 Pillow~=7.1.2
+requests
