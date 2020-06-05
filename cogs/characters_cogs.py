@@ -129,6 +129,23 @@ class Customisations(commands.Cog):
                             f"chose {pending['character'].name}! Good job!")
                         break
 
+    @commands.command(name="mycharacters", aliases=['myc'])
+    async def my_characters(self, ctx):
+        user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
+        if user_characters is None:
+            rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
+            if ctx.has_voted(user_id=ctx.author.id):
+                rolls += 25
+            user_characters = UserCharacters(user_id=ctx.author.id,
+                                             database=self.database,
+                                             rolls=rolls,
+                                             expires_in=self.cool_down_checks.get('expires_in', None),
+                                             callback=self.callback)
+            self.bot.cache.store('characters', ctx.author.id, user_characters)
+
+
+
+
 class Checks:
     @classmethod
     def has_rolls(cls, user: UserCharacters):

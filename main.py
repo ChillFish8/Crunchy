@@ -12,7 +12,8 @@ from datetime import timedelta
 from data.database import MongoDatabase
 from data.cachemanager import CacheManager, Store
 from logger import Logger
-from data import database, guild_config
+from data import guild_config
+from background.tasks import change_presence
 
 
 with open('config.json', 'r') as file:
@@ -53,6 +54,7 @@ class CrunchyBot(commands.Bot):
         for collection in REQUIRED_CACHE:
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
+        self.started = False
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
@@ -74,10 +76,15 @@ class CrunchyBot(commands.Bot):
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
-    @classmethod
-    async def on_ready(cls, shard_id=1):
+    async def on_ready_once(self):
+        change_presence.start(self)
+
+    async def on_ready(self, shard_id=1):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
+        if not self.started:
+            await self.on_ready_once()
+        self.started = True
 
     @classmethod
     async def on_disconnect(cls):
