@@ -1,7 +1,12 @@
 import json
 import pymongo
 
+from time import time
+from datetime import datetime, timedelta
+from discord.ext import tasks
+
 from realms.character import Character
+
 
 class MongoDatabase:
     """
@@ -59,6 +64,21 @@ class MongoDatabase:
     def reset_characters(self, user_id: int):
         return self.characters.find_one_and_delete({'_id': user_id})
 
+    def bulk_update(self, submitted_characters: list):
+        self.characters.update_many()
+
+class TaskManager:
+    to_submit = []
+    db: MongoDatabase = None
+
+    @classmethod
+    def submit_task(cls, user_id, data):
+        cls.to_submit.append({'_id': user_id, 'data': data})
+
+    @classmethod
+    @tasks.loop(minutes=60)
+    async def send_to_db(cls):
+        cls.db.
 
 class UserCharacters:
     """
@@ -82,6 +102,7 @@ class UserCharacters:
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
+        self.rolls = data.pop('rolls', {'rolls_left': 25, 'resets_at': None})
 
     def submit_character(self, character: Character):
         self.characters.append(character.to_dict())
@@ -89,6 +110,27 @@ class UserCharacters:
 
     def dump_character(self, character: Character):
         id_ = character.id
+        for i, character_ in enumerate(self.characters):
+            if character_['id'] == id_:
+                self.characters.pop(i)
+        if len(self.characters) > 0:
+            self._db.update_characters(self.user_id, self.characters)
+        else:
+            self._db.reset_characters(user_id=self.user_id)
+        return self.characters
+
+    def update_rolls(self, modifier: int, resets_at: [int, float]):
+        self.rolls['rolls_left'] += modifier
+        self.rolls['expires_at'] = resets_at
+        TaskManager.submit_task(self.user_id, self.rolls)
+
+    @property
+    def rolls_left(self):
+        return self.rolls['rolls_left']
+
+
+
+
 
 
 if __name__ == "__main__":
