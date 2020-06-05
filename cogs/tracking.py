@@ -231,7 +231,7 @@ class UserSettings(commands.Cog):
         return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
                               f" whitelisted for your area.")
 
-    @commands.command()
+    @commands.command(aliases=['block'])
     async def disallow(self, ctx, user: discord.Member):
         """ Disallow a user to bypass the public/private system """
         if ctx.author.id == user.id:
