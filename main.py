@@ -179,7 +179,7 @@ class ErrorHandler:
 
         elif ctx.command not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
-                'setprefix', 'resetprefix', 'togglensfw'):
+                'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
             err = error
 
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
