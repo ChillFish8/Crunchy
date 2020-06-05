@@ -140,10 +140,18 @@ class CrunchyBot(commands.AutoShardedBot):
         """ Used for some events later on """
         if not self.is_ready():
             return
+
         prefix = await self.get_custom_prefix(self, message)
-        if message.content.lower().startswith(prefix.lower()) or \
-                message.content.startswith(f"<@{self.user.id}> ") or \
-                message.content.startswith(f"<@!{self.user.id}> "):
+        if message.content.lower().startswith(prefix.lower()):
+            message.content = message.content[len(prefix):]
+            await self.process_commands(message=message)
+
+        elif message.content.startswith(f"<@{self.user.id}> "):
+            message.content = message.content[len(f"<@{self.user.id}> "):]
+            await self.process_commands(message=message)
+
+        elif message.content.startswith(f"<@!{self.user.id}> "):
+            message.content = message.content[len(f"<@!{self.user.id}> "):]
             await self.process_commands(message=message)
 
 
