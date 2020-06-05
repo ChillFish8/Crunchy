@@ -77,8 +77,6 @@ class CrunchyBot(commands.Bot):
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
-
-
     async def on_ready_once(self):
         change_presence.start(self)
 
@@ -170,10 +168,14 @@ class ErrorHandler:
             except discord.Forbidden:
                 pass
 
+        elif isinstance(error, commands.MissingPermissions):
+            return await ctx.send(
+                f"<:HimeSad:676087829557936149> You need to give me give me argument e.g "
+                f"`{ctx.prefix}{ctx.command.name} arg1 arg2`.")
         elif ctx.command not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw'):
-            err = error.original
+            err = error
 
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
