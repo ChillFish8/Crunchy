@@ -212,6 +212,12 @@ class AddingAnime(commands.Cog):
         except Exception as e:
             return await ctx.send(f"Oh no! A error jumped out and scared me: {e}")
 
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> You need to give the title of the item at least "
+                "for this command.")
+
 
 class UserSettings(commands.Cog):
     def __init__(self, bot):
@@ -255,6 +261,15 @@ class UserSettings(commands.Cog):
             mode = user_area.toggle_public()
             return await ctx.send(f"<:HimeHappy:677852789074034691> Your favourites"
                                   f" list is now {'**public**' if mode else '**private**'}")
+        else:
+            return await ctx.send(f"Sorry, that's not a valid command to firewall.")
+
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> You need to specify the command"
+                " (`recommended`, `watchlist`, `favourites`)"
+                " or give me a channel Id for this command.")
 
 
 class ViewTracked(commands.Cog):
