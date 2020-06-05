@@ -1,7 +1,6 @@
 import json
 import pymongo
 
-from time import time
 from datetime import datetime, timedelta
 from discord.ext import tasks
 
@@ -64,21 +63,6 @@ class MongoDatabase:
     def reset_characters(self, user_id: int):
         return self.characters.find_one_and_delete({'_id': user_id})
 
-    def bulk_update(self, submitted_characters: list):
-        self.characters.update_many()
-
-class TaskManager:
-    to_submit = []
-    db: MongoDatabase = None
-
-    @classmethod
-    def submit_task(cls, user_id, data):
-        cls.to_submit.append({'_id': user_id, 'data': data})
-
-    @classmethod
-    @tasks.loop(minutes=60)
-    async def send_to_db(cls):
-        cls.db.
 
 class UserCharacters:
     """
@@ -89,9 +73,10 @@ class UserCharacters:
         :returns UserCharacters object:
     """
 
-    def __init__(self, user_id, database=None):
+    def __init__(self, user_id, rolls, expires_in, database=None):
         """
         :param user_id:
+        :param rolls:
         :param database: -> Optional
         If data is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
@@ -102,7 +87,8 @@ class UserCharacters:
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
-        self.rolls = data.pop('rolls', {'rolls_left': 25, 'resets_at': None})
+        self._rolls = rolls
+        self._expires_in = expires_in
 
     def submit_character(self, character: Character):
         self.characters.append(character.to_dict())
@@ -119,18 +105,22 @@ class UserCharacters:
             self._db.reset_characters(user_id=self.user_id)
         return self.characters
 
-    def update_rolls(self, modifier: int, resets_at: [int, float]):
-        self.rolls['rolls_left'] += modifier
-        self.rolls['expires_at'] = resets_at
-        TaskManager.submit_task(self.user_id, self.rolls)
+    def update_rolls(self, modifier: int):
+        self._rolls += modifier
+        if self.rolls_left <= 0:
+            self._expires_in = datetime.now() + timedelta(hours=12)
 
     @property
     def rolls_left(self):
-        return self.rolls['rolls_left']
+        return self._rolls
 
-
-
-
+    @property
+    def expires_in(self):
+        if self._expires_in is not None:
+            hours, seconds = divmod(self._expires_in.total_seconds(), 3600)
+            minutes, seconds = divmod(seconds, 60)
+            return f"{hours}h, {minutes}m, {seconds}s"
+        return self._expires_in
 
 
 if __name__ == "__main__":

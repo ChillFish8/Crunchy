@@ -7,6 +7,8 @@ class Character:
         self.icon = icon
         self.id = get_id()
         self._base_power = random.randint(0, 64)
+        self._defense = random.randint(0, 10)
+        self._attack = random.randint(0, 10)
         self.modifiers = {}
 
     def _unload_self(self) -> dict:
@@ -39,3 +41,11 @@ class Character:
                 export_power + int(mod[1:])
         export_power += self._base_power
         return export_power
+
+    @property
+    def attack(self):
+        return self._attack
+
+    @property
+    def defense(self):
+        return self._defense
