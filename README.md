@@ -6,4 +6,4 @@ Crunchy is also able to track your watchlist, favourites and recommended animes 
 You can invite [Crunchy Here](https://discord.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=1678109696)\n
 You can view our [FREE API Here](https://crunchy-bot.live/api/endpoints) Which is in ongoing developement to become the largest public API for anyone to use.
 
-
+[logo]: https://cdn.discordapp.com/emojis/717784139641651211.png?v=1 "Logo Title Text 2"
