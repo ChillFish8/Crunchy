@@ -8,13 +8,14 @@ import traceback
 from discord import Webhook, AsyncWebhookAdapter
 from discord.ext import commands
 from datetime import timedelta
+from random import choice
+from discord.ext import tasks
 
 from data.database import MongoDatabase
 from data.cachemanager import CacheManager, Store
 from logger import Logger
 from data import guild_config
-from background.tasks import change_presence
-
+from resources.archieve.anime_examples import WATCHLIST
 
 with open('config.json', 'r') as file:
     config = json.load(file)
@@ -56,6 +57,7 @@ class CrunchyBot(commands.Bot):
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
         self.started = False
+        asyncio.get_event_loop().create_task(self.change_presence.start())
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
@@ -78,7 +80,7 @@ class CrunchyBot(commands.Bot):
                 raise e
 
     async def on_ready_once(self):
-        change_presence.start(self)
+        pass
 
     async def on_shard_ready(self, shard_id):
         """ Log any shard connects """
@@ -139,6 +141,14 @@ class CrunchyBot(commands.Bot):
         if not self.is_ready():
             return
         await self.process_commands(message=message)
+
+    @tasks.loop(minutes=2)
+    async def change_presence(self):
+        try:
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                 name=f"{choice(WATCHLIST)}"))
+        except Exception as e:
+            print(e)
 
 
 class ErrorHandler:
