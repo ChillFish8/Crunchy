@@ -182,27 +182,27 @@ class ErrorHandler:
                 'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
             err = error
 
-            if str(type(err).__name__) == "Forbidden" and "403" in str(err):
-                return
+            #if str(type(err).__name__) == "Forbidden" and "403" in str(err):
+            #    return
 
-            short_error_embed = discord.Embed(color=COLOUR)
-            short_error_embed.set_author(
-                name=f"It appears an error has occurred trying to run {ctx.command}.",
-                icon_url="https://cdn.discordapp.com/emojis/676087829557936149.png?v=1")
-            await ctx.send(embed=short_error_embed)
+            #short_error_embed = discord.Embed(color=COLOUR)
+            #short_error_embed.set_author(
+            #    name=f"It appears an error has occurred trying to run {ctx.command}.",
+            #    icon_url="https://cdn.discordapp.com/emojis/676087829557936149.png?v=1")
+            #await ctx.send(embed=short_error_embed)
 
-            _traceback = traceback.format_tb(err.__traceback__)
-            _traceback = ''.join(_traceback)
-            full_error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content, _traceback, err)
-
-            embed = discord.Embed(description=f"Command: {ctx.command}\n"
-                                              f"Full Message: {ctx.message.content}\n"
-                                              f"{full_error}",
-                                  color=COLOUR)
-            embed.set_author(name="Command Error.",
-                             icon_url="https://cdn.discordapp.com/emojis/588404204369084456.png"
-                             )
-            await self.webhook.send(embed=embed)
+            #_traceback = traceback.format_tb(err.__traceback__)
+            #_traceback = ''.join(_traceback)
+            #full_error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content, _traceback, err)
+            #
+            #embed = discord.Embed(description=f"Command: {ctx.command}\n"
+            #                                  f"Full Message: {ctx.message.content}\n"
+            #                                  f"{full_error}",
+            #                      color=COLOUR)
+            #embed.set_author(name="Command Error.",
+            #                 icon_url="https://cdn.discordapp.com/emojis/588404204369084456.png"
+            #                 )
+            #await self.webhook.send(embed=embed)
 
 
 @tasks.loop(minutes=2)
