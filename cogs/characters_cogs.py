@@ -160,15 +160,15 @@ class Customisations(commands.Cog):
     async def my_characters(self, ctx, user: discord.User=None):
         if user is not None:
             user_ = user
-            user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
+            user_characters: UserCharacters = self.bot.cache.get('characters', user.id)
             if user_characters is None:
                 rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
-                user_characters = UserCharacters(user_id=ctx.author.id,
+                user_characters = UserCharacters(user_id=user.id,
                                                  database=self.database,
                                                  rolls=rolls,
                                                  expires_in=self.cool_down_checks.get('expires_in', None),
                                                  callback=self.callback)
-                self.bot.cache.store('characters', ctx.author.id, user_characters)
+                self.bot.cache.store('characters', user.id, user_characters)
         else:
             user_ = ctx.author
             user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
@@ -192,7 +192,7 @@ class Customisations(commands.Cog):
             embed.set_author(name=f"{user_.name}'s collected characters", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
         else:
-            embeds = await self.generate_embeds(user=user_, area=user_area)
+            embeds = await self.generate_embeds(user=user_, area=user_characters)
             if len(embeds) > 1:
                 pager = Paginator(embed_list=embeds,
                                   bot=self.bot,

@@ -58,8 +58,11 @@ class MongoDatabase:
             'rank': {'ranking': 0, 'power': 0, 'total_character': 0}
         }
 
-    def update_characters(self, user_id: int, characters: list):
+    def update_characters(self, user_id: int, characters: list):    
         return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'characters': characters}})
+
+    def add_characters(self, user_id: int, data: dict):
+        self.characters.insert_one({'_id': user_id, **data})
 
     def update_rank(self, user_id: int, rank: dict):
         return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'rank': rank}})
@@ -97,8 +100,13 @@ class UserCharacters:
         self.mod_callback = callback
 
     def submit_character(self, character: Character):
-        self.characters.append(character.to_dict())
-        self._db.update_characters(self.user_id, self.characters)
+        if len(self.characters) > 0:
+            self.characters.append(character.to_dict())
+            self._db.update_characters(self.user_id, self.characters)
+        else:
+            self.characters.append(character.to_dict())
+            self._db.add_characters(self.user_id,
+                                    {'characters': self.characters, 'rank': self.rank})
 
     def dump_character(self, character: Character):
         id_ = character.id
