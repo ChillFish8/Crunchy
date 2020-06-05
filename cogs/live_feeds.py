@@ -105,7 +105,7 @@ class WebhookBroadcast:
         chunks, remaining = divmod(len(self.web_hooks), 250)
         for i in range(chunks):
             tasks = []
-            for guild in self.web_hooks.pop[i * 250:i * 250 + 250]:
+            for guild in self.web_hooks[i * 250:i * 250 + 250]:
                 if guild.url is not None:
                     tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
@@ -151,9 +151,9 @@ class LiveFeedBroadcasts(commands.Cog):
     async def background_checker(self):
         while True:
             await self.bot.wait_until_ready()
-            #if self.first_start:
-            #    await asyncio.sleep(600)
-            #    self.first_start = False
+            if self.first_start:
+                await asyncio.sleep(600)
+                self.first_start = False
             async with aiohttp.ClientSession() as sess:
                 async with sess.get(RELEASE_RSS) as resp_release:
                     if resp_release.status == 200:
