@@ -2,13 +2,13 @@ import random
 from utils.id_maker import get_id
 
 class Character:
-    def __init__(self, name=None, icon=None):
+    def __init__(self, name=None, icon=None, base_power=None, defense=None, attack=None):
         self.name = name
         self.icon = icon
         self.id = get_id()
-        self._base_power = random.randint(0, 64)
-        self._defense = random.randint(0, 10)
-        self._attack = random.randint(0, 10)
+        self._base_power = base_power
+        self._base_defense = defense
+        self._base_attack = attack
         self.modifiers = {}
 
     def _unload_self(self) -> dict:

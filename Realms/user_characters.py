@@ -43,7 +43,7 @@ class MongoDatabase:
         print(f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
 
         self.db = self.client["Crunchy"]
-        self.characters = self.db["characters"]
+        self.characters = self.db["collected_characters"]
         # super().__init__(self.db)
 
     def close_conn(self):

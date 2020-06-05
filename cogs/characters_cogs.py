@@ -37,7 +37,7 @@ def filter_(item_content):
 
 
 class Customisations(commands.Cog):
-    with open(r"resources/archieve/waifus.json", "r") as file:
+    with open(r"resources/archieve/main_characters.json", "r") as file:
         RANDOM_CHARACTERS = json.load(file)
     random.shuffle(RANDOM_CHARACTERS)
     group = RANDOM_CHARACTERS[:5000]
@@ -96,7 +96,11 @@ class Customisations(commands.Cog):
                                       "https://top.gg/bot/656598065532239892/vote")
 
         c = random.choice(self.group)
-        character_obj = Character(name=c['name'], icon=c['url'])
+        character_obj = Character(name=c['name'],
+                                  icon=c['url'],
+                                  base_power=c['base_power'],
+                                  defense=c['defense'],
+                                  attack=c['attack'])
         embed = discord.Embed(
             title=character_obj.name,
             description=f"💪 **Power:** `{character_obj.power}`\n"
