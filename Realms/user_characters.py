@@ -73,10 +73,11 @@ class UserCharacters:
         :returns UserCharacters object:
     """
 
-    def __init__(self, user_id, rolls, expires_in, database=None):
+    def __init__(self, user_id, rolls, expires_in, callback, database=None):
         """
         :param user_id:
         :param rolls:
+        :param callback:
         :param database: -> Optional
         If data is None it falls back to a global var,
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
@@ -89,6 +90,7 @@ class UserCharacters:
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
         self._rolls = rolls
         self._expires_in = expires_in
+        self.mod_callback = callback
 
     def submit_character(self, character: Character):
         self.characters.append(character.to_dict())
@@ -109,10 +111,14 @@ class UserCharacters:
         self._rolls += modifier
         if self.rolls_left <= 0:
             self._expires_in = datetime.now() + timedelta(hours=12)
+        self.mod_callback(self.user_id, self)
 
     @property
     def rolls_left(self):
         return self._rolls
+
+    def get_time_obj(self):
+        return self._expires_in
 
     @property
     def expires_in(self):
