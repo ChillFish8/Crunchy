@@ -19,21 +19,17 @@ class ApiCollectors:
         self.session = aiohttp.ClientSession()
 
     async def get_from_neko(self, type_):
-        async with self.session as sess:
-            async with sess.get(NEKO_API_BASE + f"/image?type={type_}") as r:
-                result = await r.json()
-                return result
+        async with self.session.get(NEKO_API_BASE + f"/image?type={type_}") as r:
+            result = await r.json()
+            return result
 
     async def get_from_crunchy(self, tag=None, type_="hentai"):
-        print("wew")
         url = CRUNCHY_API_BASE + f"/nsfw/{type_}"
         if tag is not None:
             url += f"/{tag}"
-        async with self.session as sess:
-            async with sess.get(url) as r:
-                result = await r.json()
-                print(result)
-                return result
+        async with self.session.get(url) as r:
+            result = await r.json()
+            return result
 
 class NSFW(commands.Cog):
     def __init__(self, bot):

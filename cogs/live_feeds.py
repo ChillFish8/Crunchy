@@ -437,7 +437,10 @@ class LiveFeedCommands(commands.Cog):
                 "<:HimeSad:676087829557936149> Sorry! You're missing the require permission `ADMINISTRATOR`"
                 f"to use this command (`{ctx.command}`)")
 
-
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> You need to mention a channel"
+                " or give me a channel Id for this command.")
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
