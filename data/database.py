@@ -95,17 +95,16 @@ class UserTracking:
             "recommended": self.db["recommendedlist"],
         }
 
-    def set_user_data(self, area: str, user_id: int, contents: list) -> [dict, int]:
+    def set_user_data(self, area: str, user_id: int, contents: dict) -> [dict, int]:
         current_data = self.collections[area].find_one({'_id': user_id})
         Logger.log_database("SET-USER: User Content with Id: {} returned.".format(user_id))
 
         if current_data is not None:
             QUERY = {'_id': user_id}
-            new_data = {'contents': contents}
-            resp = self.collections[area].update_one(QUERY, {'$set': new_data})
+            resp = self.collections[area].update_one(QUERY, {'$set': contents})
             return resp.raw_result
         else:
-            data = {'_id': user_id, 'contents': contents}
+            data = {'_id': user_id, **contents}
             resp = self.collections[area].insert_one(data)
             return resp.inserted_id
 
@@ -115,16 +114,9 @@ class UserTracking:
             "DELETE-USER: Guild with Id: {} returned.".format(user_id))
         return "COMPLETE"
 
-    def get_user_data(self, area: str, user_id: int) -> list:
+    def get_user_data(self, area: str, user_id: int) -> dict:
         current_data = self.collections[area].find_one({'_id': user_id})
-        if area == "recommended":
-            return current_data['contents'] if current_data is not None else {
-                'public': True,
-                'list': [],
-                'blocked': [],
-                'bypass': []}
-        else:
-            return current_data['contents'] if current_data is not None else []
+        return current_data if current_data is not None else {'public': True, 'contents': []}
 
 
 class Votes:

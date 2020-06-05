@@ -221,33 +221,44 @@ class UserSettings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def allow(self, ctx, user: discord.Member):
-        """ Allow a user to bypass the public/private system """
-        if ctx.author.id == user.id:
-            return await ctx.send(f"<:HimeMad:676087826827444227> You can't whitelist yourself silly!")
-        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
-        user_area.bypass(user.id)
-        return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
-                              f" whitelisted for your area.")
+    #@commands.command()
+    #async def allow(self, ctx, user: discord.Member):
+    #    """ Allow a user to bypass the public/private system """
+    #    if ctx.author.id == user.id:
+    #        return await ctx.send(f"<:HimeMad:676087826827444227> You can't whitelist yourself silly!")
+    #    user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+    #    user_area.bypass(user.id)
+    #    return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
+    #                          f" whitelisted for your area.")
 
-    @commands.command(aliases=['block'])
-    async def disallow(self, ctx, user: discord.Member):
-        """ Disallow a user to bypass the public/private system """
-        if ctx.author.id == user.id:
-            return await ctx.send(f"<:HimeMad:676087826827444227> You can't block yourself silly!")
-        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
-        user_area.block(user.id)
-        return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
-                              f" blocked from your area.")
+    #@commands.command(aliases=['block'])
+    #async def disallow(self, ctx, user: discord.Member):
+    #    """ Disallow a user to bypass the public/private system """
+    #    if ctx.author.id == user.id:
+    #        return await ctx.send(f"<:HimeMad:676087826827444227> You can't block yourself silly!")
+    #    user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+    #    user_area.block(user.id)
+    #    return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
+    #                          f" blocked from your area.")
 
     @commands.command(aliases=['fw'])
-    async def firewall(self, ctx):
+    async def firewall(self, ctx, command_: str):
         """ Toggle public/private system """
-        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
-        mode = user_area.toggle_public()
-        return await ctx.send(f"<:HimeHappy:677852789074034691> Your recommended"
-                              f" list is now {'**public**' if mode else '**private**'}")
+        if command_ == "recommended":
+            user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+            mode = user_area.toggle_public()
+            return await ctx.send(f"<:HimeHappy:677852789074034691> Your recommended"
+                                  f" list is now {'**public**' if mode else '**private**'}")
+        elif command_ == "watchlist":
+            user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
+            mode = user_area.toggle_public()
+            return await ctx.send(f"<:HimeHappy:677852789074034691> Your watchlist"
+                                  f" list is now {'**public**' if mode else '**private**'}")
+        elif command_ == "favourites":
+            user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
+            mode = user_area.toggle_public()
+            return await ctx.send(f"<:HimeHappy:677852789074034691> Your favourites"
+                                  f" list is now {'**public**' if mode else '**private**'}")
 
 
 class ViewTracked(commands.Cog):

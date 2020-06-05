@@ -18,16 +18,20 @@ class BasicTracker:
         self.user_id = user_id
         self.type = type_
         self._db = db if database is None else database
-        self._contents = self._db.get_user_data(area=self.type, user_id=user_id)
+        self.data = self._db.get_user_data(area=self.type, user_id=user_id)
+        self._contents = self.data['contents']
+        self.public = self.data['firewall']
 
     def add_content(self, data: dict):
         self._contents.append(data)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
+        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
+                                                                               'firewall': self.public})
         return self._contents
 
     def remove_content(self, index: int):
         temp = self._contents.pop(index)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
+        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
+                                                                               'firewall': self.public})
         return temp
 
     def _generate_block(self):
@@ -52,6 +56,16 @@ class BasicTracker:
     def to_dict(self):
         return {'content': self._contents}
 
+    def toggle_public(self):
+        self.public = not self.public
+        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
+                                                                               'firewall': self.public})
+        return self.public
+
+    @property
+    def is_public(self):
+        return self.public
+
 
 class UserFavourites(BasicTracker):
     def __init__(self, user_id, database=None):
@@ -67,66 +81,17 @@ class UserRecommended(BasicTracker):
     def __init__(self, user_id, database=None):
         super().__init__(user_id, type_="recommended", database=database)
 
-    @property
-    def is_public(self):
-        return self._contents['public']
-
-    def is_bypass(self, id_):
-        return id_ in self._contents['bypass']
-
-    def is_blocked(self, id_):
-        return id_ in self._contents['blocked']
-
-    def block(self, id_):
-        if id_ in self._contents['bypass']:
-            self._contents['bypass'].remove(id_)
-        if id_ not in self._contents['blocked']:
-            self._contents['blocked'].append(id_)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-
-    def bypass(self, id_):
-        if id_ in self._contents['blocked']:
-            self._contents['blocked'].remove(id_)
-        if id_ not in self._contents['bypass']:
-            self._contents['bypass'].append(id_)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-
-    def toggle_public(self):
-        self._contents['public'] = not self._contents['public']
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-        return self._contents['public']
-
     def add_content(self, data: dict):
-        self._contents['list'].append(data)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-        return self._contents['list']
+        self._contents.append(data)
+        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
+                                                                               'firewall': self.public})
+        return self._contents
 
     def remove_content(self, index: int):
-        self._contents['list'].pop(index)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents=self._contents)
-        return self._contents['list']
-
-    def _generate_block(self):
-        """ This turns a list of X amount of side into 10 block chunks. """
-        pages, rem = divmod(len(self._contents['list']), 10)
-        chunks, i = [], 0
-        for i in range(0, pages, 10):
-            chunks.append(self._contents['list'][i:i + 10])
-        if rem != 0:
-            chunks.append(self._contents['list'][i:i + rem])
-        return chunks
-
-    def get_blocks(self):
-        """ A generator to allow the bot to paginate large sets. """
-        for block in self._generate_block():
-            yield block
-
-    @property
-    def amount_of_items(self):
-        return len(self._contents['list'])
-
-    def to_dict(self):
-        return {'content': self._contents}
+        self._contents.pop(index)
+        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
+                                                                               'firewall': self.public})
+        return self._contents
 
 
 if __name__ == "__main__":
