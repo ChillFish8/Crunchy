@@ -168,10 +168,10 @@ class ErrorHandler:
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
 
-            short_error_embed = discord.Embed(
-                title=f"It appears an error has occurred trying to run {ctx.command}.",
-                color=COLOUR)
-            short_error_embed.set_footer(text="This error has been reported to my owner.")
+            short_error_embed = discord.Embed(color=COLOUR)
+            short_error_embed.set_author(
+                name=f"It appears an error has occurred trying to run {ctx.command}.",
+                icon_url="https://cdn.discordapp.com/emojis/676087829557936149.png?v=1")
             await ctx.send(embed=short_error_embed)
 
             _traceback = traceback.format_tb(err.__traceback__)

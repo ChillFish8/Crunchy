@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext import tasks
 
 from realms.character import Character
-from realms.user_characters import UserCharacters
+from realms.user_characters import UserCharacters, MongoDatabase
 
 
 NON_VOTE_ROLLS = 25
@@ -37,6 +37,7 @@ class Customisations(commands.Cog):
         self.bot = bot
         self.cool_down_checks = {}
         self.pending = {}
+        self.database = MongoDatabase()
 
     def callback(self, user_id, user_characters: UserCharacters):
         self.cool_down_checks[user_id] = user_characters
@@ -68,7 +69,7 @@ class Customisations(commands.Cog):
             if ctx.has_voted(user_id=ctx.author.id):
                 rolls += 25
             user_characters = UserCharacters(user_id=ctx.author.id,
-                                             database=self.bot.database,
+                                             database=self.database,
                                              rolls=rolls,
                                              expires_in=self.cool_down_checks.get('expires_in', None),
                                              callback=self.callback)
@@ -112,25 +113,24 @@ class Customisations(commands.Cog):
         }
         user = self.pending.get(user_character_obj.user_id, DEFAULT)
         user['messages'].append(payload)
+        self.pending[user_character_obj.user_id] = user
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         if self.pending.get(payload.user_id, False):
-            for pending in self.pending[payload.user_id]:
+            for pending in self.pending[payload.user_id]['messages']:
                 if pending['message_id'] == payload.message_id:
                     if str(payload.emoji) in RANDOM_EMOJIS:
                         pending['user_character'].submit_character(pending['character'])
-                        await pending['channel'].send(f"You choose {pending['character'].name}! Good job!")
+                        await pending['channel'].send(
+                            f"<:HimeHappy:677852789074034691> <@{pending['user'].id}> "
+                            f"chose {pending['character'].name}! Good job!")
                         break
-
-
 
 class Checks:
     @classmethod
     def has_rolls(cls, user: UserCharacters):
         return user.rolls_left > 0
-
-
 
 
 def setup(bot):
