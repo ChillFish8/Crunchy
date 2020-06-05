@@ -1,10 +1,11 @@
 import random
-
+from utils.id_maker import get_id
 
 class Character:
     def __init__(self, name=None, icon=None):
         self.name = name
         self.icon = icon
+        self.id = get_id()
         self._base_power = random.randint(0, 64)
         self.modifiers = {}
 

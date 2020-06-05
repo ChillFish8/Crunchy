@@ -88,6 +88,8 @@ class UserCharacters:
         self._db.update_characters(self.user_id, self.characters)
 
     def dump_character(self, character: Character):
+        id_ = character.id
+
 
 if __name__ == "__main__":
     db = MongoDatabase()
