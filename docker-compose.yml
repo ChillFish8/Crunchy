@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  crunchy_bot:
+    build: .
+    container_name: crunchy_bot
+    image: crunchy_bot
+    restart: on-failure
+    command: python main.py
+    volumes:
+      - .:/code
