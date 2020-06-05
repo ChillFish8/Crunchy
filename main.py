@@ -43,9 +43,9 @@ Logger.LOG_CACHE = False
 Logger.LOG_DATABASE = False
 
 
-class CrunchyBot(commands.Bot):
+class CrunchyBot(commands.AutoShardedBot):
     def __init__(self, **options):
-        super().__init__(self.get_custom_prefix, **options)
+        super().__init__("", **options)
         self.before_invoke(self.get_config)
         self.owner_ids = DEVELOPER_IDS
         self.colour = COLOUR
@@ -140,7 +140,11 @@ class CrunchyBot(commands.Bot):
         """ Used for some events later on """
         if not self.is_ready():
             return
-        await self.process_commands(message=message)
+        prefix = await self.get_custom_prefix(self, message)
+        if message.content.lower().startswith(prefix.lower()) or \
+                message.content.startswith(f"<@{self.user.id}> ") or \
+                message.content.startswith(f"<@!{self.user.id}> "):
+            await self.process_commands(message=message)
 
 
 class ErrorHandler:
