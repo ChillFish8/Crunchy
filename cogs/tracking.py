@@ -179,13 +179,9 @@ class AddingAnime(commands.Cog):
                                   f"You didnt mention the person you wanted to recommend an Anime to.")
 
         user_area = UserRecommended(user_id=user.id, database=self.bot.database)
-        if not user_area.is_public and not user_area.is_bypass(ctx.author.id):
+        if not user_area.is_public:
             return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
                                   f"The user you mentioned has their recommended list set to private.")
-
-        if user_area.is_blocked(ctx.author.id):
-            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
-                                  f"The user you mentioned has blocked you from added content to their area.")
 
         if argument is None:
             return await ctx.send(f"<:HimeMad:676087826827444227> Oh no! "
@@ -294,6 +290,8 @@ class ViewTracked(commands.Cog):
         if user is not None:
             user_ = user
             user_area = UserWatchlist(user_id=user.id, database=self.bot.database)
+            if not user_area.is_public:
+                return await ctx.send("Oops! This user has their watchlist firewalled (Private).")
         else:
             user_ = ctx.author
             user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
@@ -325,6 +323,8 @@ class ViewTracked(commands.Cog):
         else:
             user_ = ctx.author
             user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
+            if not user_area.is_public:
+                return await ctx.send("Oops! This user has their favourites firewalled (Private).")
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
@@ -354,6 +354,8 @@ class ViewTracked(commands.Cog):
         else:
             user_ = ctx.author
             user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+            if not user_area.is_public:
+                return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour)\
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
