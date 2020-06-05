@@ -77,10 +77,12 @@ class CrunchyBot(commands.Bot):
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
+
+
     async def on_ready_once(self):
         change_presence.start(self)
 
-    async def on__shard_ready(self, shard_id):
+    async def on_shard_ready(self, shard_id):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
@@ -105,7 +107,7 @@ class CrunchyBot(commands.Bot):
         else:
             has_voted = self.database.get_vote(user_id)
             self.cache.store("votes", user_id, has_voted)
-            if has_voted['expires'] is not None:
+            if has_voted is not None:
                 return 1
             else:
                 return 0
