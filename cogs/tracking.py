@@ -311,7 +311,8 @@ class ViewTracked(commands.Cog):
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in their favourites,\n lets get them filling list!"
+                                f"have anything in {'your' if user is None else 'their'} favourites,\n" \
+                                f" lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
@@ -339,7 +340,8 @@ class ViewTracked(commands.Cog):
             embed = discord.Embed(color=self.bot.colour)\
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in their recommended,\n lets get them filling list!"
+                                f"have anything in {'your' if user is None else 'their'} recommended,\n" \
+                                f" lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
@@ -353,6 +355,77 @@ class ViewTracked(commands.Cog):
                 return self.bot.loop.create_task(pager.start())
             else:
                 return await ctx.send(embed=embeds[0])
+
+
+class RemoveTracked(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def generate_embeds(self, user: discord.User, area):
+        pages, rem = divmod(area.amount_of_items, 10)
+        if rem != 0:
+            pages += 1
+
+        embeds = []
+        for i, chunk in enumerate(area.get_blocks()):
+            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
+                .set_footer(text=f"Page {i + 1} / {pages}")
+            for x, item in enumerate(chunk):
+                if item['url'] is not None:
+                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
+                                    name="\u200b",
+                                    inline=False)
+                else:
+                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                                    name="\u200b",
+                                    inline=False)
+            embed.set_thumbnail(url=random.choice(HAPPY_URL))
+            embed.set_author(name=f"{user.name}'s {area.type}", icon_url=user.avatar_url)
+            embeds.append(embed)
+        return embeds
+
+    async def show_area(self, ctx, area):
+        if area.amount_of_items <= 0:
+            embed = discord.Embed(color=self.bot.colour)\
+                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+            embed.description = f"Oops! you dont " \
+                                f"have anything in your recommended,\n lets get them filling it!"
+            embed.set_thumbnail(url=random.choice(SAD_URL))
+            embed.set_author(name=f"{ctx.author.name}'s {area.type}", icon_url=ctx.author.avatar_url)
+            return await ctx.send(embed=embed)
+        else:
+            embeds = await self.generate_embeds(user=ctx.author, area=area)
+            if len(embeds) > 1:
+                pager = Paginator(embed_list=embeds,
+                                  bot=self.bot,
+                                  message=ctx.message,
+                                  colour=self.bot.colour)
+                return self.bot.loop.create_task(pager.start())
+            else:
+                return await ctx.send(embed=embeds[0])
+
+    @commands.command(name="removewatchlist", aliases=['rw', 'watchlist'])
+    async def remove_watchlist(self, ctx, index: int = None):
+        """ Remove something from watch list """
+        user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
+        if index is None:
+            return await self.show_area(ctx, user_area)
+
+    @commands.command(name="removefavourite", aliases=['rf', 'favourites'])
+    async def remove_favourites(self, ctx, index: int = None):
+        """ Remove something from favourites list """
+        user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
+        if index is None:
+            return await self.show_area(ctx, user_area)
+
+    @commands.command(name="removerecommended", aliases=['rr'])
+    async def remove_recommended(self, ctx, index: int = None):
+        """ Remove something from recommended list """
+        user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+        if index is None:
+            return await self.show_area(ctx, user_area)
+
+
 
 
 def setup(bot):
