@@ -57,7 +57,7 @@ class CrunchyBot(commands.Bot):
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
         self.started = False
-        asyncio.get_event_loop().create_task(self.change_presence.start())
+        self.change_presence.start()
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
@@ -144,6 +144,7 @@ class CrunchyBot(commands.Bot):
 
     @tasks.loop(minutes=2)
     async def change_presence(self):
+        await self.wait_until_ready()
         try:
             await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
                                                                  name=f"{choice(WATCHLIST)}"))
