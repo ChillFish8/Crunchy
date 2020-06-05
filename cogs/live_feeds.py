@@ -121,14 +121,17 @@ class WebhookBroadcast:
 
 
 def map_objects_releases(data):
-    guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
+    try:
+        guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
+    except:
+        guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['release'])
     return guild
 
 def map_objects_news(data):
     try:
         guild = MicroGuildWebhook(data['config']['guild_id'], data['config']['news'])
     except:
-        print(data)
+        guild = MicroGuildWebhook(data['config']['user_id'], data['config']['news'])
     return guild
 
 
