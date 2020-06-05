@@ -38,6 +38,8 @@ class Customisations(commands.Cog):
         self.cool_down_checks = {}
         self.pending = {}
         self.database = MongoDatabase()
+        self.remove_null.start()
+        self.shuffle.start()
 
     def callback(self, user_id, user_characters: UserCharacters):
         self.cool_down_checks[user_id] = user_characters

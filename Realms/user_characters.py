@@ -2,7 +2,6 @@ import json
 import pymongo
 
 from datetime import datetime, timedelta
-from discord.ext import tasks
 
 from realms.character import Character
 
@@ -45,20 +44,25 @@ class MongoDatabase:
 
         self.db = self.client["Crunchy"]
         self.characters = self.db["characters"]
-        super().__init__(self.db)
+        # super().__init__(self.db)
 
     def close_conn(self):
         """ Logs us out of the data """
         self.db.logout()
 
     def get_characters(self, user_id: int):
-        return self.characters.find_one({'_id': user_id})
+        resp = self.characters.find_one({'_id': user_id})
+        return resp if resp is not None else {
+            '_id': user_id,
+            'characters': [],
+            'rank': {'ranking': 0, 'power': 0, 'total_character': 0}
+        }
 
     def update_characters(self, user_id: int, characters: list):
-        return self.characters.find_one_and_update({'_id': user_id}, {'characters': characters})
+        return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'characters': characters}})
 
     def update_rank(self, user_id: int, rank: dict):
-        return self.characters.find_one_and_update({'_id': user_id}, {'rank': rank})
+        return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'rank': rank}})
 
     def reset_characters(self, user_id: int):
         return self.characters.find_one_and_delete({'_id': user_id})
@@ -84,7 +88,7 @@ class UserCharacters:
         """
         self.user_id = user_id
         self._db = db if database is None else database
-        data = self._db.get_guild_config(guild_id=user_id)
+        data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
