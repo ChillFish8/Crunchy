@@ -79,7 +79,7 @@ class CrunchyBot(commands.Bot):
     async def on_ready_once(self):
         change_presence.start(self)
 
-    async def on_ready(self, shard_id=1):
+    async def on__shard_ready(self, shard_id=1):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
