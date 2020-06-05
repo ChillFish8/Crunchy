@@ -15,12 +15,12 @@ class HelpCog(commands.Cog):
 
     Search_COMMANDS = [
         "`animedetails` **-** Get details from Crunchyroll on an Anime.",
-        "`manga` **-** Search for a Manga.",
+        # "`manga` **-** Search for a Manga.", todo still needs scraping
     ]
 
     LIVE_COMMANDS = [
         "`addreleasechannel` **-** Get anime releases to a channel.",
-        "`todaysreleases` **-** Get today's anime releases.",
+        # "`todaysreleases` **-** Get today's anime releases.", todo work this out
         "`addnewschannel` **-** Get Crunchyroll payload to a channel.",
     ]
 
@@ -39,15 +39,14 @@ class HelpCog(commands.Cog):
     CHARACTER_COMMANDS = [
         "`character ` **-** Get a random character, can you collect them all?",
         "`viewcharacter ` **-** View a collect character.",
-        "`removecharacter ` **-** Remove a collect character.",
+        "`removecharacter ` **-** Remove a collect character.",  # todo
     ]
 
     NSFW_COMMANDS = [
-        "`hentai` **-** ",
-        "`ass` **-** ",
-        "`neko` **-** ",
-        "`pussy` **-** ",
-        "`gonewild` **-** ",
+        "`hentai <tag - optional>` **-** Get some Hentai!",
+        "`ass` **-** Lewd ass.",
+        "`pussy` **-** Lewd pussy.",
+        "`gonewild` **-** Title says it all.",
     ]
 
     def __init__(self, bot):

@@ -156,7 +156,7 @@ class Customisations(commands.Cog):
             embeds.append(embed)
         return embeds
 
-    @commands.command(name="mycharacters", aliases=['myc', 'characters'])
+    @commands.command(name="viewcharacters", aliases=['vc', 'characters'])
     async def my_characters(self, ctx, user: discord.User=None):
         if user is not None:
             user_ = user
