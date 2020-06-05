@@ -116,7 +116,7 @@ class UserTracking:
 
     def get_user_data(self, area: str, user_id: int) -> dict:
         current_data = self.collections[area].find_one({'_id': user_id})
-        return current_data if current_data is not None else {'public': True, 'contents': []}
+        return current_data if current_data is not None else {'_id': user_id, 'firewall': True, 'contents': []}
 
 
 class Votes:

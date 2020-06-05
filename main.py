@@ -172,6 +172,7 @@ class ErrorHandler:
             return await ctx.send(
                 f"<:HimeSad:676087829557936149> You need to give me give me argument e.g "
                 f"`{ctx.prefix}{ctx.command.name} arg1 arg2`.")
+
         elif ctx.command not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw'):

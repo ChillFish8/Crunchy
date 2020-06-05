@@ -33,18 +33,18 @@ RANDOM_EMOJIS = [
 
 async def add_watchlist(ctx, bot, name, url):
     user_tracker: UserWatchlist = UserWatchlist(user_id=ctx.author.id, database=bot.database)
-    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted == 0):
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted(ctx.author.id) == 0):
         return {'content': "<:HimeMad:676087826827444227> Oh no! "
                            "You dont have enough space in your watchlist "
                            "to add this, get more storage by voting here "
                            "https://top.gg/bot/656598065532239892/vote"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted == 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted(ctx.author.id) == 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh no! "
                            f"You seem to have maxed out your watchlist, you can get more by"
                            f" buying premium here to help support my development: {PREMIUM_URL}"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted(ctx.author.id) > 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
                            f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your watchlist area! "
                            f"However, you'll need to either delete some to add more or contact my developer"
@@ -62,18 +62,18 @@ async def add_watchlist(ctx, bot, name, url):
 
 async def add_favourites(ctx, bot, name, url):
     user_tracker: UserFavourites = UserFavourites(user_id=ctx.author.id, database=bot.database)
-    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted == 0):
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted(ctx.author.id) == 0):
         return {'content': "<:HimeMad:676087826827444227> Oh no! "
                            "You dont have enough space in your favourites "
                            "to add this, get more storage by voting here "
                            "https://top.gg/bot/656598065532239892/vote"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted == 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted(ctx.author.id) == 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh no! "
                            f"You seem to have maxed out your favourites, you can get more by"
                            f" buying premium here to help support my development: {PREMIUM_URL}"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted > 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted(ctx.author.id) > 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
                            f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your favourites area! "
                            f"However, you'll need to either delete some to add more or contact my developer"

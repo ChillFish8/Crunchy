@@ -44,8 +44,8 @@ class Character:
 
     @property
     def attack(self):
-        return self._attack
+        return self._base_attack
 
     @property
     def defense(self):
-        return self._defense
+        return self._base_defense
