@@ -1,8 +1,5 @@
 # Crunchy - An advanced Anime bot
 Crunchy is a open source Bot inspired by [Crunchyroll](https://www.crunchyroll.com/en-gb) complete by a detailed RSS parser and generator linked with our API for detailed News and Release webhooks from Crunchyroll with access to over 18,000+ Animes with Manga being added back to the API soon. 
-![alt text][logo]
-
-[logo]: https://cdn.discordapp.com/attachments/680350705038393344/718573524771667968/exitment.png "Crunchy"
 
 Crunchy is also able to track your watchlist, favourites and recommended animes where others can interact with the system to recommend you awesome Anime and keep the ones you love!
 
