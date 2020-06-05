@@ -1,6 +1,7 @@
 import json
 import random
 import discord
+import asyncio
 
 from datetime import datetime
 from discord.ext import commands
@@ -8,7 +9,7 @@ from discord.ext import tasks
 
 from realms.character import Character
 from realms.user_characters import UserCharacters, MongoDatabase
-
+from utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 25
 VOTE_ROLLS_MOD = +25
@@ -16,6 +17,14 @@ RANDOM_EMOJIS = ['💞', '💗', '💖', '💓']
 DEFAULT = {
     'messages': []
 }
+
+HAPPY_URL = [
+    "https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png",
+    "https://cdn.discordapp.com/attachments/680350705038393344/717784643117777006/wow.png"
+]
+SAD_URL = [
+    "https://cdn.discordapp.com/attachments/680350705038393344/717784461391167568/sad.png",
+]
 
 
 def filter_(item_content):
@@ -129,22 +138,71 @@ class Customisations(commands.Cog):
                             f"chose {pending['character'].name}! Good job!")
                         break
 
+    async def generate_embeds(self, user: discord.User, area):
+        pages, rem = divmod(area.amount_of_items, 10)
+        if rem != 0:
+            pages += 1
+
+        embeds = []
+        for i, chunk in enumerate(area.get_blocks()):
+            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
+                .set_footer(text=f"Page {i + 1} / {pages}")
+            for x, item in enumerate(chunk):
+                if item['url'] is not None:
+                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
+                                    name="\u200b",
+                                    inline=False)
+                else:
+                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
+                                    name="\u200b",
+                                    inline=False)
+            embed.set_thumbnail(url=random.choice(HAPPY_URL))
+            embed.set_author(name=f"{user.name}'s collected characters", icon_url=user.avatar_url)
+            embeds.append(embed)
+        return embeds
+
     @commands.command(name="mycharacters", aliases=['myc'])
-    async def my_characters(self, ctx):
-        user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
-        if user_characters is None:
-            rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
-            if ctx.has_voted(user_id=ctx.author.id):
-                rolls += 25
-            user_characters = UserCharacters(user_id=ctx.author.id,
-                                             database=self.database,
-                                             rolls=rolls,
-                                             expires_in=self.cool_down_checks.get('expires_in', None),
-                                             callback=self.callback)
-            self.bot.cache.store('characters', ctx.author.id, user_characters)
+    async def my_characters(self, ctx, user: discord.User=None):
+        if user is not None:
+            user_ = user
+            user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
+            if user_characters is None:
+                rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
+                user_characters = UserCharacters(user_id=ctx.author.id,
+                                                 database=self.database,
+                                                 rolls=rolls,
+                                                 expires_in=self.cool_down_checks.get('expires_in', None),
+                                                 callback=self.callback)
+                self.bot.cache.store('characters', ctx.author.id, user_characters)
+        else:
+            user_ = ctx.author
+            user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
+            if user_characters is None:
+                rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
+                if ctx.has_voted(user_id=ctx.author.id):
+                    rolls += 25
+                user_characters = UserCharacters(user_id=ctx.author.id,
+                                                 database=self.database,
+                                                 rolls=rolls,
+                                                 expires_in=self.cool_down_checks.get('expires_in', None),
+                                                 callback=self.callback)
+                self.bot.cache.store('characters', ctx.author.id, user_characters)
 
-
-
+        if user_characters.amount_of_items <= 0:
+            embed = discord.Embed(color=self.bot.colour) \
+                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
+                                f"have any collected characters,\n lets get them filling list!"
+            embed.set_thumbnail(url=random.choice(SAD_URL))
+            embed.set_author(name=f"{user_.name}'s collected characters", icon_url=user_.avatar_url)
+            return await ctx.send(embed=embed)
+        else:
+            embeds = await self.generate_embeds(user=user_, area=user_characters)
+            pager = Paginator(embed_list=embeds,
+                              bot=self.bot,
+                              message=ctx.message,
+                              colour=self.bot.colour)
+            return asyncio.get_event_loop().create_task(pager.start())
 
 class Checks:
     @classmethod

@@ -132,6 +132,25 @@ class UserCharacters:
             return f"{hours}h, {minutes}m, {seconds}s"
         return self._expires_in
 
+    def _generate_block(self):
+        """ This turns a list of X amount of side into 10 block chunks. """
+        pages, rem = divmod(len(self.characters), 10)
+        chunks, i = [], 0
+        for i in range(0, pages, 10):
+            chunks.append(self.characters[i:i + 10])
+        if rem != 0:
+            chunks.append(self.characters[i:i + rem])
+        return chunks
+
+    def get_blocks(self):
+        """ A generator to allow the bot to paginate large sets. """
+        for block in self._generate_block():
+            yield block
+
+    @property
+    def amount_of_items(self):
+        return len(self.characters)
+
 
 if __name__ == "__main__":
     db = MongoDatabase()
