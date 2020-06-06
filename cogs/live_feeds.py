@@ -81,7 +81,7 @@ class WebhookBroadcast:
         Logger.log_broadcast(f"Cleaning up broadcast, deleting {len(self.failed_to_send)} hooks.")
         for fail in self.failed_to_send:
             hook_object = GuildWebhooks(guild_id=fail, database=self.database)
-            hook_object.delete_webhook(feed_type=self.type.lower())
+            # hook_object.delete_webhook(feed_type=self.type.lower())
         await self.session.close()
 
     async def send_func(self, hook: MicroGuildWebhook):
