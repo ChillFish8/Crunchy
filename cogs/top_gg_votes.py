@@ -44,8 +44,10 @@ class TopGG(commands.Cog):
         data['user'] = int(data['user'])
         now = time.time()
         expires = now + timedelta(hours=24).total_seconds()
-        self.bot.database.add_vote(data['user'], expires)
-        self.bot.cache.store('votes', data['user'], expires)
+        check = self.bot.database.get_vote(user_id=data['user'])
+        if check is None:
+            self.bot.database.add_vote(data['user'], expires)
+            self.bot.cache.store('votes', data['user'], expires)
 
     @commands.Cog.listener()
     async def on_dbl_test(self, data):
