@@ -76,18 +76,18 @@ class CharacterGets(commands.Cog):
     async def character(self, ctx):
         user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
         if user_characters is None:
-            user: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
-            if user is not None:
-                rolls = user.rolls_left
+            user_characters: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
+            if user_characters is not None:
+                rolls, expires = user_characters.rolls_left, user_characters.expires_in
             else:
                 if ctx.has_voted(user_id=ctx.author.id):
-                    rolls = NON_VOTE_ROLLS + VOTE_ROLLS_MOD
+                    rolls, expires = NON_VOTE_ROLLS + VOTE_ROLLS_MOD, None
                 else:
-                    rolls = NON_VOTE_ROLLS
+                    rolls, expires = NON_VOTE_ROLLS, None
             user_characters = UserCharacters(user_id=ctx.author.id,
                                              database=self.database,
                                              rolls=rolls,
-                                             expires_in=self.cool_down_checks.get('expires_in', None),
+                                             expires_in=expires,
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
 
@@ -154,10 +154,10 @@ class CharacterGets(commands.Cog):
 
         embeds = []
         for i, chunk in enumerate(area.get_blocks()):
-            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now())\
+            embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
-                embed.add_field(value=f"** {x + i*10 + 1} ) - {item['name']}**",
+                embed.add_field(value=f"** {x + i * 10 + 1} ) - {item['name']}**",
                                 name="\u200b",
                                 inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
@@ -166,29 +166,41 @@ class CharacterGets(commands.Cog):
         return embeds
 
     @commands.command(name="viewcharacters", aliases=['characters'])
-    async def my_characters(self, ctx, user: discord.User=None):
+    async def my_characters(self, ctx, user: discord.User = None):
         if user is not None:
             user_ = user
-            user_characters: UserCharacters = self.bot.cache.get('characters', user.id)
-            if user_characters is None:
-                rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
-                user_characters = UserCharacters(user_id=user.id,
-                                                 database=self.database,
-                                                 rolls=rolls,
-                                                 expires_in=self.cool_down_checks.get('expires_in', None),
-                                                 callback=self.callback)
-                self.bot.cache.store('characters', user.id, user_characters)
+            user_characters: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
+            if user_characters is not None:
+                rolls = user_characters.rolls_left
+            else:
+                if ctx.has_voted(user_id=ctx.author.id):
+                    rolls = NON_VOTE_ROLLS + VOTE_ROLLS_MOD
+                else:
+                    rolls = NON_VOTE_ROLLS
+            user_characters = UserCharacters(user_id=user.id,
+                                             database=self.database,
+                                             rolls=rolls,
+                                             expires_in=self.cool_down_checks.get('expires_in', None),
+                                             callback=self.callback)
+            self.bot.cache.store('characters', user.id, user_characters)
+
         else:
             user_ = ctx.author
             user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
             if user_characters is None:
-                rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
-                if ctx.has_voted(user_id=ctx.author.id):
-                    rolls += 25
+                user_characters: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
+                if user_characters is not None:
+                    rolls = user_characters.rolls_left
+                    expires = user_characters.expires_in
+                else:
+                    if ctx.has_voted(user_id=ctx.author.id):
+                        rolls, expires = NON_VOTE_ROLLS + VOTE_ROLLS_MOD, None
+                    else:
+                        rolls, expires = NON_VOTE_ROLLS, None
                 user_characters = UserCharacters(user_id=ctx.author.id,
                                                  database=self.database,
                                                  rolls=rolls,
-                                                 expires_in=self.cool_down_checks.get('expires_in', None),
+                                                 expires_in=expires,
                                                  callback=self.callback)
                 self.bot.cache.store('characters', ctx.author.id, user_characters)
 
@@ -215,6 +227,7 @@ class CharacterGets(commands.Cog):
     def shutdown(cls):
         cls.database.close_conn()
 
+
 class Checks:
     @classmethod
     def has_rolls(cls, user: UserCharacters):
@@ -224,6 +237,6 @@ class Checks:
 def setup(bot):
     bot.add_cog(CharacterGets(bot))
 
+
 def teardown(bot):
     CharacterGets.shutdown()
-
