@@ -78,11 +78,6 @@ class GuildWebhooks:
                                                                         'release': None
                                                                         }
 
-    @Timer.timeit
-    def get_all_webhooks(self):
-        all_ = self.guild_web_hooks.find({}, {'_id': 0})
-        return list(all_)
-
 
 class UserTracking:
     """ User's Watchlist, Recommended etc... """
@@ -138,6 +133,9 @@ class Votes:
     def remove_vote(self, user_id):
         self.votes.find_one_and_delete({'_id': user_id})
         Logger.log_database("DELETE-VOTE: User Content with Id: {} returned.".format(user_id))
+
+    def remove_outdated(self, time_secs):
+        return self.votes.delete_many({'expires_in': {'$lte': time_secs}}).deleted_count
 
 
 class MongoDatabase(GuildData, UserTracking, GuildWebhooks, Votes):

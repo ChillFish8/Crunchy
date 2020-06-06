@@ -24,6 +24,12 @@ class TopGG(commands.Cog):
                                    webhook_port=config.get("dbl_port"))
         self.update_stats.start()
 
+    @tasks.loop(minutes=10)
+    async def clear_votes(self):
+        timestamp = time.time()
+        removed = self.bot.database.remove_outdated(time_secs=timestamp)
+        Logger.log_dbl("Removed: {} outdated votes".format(removed))
+
     @tasks.loop(minutes=30.0)
     async def update_stats(self):
         """This function runs every 30 minutes to automatically update your server count"""
