@@ -48,13 +48,13 @@ class HelpCog(commands.Cog):
 
     CONFIG_COMMANDS = [
         "`firewall` **-** Your recommended area between public and private.",
-        #"`allow <user mention>` **-** Allow people to bypass the firewall command.",
-        #"`block <user mention>` **-** Block people from adding and viewing your recommended.",
+        # "`allow <user mention>` **-** Allow people to bypass the firewall command.",
+        # "`block <user mention>` **-** Block people from adding and viewing your recommended.",
     ]
 
     CHARACTER_COMMANDS = [
         "`character ` **-** Get a random character, can you collect them all?",
-        "`viewcharacter ` **-** View a collect character.",
+        "`viewcharacters` **-** View all of your collected characters.",
         "`removecharacter ` **-** Remove a collect character.",  # todo
     ]
 
@@ -156,25 +156,25 @@ class SubEmbeds:
                                    color=colour),
                      None),
             'support': (
-            discord.Embed(description="This command give you a link to join Crunchy's support server if you still"
-                                      " need help or want to chat!",
-                          color=colour),
-            None),
+                discord.Embed(description="This command give you a link to join Crunchy's support server if you still"
+                                          " need help or want to chat!",
+                              color=colour),
+                None),
             'serversettings': (
-            discord.Embed(description="This will bring up a embed showing the config settings for Crunchy,"
-                                      " for this guild.\n"
-                                      "**Aliases:** `ss`",
-                          color=colour),
-            "https://cdn.discordapp.com/attachments/676092549248712704/718429619669303357/unknown.png"),
+                discord.Embed(description="This will bring up a embed showing the config settings for Crunchy,"
+                                          " for this guild.\n"
+                                          "**Aliases:** `ss`",
+                              color=colour),
+                "https://cdn.discordapp.com/attachments/676092549248712704/718429619669303357/unknown.png"),
             'setprefix': (discord.Embed(description="This command will set a custom prefix.",
                                         color=colour),
                           None),
             'togglensfw': (
-            discord.Embed(description="This command will enable or disable NSFW command for this server, "
-                                      "when enabled Crunchy will *not* display NSFW commands or send any NSFW "
-                                      "content regardless of if it is in a NSFW channel.",
-                          color=colour),
-            None),
+                discord.Embed(description="This command will enable or disable NSFW command for this server, "
+                                          "when enabled Crunchy will *not* display NSFW commands or send any NSFW "
+                                          "content regardless of if it is in a NSFW channel.",
+                              color=colour),
+                None),
 
             'myrecommended': (discord.Embed(description="This will show you a list with all the titles "
                                                         "( and urls if applicable) people have recommended you to "
@@ -195,14 +195,14 @@ class SubEmbeds:
                                        color=colour),
                          None),
             'addanime': (
-            discord.Embed(description="This is how you add items to the command `watchlist` and `favourites`\n"
-                                      "Example command:\n`-aa Tower of God "
-                                      "url=https://www.crunchyroll.com/en-gb/tower-of-god`\n"
-                                      "**Note - ** `url=` is a optional argument if you want "
-                                      "Crunchy to hyper link the title."
-                                      "**Aliases:** `aa`",
-                          color=colour),
-            None),
+                discord.Embed(description="This is how you add items to the command `watchlist` and `favourites`\n"
+                                          "Example command:\n`-aa Tower of God "
+                                          "url=https://www.crunchyroll.com/en-gb/tower-of-god`\n"
+                                          "**Note - ** `url=` is a optional argument if you want "
+                                          "Crunchy to hyper link the title."
+                                          "**Aliases:** `aa`",
+                              color=colour),
+                None),
             'recommend': (discord.Embed(description="This is how you add items to someone's recommended list\n"
                                                     "Example command:\n`-aa @Crunchy Tower of God "
                                                     "url=https://www.crunchyroll.com/en-gb/tower-of-god`\n"
