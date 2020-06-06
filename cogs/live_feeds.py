@@ -105,16 +105,16 @@ class WebhookBroadcast:
             print(e)
 
     async def broadcast(self):
-        chunks, remaining = divmod(len(self.web_hooks), 25)
+        chunks, remaining = divmod(len(self.web_hooks), 10)
         for i in range(chunks):
             tasks = []
-            for guild in self.web_hooks[i * 25:i * 25 + 25]:
+            for guild in self.web_hooks[i * 10:i * 10 + 10]:
                 if guild.url is not None:
                     tasks.append(self.send_func(hook=guild))
             await asyncio.gather(*tasks)
-            await asyncio.sleep(0.55)
+            await asyncio.sleep(0.75)
         else:
-            await asyncio.sleep(0.55)
+            await asyncio.sleep(0.75)
             tasks = []
             for guild in self.web_hooks[::-1][:remaining]:
                 if guild.url is not None:
@@ -177,7 +177,7 @@ class LiveFeedBroadcasts(commands.Cog):
                                 self.processed_news.append(news_parser['id'])
                                 self.to_send.append({'type': 'payload', 'rss': news_parser})
                                 Logger.log_rss("""[ NEWS ]  Added "{}" to be sent!""".format(news_parser['title']))
-            self.loop.create_task(self.process_payloads())
+            await self.process_payloads()
             await asyncio.sleep(600)
 
     async def process_payloads(self):
@@ -454,7 +454,7 @@ class LiveFeedCommands(commands.Cog):
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
-    #bot.add_cog(LiveFeedBroadcasts(bot))
+    bot.add_cog(LiveFeedBroadcasts(bot))
 
 
 # Testing area only:
