@@ -78,6 +78,18 @@ class CrunchyBot(commands.AutoShardedBot):
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
+        cogs_list = os.listdir('realms/cogs')
+        if '__pycache__' in cogs_list:
+            cogs_list.remove('__pycache__')
+
+        for cog in cogs_list:
+            try:
+                self.load_extension(f"realms.cogs.{cog.replace('.py', '')}")
+                Logger.log_info(f"Loaded Extension {cog.replace('.py', '')}")
+            except Exception as e:
+                print(f"Failed to load cog {cog}, Error: {e}")
+                raise e
+
     async def on_ready_once(self):
         pass
 
