@@ -48,9 +48,12 @@ class Paginator:
                     running = await self.end()
 
             except asyncio.TimeoutError:
-                embed = discord.Embed(title="Pagination Ended",
-                                      color=self.colour)
-                await self.old_message.edit(embed=embed)
+                try:
+                    embed = discord.Embed(title="Pagination Ended",
+                                          color=self.colour)
+                    await self.old_message.edit(embed=embed)
+                except discord.NotFound:
+                    pass
                 running = False
 
     async def first(self):
