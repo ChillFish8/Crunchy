@@ -53,15 +53,6 @@ class WebhookLogging(commands.Cog):
         await self.guild_webhook.send(content=desc)
 
     @commands.Cog.listener()
-    async def on_command(self, ctx: commands.Context):
-        if self.command_webhook is None:
-            return
-        desc = f"**User:** `{ctx.author.id}` **|** " \
-               f"**Guild:** `{ctx.guild.id if ctx.guild is not None else 'direct message'}` **|** " \
-               f"**Command:** `{ctx.command}`"
-        await self.command_webhook.send(content=desc)
-
-    @commands.Cog.listener()
     async def on_dbl_vote(self, data):
         if self.vote_webhook is None:
             return

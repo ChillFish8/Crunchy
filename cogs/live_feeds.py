@@ -144,7 +144,8 @@ class LiveFeedBroadcasts(commands.Cog):
         self.loop = asyncio.get_event_loop()
         self.to_send = []
         self.sent = []
-        self.processed = []
+        self.processed_releases = []
+        self.processed_news = []
         self.callbacks = {'release': self.release_callback, 'payload': self.news_callback}
         self.loop.create_task(self.background_checker())
         self.first_start = True
@@ -161,10 +162,8 @@ class LiveFeedBroadcasts(commands.Cog):
                         content = await resp_release.text()
                         release_parser = feedparser.parse(content)['entries'][0]
                         if not any([item in release_parser['title'].lower() for item in EXCLUDE_IN_TITLE]):
-                            if release_parser['id'] not in self.processed or \
-                                    release_parser['title'] not in self.processed:
-                                self.processed.append(release_parser['id'])
-                                self.processed.append(release_parser['title'])
+                            if release_parser['id'] not in self.processed_releases:
+                                self.processed_releases.append(release_parser['id'])
                                 self.to_send.append({'type': 'release', 'rss': release_parser})
                                 Logger.log_rss(
                                     """[ RELEASE ]  Added "{}" to be sent!""".format(release_parser['title']))
@@ -174,10 +173,8 @@ class LiveFeedBroadcasts(commands.Cog):
                         content = await resp_news.text()
                         news_parser = feedparser.parse(content)['entries'][0]
                         if not any([item in news_parser['title'].lower() for item in EXCLUDE_IN_TITLE]):
-                            if news_parser['id'] not in self.processed or \
-                                    news_parser['title'] not in self.processed:
-                                self.processed.append(news_parser['id'])
-                                self.processed.append(news_parser['title'])
+                            if news_parser['id'] not in self.processed_news:
+                                self.processed_news.append(news_parser['id'])
                                 self.to_send.append({'type': 'payload', 'rss': news_parser})
                                 Logger.log_rss("""[ NEWS ]  Added "{}" to be sent!""".format(news_parser['title']))
             self.loop.create_task(self.process_payloads())
@@ -185,7 +182,7 @@ class LiveFeedBroadcasts(commands.Cog):
 
     async def process_payloads(self):
         for item in self.to_send:
-            await self.callbacks[item['type']](item['rss'])
+            asyncio.get_event_loop().create_task(self.callbacks[item['type']](item['rss']))
         self.to_send = []
 
     async def release_callback(self, rss: dict):
