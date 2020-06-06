@@ -10,7 +10,7 @@ from realms.character import Character
 from realms.user_characters import UserCharacters, MongoDatabase
 from utils.paginator import Paginator
 
-NON_VOTE_ROLLS = 25
+NON_VOTE_ROLLS = 15
 VOTE_ROLLS_MOD = +25
 RANDOM_EMOJIS = ['💞', '💗', '💖', '💓']
 DEFAULT = {
