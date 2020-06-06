@@ -91,13 +91,13 @@ class CharacterGets(commands.Cog):
             self.bot.cache.store('characters', ctx.author.id, user_characters)
 
         if not Checks.has_rolls(user_characters):
-            if ctx.has_voted(user_id=ctx.author.id):
-                return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
-                                      f" come back in {user_characters.expires_in} hours when ive found some more characters!")
-            else:
+            if not ctx.has_voted(user_id=ctx.author.id):
                 return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
                                       " upvote Crunchy to get more rolls and other awesome perks!\n"
                                       "https://top.gg/bot/656598065532239892/vote")
+            else:
+                return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                                      f" come back in {user_characters.expires_in} hours when ive found some more characters!")
 
         c = random.choice(self.group)
         character_obj = Character(name=c['name'],
