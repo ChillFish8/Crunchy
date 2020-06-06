@@ -127,7 +127,7 @@ class CrunchyBot(commands.AutoShardedBot):
 
     async def get_custom_prefix(self, bot, message: discord.Message):
         """ Fetches guild data either from cache or fetches it """
-        if message.guild is not None:
+        if message.guild is not None and self.user.id != 641590528026083338:
             guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:
                 guild_data = guild_config.GuildConfig(message.guild.id, database=self.database)
@@ -137,7 +137,7 @@ class CrunchyBot(commands.AutoShardedBot):
             return DEFAULT_PREFIX
 
     async def on_message(self, message):
-        """ Used for some events later on """
+        """ Used for case insensitive prefix """
         if not self.is_ready():
             return
 
