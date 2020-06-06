@@ -138,7 +138,7 @@ class UserCharacters:
             delta = self._expires_in - datetime.now()
             hours, seconds = divmod(delta.total_seconds(), 3600)
             minutes, seconds = divmod(seconds, 60)
-            return f"{round(hours, 0)}h, {round(minutes, 0)}m, {round(seconds, 0)}s"
+            return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
         return self._expires_in
 
     def _generate_block(self):

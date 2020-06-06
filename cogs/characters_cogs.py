@@ -84,6 +84,7 @@ class Customisations(commands.Cog):
                                              expires_in=self.cool_down_checks.get('expires_in', None),
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
+            print(rolls)
 
         if not Checks.has_rolls(user_characters):
             if ctx.has_voted(user_id=ctx.author.id):
