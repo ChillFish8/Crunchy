@@ -66,11 +66,10 @@ class Customisations(commands.Cog):
         self.cool_down_checks = dict(
             filter(filter_, self.cool_down_checks.items()))
 
-    @classmethod
     @tasks.loop(minutes=30)
-    async def shuffle(cls):
-        random.shuffle(cls.RANDOM_CHARACTERS)
-        cls.group = cls.RANDOM_CHARACTERS[:5000]
+    async def shuffle(self):
+        random.shuffle(self.RANDOM_CHARACTERS)
+        self.group = self.RANDOM_CHARACTERS[:5000]
 
     @commands.command(aliases=['c'])
     async def character(self, ctx):
