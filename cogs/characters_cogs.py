@@ -35,17 +35,17 @@ def filter_(item_content):
         return {item_content[0]: item_content[1]}
 
 
-class Customisations(commands.Cog):
+class CharacterGets(commands.Cog):
     with open(r"resources/archieve/main_characters.json", "r") as file:
         RANDOM_CHARACTERS = json.load(file)
     random.shuffle(RANDOM_CHARACTERS)
     group = RANDOM_CHARACTERS[:5000]
+    database = MongoDatabase()
 
     def __init__(self, bot):
         self.bot = bot
         self.cool_down_checks = {}
         self.pending = {}
-        self.database = MongoDatabase()
         self.remove_null.start()
         self.shuffle.start()
 
@@ -75,16 +75,20 @@ class Customisations(commands.Cog):
     async def character(self, ctx):
         user_characters: UserCharacters = self.bot.cache.get('characters', ctx.author.id)
         if user_characters is None:
-            rolls = self.cool_down_checks.get('rolls_left', NON_VOTE_ROLLS)
-            if ctx.has_voted(user_id=ctx.author.id):
-                rolls += 25
+            user: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
+            if user is not None:
+                rolls = user.rolls_left
+            else:
+                if ctx.has_voted(user_id=ctx.author.id):
+                    rolls = NON_VOTE_ROLLS + VOTE_ROLLS_MOD
+                else:
+                    rolls = NON_VOTE_ROLLS
             user_characters = UserCharacters(user_id=ctx.author.id,
                                              database=self.database,
                                              rolls=rolls,
                                              expires_in=self.cool_down_checks.get('expires_in', None),
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
-            print(rolls)
 
         if not Checks.has_rolls(user_characters):
             if ctx.has_voted(user_id=ctx.author.id):
@@ -206,6 +210,10 @@ class Customisations(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
+    @classmethod
+    def shutdown(cls):
+        cls.database.close_conn()
+
 class Checks:
     @classmethod
     def has_rolls(cls, user: UserCharacters):
@@ -213,9 +221,8 @@ class Checks:
 
 
 def setup(bot):
-    bot.add_cog(Customisations(bot))
+    bot.add_cog(CharacterGets(bot))
 
+def teardown(bot):
+    CharacterGets.shutdown()
 
-if __name__ == "__main__":
-    test = Customisations("wow")
-    print(random.choice(test.group))
