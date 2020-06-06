@@ -21,10 +21,17 @@ class Paginator:
         self.colour = colour
 
     async def start(self):
-        self.old_message = await self.channel.send(embed=self.embed_list[self.counter])
-        for emoji in self.PAGINATION_EMOJI:
-            await self.old_message.add_reaction(emoji)
-        await self.pager()
+        try:
+            self.old_message = await self.channel.send(embed=self.embed_list[self.counter])
+            for emoji in self.PAGINATION_EMOJI:
+                await self.old_message.add_reaction(emoji)
+            await self.pager()
+        except discord.Forbidden:
+            try:
+                await self.message.author.send(
+                    "Oops! I seem to be missing permission to send messages in that channel!")
+            except discord.Forbidden:
+                pass
 
     async def pager(self):
         def check(r, u):
