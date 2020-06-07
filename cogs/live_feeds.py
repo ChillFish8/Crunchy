@@ -44,7 +44,7 @@ class LiveFeedCommands(commands.Cog):
         """ Getting current web hooks """
         for hook in hooks:
             if name.lower().replace(" ", "") in hook.name.lower().replace(" ", ""):
-                return hook.name
+                return hook
         else:
             return False
 
@@ -62,24 +62,43 @@ class LiveFeedCommands(commands.Cog):
         existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
         check = self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks)
         if check:
-            return await ctx.send(
+            message = await ctx.send(
                 f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
-                f"Please delete the original release webhook first.")
+                f"Would you like me to reload this webhook?.")
+            await message.add_reaction("<:ok:717784139943641088>")
+            try:
+                def check(r, u):
+                    return str(r.emoji) == "<:ok:717784139943641088>" \
+                           and u.id == ctx.author.id \
+                           and r.message.id == message.id
 
-        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
-        guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
-        try:
-            webhook = await self.make_webhook(channel=channel, feed_type="releases")
-            guild_data.add_webhook(webhook=webhook, feed_type="releases")
-            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
-            return await to_edit.edit(content=f'All set! I will now send releases to <#{webhook.channel_id}>')
-        except discord.Forbidden:
-            return await to_edit.edit(content="I am missing permissions to create a webhook. "
-                                              "I need the permission `MANAGE_WEBHOOKS`.")
-        except AttributeError:
-            return await to_edit.edit(
-                content="Sorry but something went wrong when trying to make this webhook."
-                        " Please try a different channel.")
+                choice = await self.bot.wait_for("reaction_add", timeout=30, check=check)
+                if choice:
+                    to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+                    guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+                    webhook = check
+                else:
+                    return
+            except asyncio.TimeoutError:
+                return await ctx.send(
+                    f"<:HimeSad:676087829557936149> The selection period has timed out, "
+                    f"Please delete the webhook manually if you haven't already.")
+        else:
+            to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+            guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+            try:
+                webhook = await self.make_webhook(channel=channel, feed_type="releases")
+            except discord.Forbidden:
+                return await to_edit.edit(content="I am missing permissions to create a webhook. "
+                                                  "I need the permission `MANAGE_WEBHOOKS`.")
+            except AttributeError:
+                return await to_edit.edit(
+                    content="Sorry but something went wrong when trying to make this webhook."
+                            " Please try a different channel.")
+
+        guild_data.add_webhook(webhook=webhook, feed_type="releases")
+        await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
+        return await to_edit.edit(content=f'All set! I will now send releases to <#{webhook.channel_id}>')
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
@@ -88,23 +107,43 @@ class LiveFeedCommands(commands.Cog):
         existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
         check = self.check_exists(name="Crunchyroll News", hooks=existing_hooks)
         if check:
-            return await ctx.send(
+            message = await ctx.send(
                 f"<:HimeSad:676087829557936149> Oops! Already have a news webhook (`{check}`) active.\n"
-                f"Please delete the original release webhook first.")
-        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
-        guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
-        try:
-            webhook = await self.make_webhook(channel=channel, feed_type="news")
-            guild_data.add_webhook(webhook=webhook, feed_type="news")
-            await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
-            return await to_edit.edit(content=f'All set! I will now send payload to <#{webhook.channel_id}>')
-        except discord.Forbidden:
-            return await to_edit.edit(content="I am missing permissions to create a webhook. "
-                                              "I need the permission `MANAGE_WEBHOOKS`.")
-        except AttributeError:
-            return await to_edit.edit(
-                content="Sorry but something went wrong when trying to make this webhook."
-                        " Please try a different channel.")
+                f"Would you like me to reload this webhook?.")
+            await message.add_reaction("<:ok:717784139943641088>")
+            try:
+                def check(r, u):
+                    return str(r.emoji) == "<:ok:717784139943641088>" \
+                           and u.id == ctx.author.id \
+                           and r.message.id == message.id
+
+                choice = await self.bot.wait_for("reaction_add", timeout=30, check=check)
+                if choice:
+                    to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+                    guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+                    webhook = check
+                else:
+                    return
+            except asyncio.TimeoutError:
+                return await ctx.send(
+                    f"<:HimeSad:676087829557936149> The selection period has timed out, "
+                    f"Please delete the webhook manually if you haven't already.")
+        else:
+            to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+            guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
+            try:
+                webhook = await self.make_webhook(channel=channel, feed_type="news")
+            except discord.Forbidden:
+                return await to_edit.edit(content="I am missing permissions to create a webhook. "
+                                                  "I need the permission `MANAGE_WEBHOOKS`.")
+            except AttributeError:
+                return await to_edit.edit(
+                    content="Sorry but something went wrong when trying to make this webhook."
+                            " Please try a different channel.")
+
+        guild_data.add_webhook(webhook=webhook, feed_type="news")
+        await webhook.send(content=random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
+        return await to_edit.edit(content=f'All set! I will now send news to <#{webhook.channel_id}>')
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):

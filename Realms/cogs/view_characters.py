@@ -1,6 +1,10 @@
+import json
+import random
 import discord
 
+from datetime import datetime
 from discord.ext import commands
+from discord.ext import tasks
 
 from realms.character import Character
 from realms.user_characters import UserCharacters
@@ -26,6 +30,13 @@ class ViewCharacters(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(name="view", aliases=['inspect'])
+    async def character_details(self, ctx, *, character_name: str = None):
+        if character_name is None:
+            return await ctx.send("<:HimeSad:676087829557936149> You haven't specified a character to inspect")
+
+        user_area = UserCharacters(user_id=ctx.author.id, )
 
 
 def setup(bot):

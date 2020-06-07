@@ -78,7 +78,7 @@ class CrunchyBot(commands.AutoShardedBot):
                 print(f"Failed to load cog {cog}, Error: {e}")
                 raise e
 
-        cogs_list = os.listdir('./realms/cogs')
+        cogs_list = os.listdir('realms/cogs')
         if '__pycache__' in cogs_list:
             cogs_list.remove('__pycache__')
 

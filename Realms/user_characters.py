@@ -12,7 +12,7 @@ class UserCharacters:
         :returns UserCharacters object:
     """
 
-    def __init__(self, user_id, rolls, expires_in, callback, database=None):
+    def __init__(self, user_id, database, rolls=None, expires_in=None, callback=None):
         """
         :param user_id:
         :param rolls:
@@ -22,7 +22,7 @@ class UserCharacters:
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id
-        self._db = db if database is None else database
+        self._db =  database
         data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
@@ -50,6 +50,13 @@ class UserCharacters:
         else:
             self._db.reset_characters(user_id=self.user_id)
         return self.characters
+
+    def get_character(self, search: str=None, id_: int=None) -> [dict, None]:
+        for character in self.characters:
+            if search is not None:
+                if character['name'] == search:
+                    return character
+
 
     def update_rolls(self, modifier: int):
         self._rolls += modifier
@@ -91,3 +98,4 @@ class UserCharacters:
     @property
     def amount_of_items(self):
         return len(self.characters)
+
