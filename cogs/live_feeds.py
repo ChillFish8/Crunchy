@@ -40,7 +40,7 @@ class LiveFeedCommands(commands.Cog):
         self.bot = bot
 
     @classmethod
-    def check_exists(cls, name, hooks):
+    def check_exists(cls, name, hooks) -> [discord.Webhook, bool]:
         """ Getting current web hooks """
         for hook in hooks:
             if name.lower().replace(" ", "") in hook.name.lower().replace(" ", ""):
@@ -60,10 +60,10 @@ class LiveFeedCommands(commands.Cog):
     @commands.command(name="addreleasechannel", aliases=['arc', 'addrelease'])
     async def add_release_channel(self, ctx, channel: discord.TextChannel):
         existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
-        check = self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks)
-        if check:
+        hook = self.check_exists(name="Crunchyroll Releases", hooks=existing_hooks)
+        if hook:
             message = await ctx.send(
-                f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{check}`) active.\n"
+                f"<:HimeSad:676087829557936149> Oops! Already have a release webhook (`{hook.name}`) active.\n"
                 f"Would you like me to reload this webhook?.")
             await message.add_reaction("<:ok:717784139943641088>")
             try:
@@ -74,9 +74,10 @@ class LiveFeedCommands(commands.Cog):
 
                 choice = await self.bot.wait_for("reaction_add", timeout=30, check=check)
                 if choice:
+                    await message.delete()
                     to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
                     guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
-                    webhook = check
+                    webhook = hook
                 else:
                     return
             except asyncio.TimeoutError:
@@ -105,10 +106,10 @@ class LiveFeedCommands(commands.Cog):
     @commands.command(name="addnewschannel", aliases=['acc', 'addnews'])
     async def add_news_channel(self, ctx, channel: discord.TextChannel):
         existing_hooks = await ctx.guild.webhooks()  # Lest just make sure they cant have multiple hooks at once
-        check = self.check_exists(name="Crunchyroll News", hooks=existing_hooks)
-        if check:
+        hook = self.check_exists(name="Crunchyroll News", hooks=existing_hooks)
+        if hook:
             message = await ctx.send(
-                f"<:HimeSad:676087829557936149> Oops! Already have a news webhook (`{check}`) active.\n"
+                f"<:HimeSad:676087829557936149> Oops! Already have a news webhook (`{hook.name}`) active.\n"
                 f"Would you like me to reload this webhook?.")
             await message.add_reaction("<:ok:717784139943641088>")
             try:
@@ -119,9 +120,10 @@ class LiveFeedCommands(commands.Cog):
 
                 choice = await self.bot.wait_for("reaction_add", timeout=30, check=check)
                 if choice:
+                    await message.delete()
                     to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
                     guild_data: GuildWebhooks = GuildWebhooks(guild_id=ctx.guild.id, database=self.bot.database)
-                    webhook = check
+                    webhook = hook
                 else:
                     return
             except asyncio.TimeoutError:
