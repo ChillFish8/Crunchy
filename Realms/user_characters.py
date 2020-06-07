@@ -22,7 +22,7 @@ class UserCharacters:
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id
-        self._db =  database
+        self._db = database
         data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
@@ -62,6 +62,14 @@ class UserCharacters:
                 if search.lower() in character['name'].lower():
                     return character
         return None
+
+    def update_character(self, character: Character) -> Character:
+        for i, char in enumerate(self.characters):
+            if character.id == char['id']:
+                self.characters[i] = character.to_dict()
+        print(self.characters)
+        self._db.update_characters(self.user_id, self.characters)
+        return character
 
     def update_rolls(self, modifier: int):
         self._rolls += modifier

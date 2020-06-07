@@ -1,5 +1,6 @@
 import json
 import random
+import time
 import discord
 
 from datetime import datetime
@@ -44,6 +45,7 @@ class ViewCharacters(commands.Cog):
         character = Character().from_dict(character_dict)
         details = Display(self.bot, character, ctx)
         await ctx.send(embed=details.generate_pages())
+        user_area.update_character(character)
 
     async def cog_command_error(self, ctx, error):
         raise error
@@ -63,8 +65,10 @@ class Display:
         embed.set_thumbnail(url=self.character.icon)
         embed.set_author(name=f"{self.character.name} - General Info", icon_url=self.ctx.author.avatar_url)
         embed.set_footer(text=hinter.get_hint())
-
-        embed.description = self.character.get_emotion()
+        delta = time.gmtime(self.character.last_active)
+        embed.description = f"{self.character.get_emotion()}\n**Last active:** " \
+                            f"`{delta.tm_mday}/{delta.tm_mon}/{delta.tm_year} " \
+                            f"{delta.tm_hour}:{delta.tm_min}:{delta.tm_sec}` GMT\n"
         embed.add_field(
             name="\u200b",
             value=f"**__Base Stats__**\n"

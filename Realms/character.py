@@ -69,18 +69,19 @@ class Responses:
 class Feelings:
     def get_emotion(self) -> str:
         if self.food <= 2:
-            return f'Thinking - "{Responses.get_food_resp()}"'
+            return f'**Thinking** - "{Responses.get_food_resp()}"'
         elif self.hearts > 4:
-            return f'Thinking - "{Responses.get_love_resp()}"'
+            return f'**Thinking** - "{Responses.get_love_resp()}"'
         else:
-            return f'Feeling - "{self.mood}"'
+            return f'**Feeling** - "{self.mood}"'
 
 
 class CharactersChoice:
-    def __init__(self, food, hearts, treat):
-        self._treat = treat
-        self._hearts = hearts
-        self._food = food
+    def __init__(self):
+        self._treat = self.treat
+        self._hearts = self.hearts
+        self._food = self.food
+        self._mood = self.mood
 
     def choice(self, activity: str):
         if activity == "snack":
@@ -91,11 +92,13 @@ class CharactersChoice:
         elif activity == "fun":
             if self._food <= BASE_FOOD - 3:
                 return False, "FOOD-NEEDED"
+            elif self._mood.lower() in ['tired', 'grumpy']:
+                return False, "NOT-IN-MOOD"
             else:
                 return True, None
 
 
-class Character(Feelings):
+class Character(Feelings, CharactersChoice):
     def __init__(self, name=None, icon=None, base_power=None, defense=None, attack=None):
         self.name = name
         self.icon = icon
@@ -108,17 +111,16 @@ class Character(Feelings):
         self._base_defense = defense
         self._base_attack = attack
 
-        self._hearts = 5
-        self._food = 2
-        self._treat = 5
+        self._hearts = 1
+        self._food = 3
+        self._treat = 0
         super().__init__()
 
     def _unload_self(self) -> dict:
         items = self.__dict__
         export = {}
         for key, value in items.items():
-            if not isinstance(value, object):
-                export[key] = value
+            export[key] = value
         return export
 
     def _load_unknown(self):
