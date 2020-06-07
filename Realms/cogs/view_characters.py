@@ -9,6 +9,7 @@ from discord.ext import tasks
 from realms.character import Character
 from realms.user_characters import UserCharacters
 from realms.static import Database
+from realms.hints import hinter
 
 NON_VOTE_ROLLS = 15
 VOTE_ROLLS_MOD = +25
@@ -61,8 +62,9 @@ class Display:
         embed = discord.Embed(color=self.bot.colour)
         embed.set_thumbnail(url=self.character.icon)
         embed.set_author(name=f"{self.character.name} - General Info", icon_url=self.ctx.author.avatar_url)
-        embed.set_footer(text="You can")
+        embed.set_footer(text=hinter.get_hint())
 
+        embed.description = self.character.get_emotion()
         embed.add_field(
             name="\u200b",
             value=f"**__Base Stats__**\n"
@@ -80,9 +82,6 @@ class Display:
             value=f"**__Modifiers__**\n"
                   f"{self.character.render_modifiers()}",
             inline=False)
-
-
-
         return embed
 
 def setup(bot):
