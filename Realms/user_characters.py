@@ -53,10 +53,15 @@ class UserCharacters:
 
     def get_character(self, search: str=None, id_: int=None) -> [dict, None]:
         for character in self.characters:
-            if search is not None:
-                if character['name'] == search:
+            if character['name'].lower() == search.lower():
+                return character
+            elif character['id'] == id_:
+                return character
+        if search is not None:
+            for character in self.characters:
+                if search.lower() in character['name'].lower():
                     return character
-
+        return None
 
     def update_rolls(self, modifier: int):
         self._rolls += modifier

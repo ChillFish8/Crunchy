@@ -11,7 +11,10 @@ class OwnerCommands(commands.Cog):
     @commands.command(name="reload")
     async def reload_ext(self, ctx, command_name: str):
         try:
-            query = "cogs." + command_name
+            if "chara" in command_name:
+                query = "realms.cogs." + command_name
+            else:
+                query = "cogs." + command_name
             self.bot.reload_extension(query)
             await ctx.send("Reloaded module {}".format(query))
         except Exception as e:

@@ -9,12 +9,10 @@ from discord.ext import tasks
 from realms.character import Character
 from realms.user_characters import UserCharacters
 from realms.static import Database
-from utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 15
 VOTE_ROLLS_MOD = +25
 RANDOM_EMOJIS = ['💞', '💗', '💖', '💓']
-
 
 HAPPY_URL = [
     "https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png",
@@ -36,8 +34,56 @@ class ViewCharacters(commands.Cog):
         if character_name is None:
             return await ctx.send("<:HimeSad:676087829557936149> You haven't specified a character to inspect")
 
-        user_area = UserCharacters(user_id=ctx.author.id, )
+        user_area = UserCharacters(user_id=ctx.author.id, database=self.database)
+        character_dict = user_area.get_character(search=character_name)
+        if character_dict is None:
+            return await ctx.send("<:HimeSad:676087829557936149> Sorry! >_< I couldn't find that character "
+                                  "in your area, Time to get rolling and collecting more!")
 
+        character = Character().from_dict(character_dict)
+        details = Display(self.bot, character, ctx)
+        await ctx.send(embed=details.generate_pages())
+
+    async def cog_command_error(self, ctx, error):
+        raise error
+
+
+class Display:
+    def __init__(self, bot, character: Character, ctx):
+        self.ctx = ctx
+        self.bot = bot
+        self.character = character
+
+    def generate_pages(self):
+        page_list = []
+
+        # First Page  (General Details)
+        embed = discord.Embed(color=self.bot.colour)
+        embed.set_thumbnail(url=self.character.icon)
+        embed.set_author(name=f"{self.character.name} - General Info", icon_url=self.ctx.author.avatar_url)
+        embed.set_footer(text="You can")
+
+        embed.add_field(
+            name="\u200b",
+            value=f"**__Base Stats__**\n"
+                  f"💪 **Power:** `{self.character.power}`\n\n"
+                  f"⚔️ **Attack:** `{self.character.attack}`\n\n"
+                  f"🛡️ **Defense:** `{self.character.defense}`\n",
+            inline=True)
+        embed.add_field(
+            name="\u200b",
+            value=f"**__Character Stats__**\n"
+                  f"{self.character.render_character_info()}",
+            inline=True)
+        embed.add_field(
+            name="\u200b",
+            value=f"**__Modifiers__**\n"
+                  f"{self.character.render_modifiers()}",
+            inline=False)
+
+
+
+        return embed
 
 def setup(bot):
     bot.add_cog(ViewCharacters(bot))
