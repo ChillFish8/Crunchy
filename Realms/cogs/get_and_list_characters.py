@@ -9,6 +9,7 @@ from discord.ext import tasks
 from realms.character import Character
 from realms.user_characters import UserCharacters
 from realms.static import Database
+
 from utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 15
