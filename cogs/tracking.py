@@ -336,11 +336,11 @@ class ViewTracked(commands.Cog):
         if user is not None:
             user_ = user
             user_area = UserFavourites(user_id=user.id, database=self.bot.database)
+            if not user_area.is_public:
+                return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         else:
             user_ = ctx.author
             user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
-            if not user_area.is_public:
-                return await ctx.send("Oops! This user has their favourites firewalled (Private).")
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
@@ -367,11 +367,11 @@ class ViewTracked(commands.Cog):
         if user is not None:
             user_ = user
             user_area = UserRecommended(user_id=user.id, database=self.bot.database)
+            if not user_area.is_public:
+                return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         else:
             user_ = ctx.author
             user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
-            if not user_area.is_public:
-                return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
