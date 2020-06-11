@@ -32,7 +32,7 @@ class UserCharacters:
         self.mod_callback = callback
 
     def submit_character(self, character: Character):
-        if len(self.characters) > 0:
+        if self._db.characters.find_one({'_id': self.user_id}) is not None:
             self.characters.append(character.to_dict())
             self._db.update_characters(self.user_id, self.characters)
         else:

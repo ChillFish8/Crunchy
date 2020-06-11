@@ -24,28 +24,20 @@ class Search(commands.Cog):
             return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
                                   "You need to give me something to search for!")
 
-        search_url = BASE_URL + "/anime/search?legacy=True&terms=" + "+".join(args)
-        details_url = BASE_URL + "/anime/details?id={}"
+        details_url = BASE_URL + "/anime/details?terms={}&legacy=True"
         async with aiohttp.ClientSession() as sess:
-            async with sess.get(search_url) as resp:
+            async with sess.get(details_url.format("+".join(args))) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                           "Something seems to have gone wrong when searching for that."
                                           " Please try again later!")
                 else:
-                    results = await resp.json()
-                    if results.get("status", 404) != 200:
-                        return await ctx.send("<:HimeSad:676087829557936149> Oops! "
-                                              "I couldn't find what you were search for.")
+                    details = await resp.json()
+                    if len(details) >= 1:
+                        details = details[0]['data']
                     else:
-                        async with sess.get(details_url.format(results['result_id'])) as resp_2:
-                            if resp_2.status != 200:
-                                return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
-                                                      "Something seems to have gone wrong when searching for that."
-                                                      " Please try again later!")
-                            else:
-                                details = await resp_2.json()
-                                details = details['details']['data']
+                        return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
+                                              "I couldn't find what you are searching for.")
         embed = discord.Embed(
             title=f"<:CrunchyRollLogo:676087821596885013>  {details['title']}  <:CrunchyRollLogo:676087821596885013>",
             url=f"https://www.crunchyroll.com/{details['title'].lower().replace(' ', '-')}",

@@ -26,7 +26,7 @@ class ApiCollectors:
     async def get_from_crunchy(self, tag=None, type_="hentai"):
         url = CRUNCHY_API_BASE + f"/nsfw/{type_}"
         if tag is not None:
-            url += f"/{tag}"
+            url += f"?tag={tag}"
         async with self.session.get(url) as r:
             result = await r.json()
             return result
