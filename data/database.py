@@ -53,25 +53,25 @@ class GuildWebhooks:
         current_data = self.guild_web_hooks.find_one({'_id': guild_id})
         Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         if current_data is not None:
-            QUERY = {'_id': guild_id}
+            QUERY = {'_id': f"{guild_id}"}
             new_data = {'config': config}
             resp = self.guild_web_hooks.update_one(QUERY, {'$set': new_data})
             return resp.raw_result
         else:
-            data = {'_id': guild_id, 'config': config}
+            data = {'_id': f"{guild_id}", 'config': config}
             resp = self.guild_web_hooks.insert_one(data)
             return resp.inserted_id
 
     @Timer.timeit
     def delete_guild_webhooks(self, guild_id: int):
-        current_data = self.guild_web_hooks.find_one_and_delete({'_id': guild_id})
+        current_data = self.guild_web_hooks.find_one_and_delete({'_id': f"{guild_id}"})
         Logger.log_database(
             "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         return "COMPLETE"
 
     @Timer.timeit
     def get_guild_webhooks(self, guild_id: int) -> dict:
-        current_data = self.guild_web_hooks.find_one({'_id': guild_id})
+        current_data = self.guild_web_hooks.find_one({'_id': f"{guild_id}"})
         return current_data['config'] if current_data is not None else {'user_id': guild_id,
                                                                         'news': None,
                                                                         'release': None
