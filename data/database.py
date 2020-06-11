@@ -64,7 +64,7 @@ class GuildWebhooks:
 
     @Timer.timeit
     def delete_guild_webhooks(self, guild_id: int):
-        current_data = self.guild_web_hooks.find_one_and_delete({'_id': f"{guild_id}"})
+        _ = self.guild_web_hooks.find_one_and_delete({'_id': f"{guild_id}"})
         Logger.log_database(
             "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         return "COMPLETE"
