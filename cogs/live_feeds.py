@@ -1,3 +1,5 @@
+from typing import Union, Any
+
 import discord
 import asyncio
 import random
@@ -40,7 +42,7 @@ class LiveFeedCommands(commands.Cog):
         self.bot = bot
 
     @classmethod
-    def check_exists(cls, name, hooks) -> [discord.Webhook, bool]:
+    def check_exists(cls, name, hooks) -> Union[bool, discord.Webhook]:
         """ Getting current web hooks """
         for hook in hooks:
             if name.lower().replace(" ", "") in hook.name.lower().replace(" ", ""):
