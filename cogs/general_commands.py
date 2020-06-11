@@ -30,6 +30,7 @@ class GeneralCommands(commands.Cog):
     @commands.command(aliases=['ss', 'serversettings'])
     async def server_settings(self, ctx):
         """ Set a new prefix """
+
         embed = discord.Embed(
             description=f"__**Server Info**__\n"
                         f"Name: `{ctx.guild}`\n"
