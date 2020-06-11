@@ -112,14 +112,14 @@ class CrunchyBot(commands.AutoShardedBot):
     def has_voted(self, user_id):
         has_voted = self.cache.get("votes", user_id)
         if has_voted is not None:
-            if has_voted is not None:
+            if has_voted.get('expires_in', None) is not None:
                 return 1
             else:
                 return 0
         else:
             has_voted = self.database.get_vote(user_id)
             self.cache.store("votes", user_id, has_voted)
-            if has_voted.get('expires', None) is not None:
+            if has_voted.get('expires_in', None) is not None:
                 return 1
             else:
                 return 0
