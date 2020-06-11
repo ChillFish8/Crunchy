@@ -48,6 +48,9 @@ class TopGG(commands.Cog):
         if check is None:
             self.bot.database.add_vote(data['user'], expires)
             self.bot.cache.store('votes', data['user'], expires)
+        else:
+            self.bot.database.update_vote(data['user'], expires)
+            self.bot.cache.store('votes', data['user'], expires)
 
     @commands.Cog.listener()
     async def on_dbl_test(self, data):

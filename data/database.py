@@ -129,6 +129,10 @@ class Votes:
         self.votes.insert_one({'_id': user_id, 'expires_in': expires_in})
         Logger.log_database("SET-VOTE: User Content with Id: {} returned.".format(user_id))
 
+    def update_vote(self, user_id, expires_in):
+        self.votes.find_one_and_update({'_id': user_id}, {'$set': {'expires_in': expires_in}})
+        Logger.log_database("SET-VOTE: User Content with Id: {} returned.".format(user_id))
+
     def remove_vote(self, user_id):
         self.votes.find_one_and_delete({'_id': user_id})
         Logger.log_database("DELETE-VOTE: User Content with Id: {} returned.".format(user_id))
