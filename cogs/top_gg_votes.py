@@ -23,6 +23,7 @@ class TopGG(commands.Cog):
                                    webhook_auth=config.get("dbl_password"),
                                    webhook_port=config.get("dbl_port"))
         self.update_stats.start()
+        self.clear_votes.start()
 
     @tasks.loop(minutes=10)
     async def clear_votes(self):
