@@ -205,7 +205,7 @@ class ErrorHandler:
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
             err = error
-
+            return
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
 
