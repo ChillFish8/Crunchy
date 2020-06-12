@@ -50,7 +50,7 @@ class GuildWebhooks:
 
     @Timer.timeit
     def set_guild_webhooks(self, guild_id: int, config: dict) -> [dict, int]:
-        current_data = self.guild_web_hooks.find_one({'_id': guild_id})
+        current_data = self.guild_web_hooks.find_one({'_id': f"{guild_id}"})
         Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         if current_data is not None:
             QUERY = {'_id': f"{guild_id}"}
