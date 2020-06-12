@@ -46,7 +46,7 @@ class TopGG(commands.Cog):
         now = time.time()
         expires = now + timedelta(hours=24).total_seconds()
         check = self.bot.database.get_vote(user_id=data['user'])
-        if check is None:
+        if check['expires_in'] is None:
             self.bot.database.add_vote(data['user'], expires)
             self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
         else:
@@ -59,7 +59,7 @@ class TopGG(commands.Cog):
         now = time.time()
         expires = now + timedelta(hours=24).total_seconds()
         check = self.bot.database.get_vote(user_id=data['user'])
-        if check is None:
+        if check['expires_in'] is None:
             self.bot.database.add_vote(data['user'], expires)
             self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
         else:
