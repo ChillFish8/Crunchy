@@ -48,10 +48,10 @@ class TopGG(commands.Cog):
         check = self.bot.database.get_vote(user_id=data['user'])
         if check is None:
             self.bot.database.add_vote(data['user'], expires)
-            self.bot.cache.store('votes', data['user'], expires)
+            self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
         else:
             self.bot.database.update_vote(data['user'], expires)
-            self.bot.cache.store('votes', data['user'], expires)
+            self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
 
     @commands.Cog.listener()
     async def on_dbl_test(self, data):
@@ -61,10 +61,10 @@ class TopGG(commands.Cog):
         check = self.bot.database.get_vote(user_id=data['user'])
         if check is None:
             self.bot.database.add_vote(data['user'], expires)
-            self.bot.cache.store('votes', data['user'], expires)
+            self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
         else:
             self.bot.database.update_vote(data['user'], expires)
-            self.bot.cache.store('votes', data['user'], expires)
+            self.bot.cache.store('votes', data['user'], {'user_id': data['user'], 'expires_in': expires})
 
 
 def setup(bot):
