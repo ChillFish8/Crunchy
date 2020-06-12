@@ -76,7 +76,6 @@ class CrunchyBot(commands.AutoShardedBot):
                 Logger.log_info(f"Loaded Extension {cog.replace('.py', '')}")
             except Exception as e:
                 print(f"Failed to load cog {cog}, Error: {e}")
-                raise e
 
         cogs_list = os.listdir('realms/cogs')
         if '__pycache__' in cogs_list:
@@ -88,7 +87,6 @@ class CrunchyBot(commands.AutoShardedBot):
                 Logger.log_info(f"Loaded Extension {cog.replace('.py', '')}")
             except Exception as e:
                 print(f"Failed to load cog {cog}, Error: {e}")
-                raise e
 
     async def on_ready_once(self):
         pass
