@@ -159,7 +159,8 @@ class LiveFeedCommands(commands.Cog):
             return await ctx.send(
                 "<:HimeSad:676087829557936149> You need to mention a channel"
                 " or give me a channel Id for this command.")
-        return
+        else:
+            raise error
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))

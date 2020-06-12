@@ -205,15 +205,8 @@ class ErrorHandler:
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
             err = error
-            return
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
-
-            short_error_embed = discord.Embed(color=COLOUR)
-            short_error_embed.set_author(
-                name=f"It appears an error has occurred trying to run {ctx.command}.",
-                icon_url="https://cdn.discordapp.com/emojis/676087829557936149.png?v=1")
-            await ctx.send(embed=short_error_embed)
 
             _traceback = traceback.format_tb(err.__traceback__)
             _traceback = ''.join(_traceback)
