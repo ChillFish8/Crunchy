@@ -188,9 +188,16 @@ class ErrorHandler:
             try:
                 return await ctx.author.send(
                     "<:HimeSad:676087829557936149> Sorry! It appears i cant send messages in that channel as i "
-                    "am missing the permission `SEND_MESSAGES`")
+                    "am missing the permission todo so.")
             except discord.Forbidden:
                 pass
+
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return
+
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Sorry! but that's not a user i can find.")
 
         elif isinstance(error, commands.MissingPermissions) and ctx.command not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',

@@ -392,6 +392,8 @@ class ViewTracked(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
+    async def on_cog_error(self, ctx, errpr):
+
 
 class RemoveTracked(commands.Cog):
     def __init__(self, bot):
