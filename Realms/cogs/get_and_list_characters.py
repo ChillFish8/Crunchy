@@ -114,7 +114,7 @@ class CharacterGets(commands.Cog):
                         f"🛡️ **Defense:** `{character_obj.defense}`\n",
             color=self.bot.colour)
         embed.set_image(url=character_obj.icon)
-        embed.set_footer(text=f"You have {user_characters.rolls_left} rolls left!")
+        embed.set_footer(text=f"You have {user_characters.rolls_left - 1} rolls left!")
         message = await ctx.send(embed=embed)
         user_characters.update_rolls(modifier=-1)
         await self.submit_wait_for(message, character_obj, user_characters, ctx.author, ctx.channel)
@@ -139,13 +139,14 @@ class CharacterGets(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         if self.pending.get(payload.user_id, False):
-            for pending in self.pending[payload.user_id]['messages']:
+            for i, pending in enumerate(self.pending[payload.user_id]['messages']):
                 if pending['message_id'] == payload.message_id:
                     if str(payload.emoji) in RANDOM_EMOJIS:
                         pending['user_character'].submit_character(pending['character'])
                         await pending['channel'].send(
                             f"<:HimeHappy:677852789074034691> <@{pending['user'].id}> "
                             f"chose {pending['character'].name}! Good job!")
+                        self.pending[payload.user_id]['messages'].pop(i)
                         break
 
     async def generate_embeds(self, user: discord.User, area):

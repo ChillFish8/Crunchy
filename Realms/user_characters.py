@@ -28,7 +28,7 @@ class UserCharacters:
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
         self._rolls = rolls
-        self._expires_in = expires_in
+        self._expires_in = data.pop('expires_in', expires_in)
         self.mod_callback = callback
 
     def submit_character(self, character: Character):
@@ -67,14 +67,13 @@ class UserCharacters:
         for i, char in enumerate(self.characters):
             if character.id == char['id']:
                 self.characters[i] = character.to_dict()
-        print(self.characters)
         self._db.update_characters(self.user_id, self.characters)
         return character
 
     def update_rolls(self, modifier: int):
         self._rolls += modifier
         if self.rolls_left <= 0:
-            self._expires_in = datetime.now() + timedelta(hours=12)
+            self._expires_in = (datetime.now() + timedelta(hours=12)).timestamp()
         self.mod_callback(self.user_id, self)
 
     @property
@@ -82,12 +81,12 @@ class UserCharacters:
         return self._rolls
 
     def get_time_obj(self):
-        return self._expires_in
+        return datetime.fromtimestamp(self._expires_in)
 
     @property
     def expires_in(self):
         if self._expires_in is not None:
-            delta = self._expires_in - datetime.now()
+            delta = datetime.fromtimestamp(self._expires_in) - datetime.now()
             hours, seconds = divmod(delta.total_seconds(), 3600)
             minutes, seconds = divmod(seconds, 60)
             return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
