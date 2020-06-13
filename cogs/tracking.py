@@ -392,8 +392,6 @@ class ViewTracked(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
-    async def on_cog_error(self, ctx, errpr):
-
 
 class RemoveTracked(commands.Cog):
     def __init__(self, bot):
@@ -479,6 +477,7 @@ class RemoveTracked(commands.Cog):
             return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
             deleted = user_area.remove_content(index - 1)
+            print(deleted)
             return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
 

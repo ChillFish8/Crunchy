@@ -88,10 +88,10 @@ class UserRecommended(BasicTracker):
         return self._contents
 
     def remove_content(self, index: int):
-        self._contents.pop(index)
+        deleted = self._contents.pop(index)
         self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
                                                                                'firewall': self.public})
-        return self._contents
+        return deleted
 
 
 if __name__ == "__main__":
