@@ -86,10 +86,13 @@ class UserCharacters:
     @property
     def expires_in(self):
         if self._expires_in is not None:
-            delta = datetime.fromtimestamp(self._expires_in) - datetime.now()
-            hours, seconds = divmod(delta.total_seconds(), 3600)
-            minutes, seconds = divmod(seconds, 60)
-            return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
+            if str(self._expires_in).isdigit()
+                delta = datetime.fromtimestamp(self._expires_in) - datetime.now()
+                hours, seconds = divmod(delta.total_seconds(), 3600)
+                minutes, seconds = divmod(seconds, 60)
+                return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
+            else:
+                return self._expires_in
         return self._expires_in
 
     def _generate_block(self):
