@@ -50,7 +50,7 @@ class Search(commands.Cog):
 
         embed.description = f"⭐ **Rating** {details['reviews']} / 5 stars\n" \
                             f"\n" \
-                            f"__**Description:**__\n {details['desc_long']}\n"
+                            f"__**Description:**__\n {details.get('desc_long', details.get('desc_short', 'No Description.'))}\n"
         return await ctx.send(embed=embed)
 
 
