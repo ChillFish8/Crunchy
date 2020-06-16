@@ -9,3 +9,5 @@
 /resources/archieve/database_config.json
 /resources/archieve/Characters.db
 /tests/
+/.idea
+/resources/archieve/
