@@ -5,6 +5,7 @@ import asyncio
 import aiohttp
 import uvloop
 import traceback
+import logging
 
 from discord import Webhook, AsyncWebhookAdapter
 from discord.ext import commands
@@ -20,8 +21,7 @@ from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-uvloop.install()
+logging.basicConfig(level=logging.INFO)
 
 with open('config.json', 'r') as file:
     config = json.load(file)
