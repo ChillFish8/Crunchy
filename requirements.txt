@@ -8,3 +8,4 @@ lxml
 dblpy
 Pillow~=7.1.2
 requests
+uvloop

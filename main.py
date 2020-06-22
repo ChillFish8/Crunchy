@@ -3,6 +3,7 @@ import os
 import json
 import asyncio
 import aiohttp
+import uvloop
 import traceback
 
 from discord import Webhook, AsyncWebhookAdapter
@@ -17,6 +18,10 @@ from data.cachemanager import CacheManager, Store
 from logger import Logger
 from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+uvloop.install()
 
 with open('config.json', 'r') as file:
     config = json.load(file)
