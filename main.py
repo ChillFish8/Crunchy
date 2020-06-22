@@ -43,7 +43,7 @@ REQUIRED_CACHE = [
 ]
 
 # Configure logger
-Logger.LOG_CACHE = True
+Logger.LOG_CACHE = False
 Logger.LOG_DATABASE = True
 pool = futures.ThreadPoolExecutor()
 
@@ -251,7 +251,6 @@ if __name__ == "__main__":
         fetch_offline_member=False,
         shard_count=SHARD_COUNT,
         heartbeat_timeout=120,
-        guild_subscriptions=False
     )
     crunchy.startup()
     change_presence.start(crunchy)
