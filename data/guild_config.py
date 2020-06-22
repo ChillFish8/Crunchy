@@ -19,7 +19,7 @@ class GuildConfig:
         :returns GuildConfig object:
     """
 
-    def __init__(self, guild_id, database=None):
+    def __init__(self, guild_id, database):
         """
         :param guild_id:
         :param database: -> Optional
@@ -32,7 +32,7 @@ class GuildConfig:
         failure.
         """
         self.guild_id = guild_id
-        self._db = db if database is None else database
+        self._db = database
         data = self._db.get_guild_config(guild_id=guild_id)
 
         self.prefix = data.pop('prefix', '-')  # Emergency safe guard

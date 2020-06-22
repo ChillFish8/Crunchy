@@ -10,6 +10,7 @@ from discord.ext import commands
 from datetime import timedelta
 from random import choice
 from discord.ext import tasks
+from concurrent import futures
 
 from data.database import MongoDatabase
 from data.cachemanager import CacheManager, Store
@@ -41,7 +42,7 @@ REQUIRED_CACHE = [
 # Configure logger
 Logger.LOG_CACHE = False
 Logger.LOG_DATABASE = False
-
+pool = futures.ThreadPoolExecutor()
 
 class CrunchyBot(commands.AutoShardedBot):
     def __init__(self, **options):
@@ -127,7 +128,7 @@ class CrunchyBot(commands.AutoShardedBot):
         if context.guild is not None:
             guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
-                guild_data = guild_config.GuildConfig(context.guild.id, database=self.database)
+                guild_data = self.loop.run_in_executor(pool, guild_config.GuildConfig, context.guild.id, self.database)
                 self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
         else:
