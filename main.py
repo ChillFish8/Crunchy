@@ -3,7 +3,6 @@ import os
 import json
 import asyncio
 import aiohttp
-import uvloop
 import traceback
 import logging
 
@@ -20,7 +19,6 @@ from logger import Logger
 from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 logging.basicConfig(level=logging.INFO)
 
 with open('config.json', 'r') as file:
