@@ -128,7 +128,8 @@ class CrunchyBot(commands.AutoShardedBot):
         if context.guild is not None:
             guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
-                guild_data = self.loop.run_in_executor(pool, guild_config.GuildConfig, context.guild.id, self.database)
+                guild_data = await self.loop.run_in_executor(pool, guild_config.GuildConfig, context.guild.id,
+                                                             self.database)
                 self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
         else:
@@ -141,7 +142,8 @@ class CrunchyBot(commands.AutoShardedBot):
         if message.guild is not None and self.user.id != 641590528026083338:
             guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:
-                guild_data = guild_config.GuildConfig(message.guild.id, database=self.database)
+                guild_data = await self.loop.run_in_executor(pool, guild_config.GuildConfig, message.guild.id,
+                                                             self.database)
                 self.cache.store("guilds", message.guild.id, guild_data)
             return guild_data.prefix
         else:
