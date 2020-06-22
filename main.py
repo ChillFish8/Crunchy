@@ -99,7 +99,6 @@ class CrunchyBot(commands.AutoShardedBot):
 
     async def on_shard_ready(self, shard_id):
         """ Log any shard connects """
-        print(shard_id)
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
             await self.on_ready_once()
