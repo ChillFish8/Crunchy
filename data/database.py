@@ -18,7 +18,6 @@ class GuildData:
     def set_guild_config(self, guild_id: int, config: dict) -> [dict, int]:
         current_data = self.guild_configs.find_one({'_id': guild_id})
         Logger.log_database("SET-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
-
         if current_data is not None:
             QUERY = {'_id': guild_id}
             new_data = {'config': config}
