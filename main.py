@@ -19,7 +19,7 @@ from logger import Logger
 from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 with open('config.json', 'r') as file:
     config = json.load(file)
@@ -44,7 +44,7 @@ REQUIRED_CACHE = [
 
 # Configure logger
 Logger.LOG_CACHE = False
-Logger.LOG_DATABASE = True
+Logger.LOG_DATABASE = False
 pool = futures.ThreadPoolExecutor()
 
 
