@@ -45,7 +45,7 @@ REQUIRED_CACHE = [
 # Configure logger
 Logger.LOG_CACHE = False
 Logger.LOG_DATABASE = False
-pool = futures.ThreadPoolExecutor()
+pool = futures.ThreadPoolExecutor(max_workers=2)
 
 
 class CrunchyBot(commands.AutoShardedBot):
@@ -95,7 +95,7 @@ class CrunchyBot(commands.AutoShardedBot):
                 print(f"Failed to load cog {cog}, Error: {e}")
 
     async def on_ready_once(self):
-        await asyncio.sleep(30)
+        await asyncio.sleep(600)
         self.allow_usage = True
 
     async def on_shard_ready(self, shard_id):
