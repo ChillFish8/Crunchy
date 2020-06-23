@@ -200,6 +200,17 @@ class ErrorHandler:
             except discord.Forbidden:
                 pass
 
+        elif isinstance(error, discord.Forbidden):
+            try:
+                return await ctx.send(
+                    "<:HimeSad:676087829557936149> Sorry! It appears im missing permissions to do that.")
+            except discord.Forbidden:
+                try:
+                    return await ctx.author.send(
+                        "<:HimeSad:676087829557936149> Sorry! It appears im missing permissions to do that.")
+                except discord.Forbidden:
+                    pass
+
         elif isinstance(error, commands.MissingRequiredArgument):
             return
 
