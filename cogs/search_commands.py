@@ -54,7 +54,7 @@ class Search(commands.Cog):
         return await ctx.send(embed=embed)
 
     @commands.command(name="mangadetails", aliases=['md'])
-    async def anime_details(self, ctx, *args):
+    async def manga_details(self, ctx, *args):
         if len(args) <= 0:
             return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
                                   "You need to give me something to search for!")
