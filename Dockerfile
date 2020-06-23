@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM intelpython/intelpython3_core
 ENV PYTHONUNBUFFERED 1
 
 RUN mkdir /code
