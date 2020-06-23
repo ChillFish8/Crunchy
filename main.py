@@ -95,7 +95,7 @@ class CrunchyBot(commands.AutoShardedBot):
                 print(f"Failed to load cog {cog}, Error: {e}")
 
     async def on_ready_once(self):
-        await asyncio.sleep(600)
+        await asyncio.sleep(30)
         self.allow_usage = True
 
     async def on_shard_ready(self, shard_id):

@@ -5,7 +5,7 @@ services:
     build: .
     container_name: crunchy_bot
     image: crunchy_bot
-    restart: on-failure
+    restart: unless-stopped
     command: python main.py
     volumes:
       - .:/code
