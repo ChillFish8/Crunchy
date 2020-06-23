@@ -45,7 +45,7 @@ REQUIRED_CACHE = [
 # Configure logger
 Logger.LOG_CACHE = False
 Logger.LOG_DATABASE = True
-pool = futures.ThreadPoolExecutor(max_workers=2)
+pool = futures.ThreadPoolExecutor()
 
 
 class CrunchyBot(commands.AutoShardedBot):
