@@ -21,7 +21,7 @@ class TopGG(commands.Cog):
         self.dblpy = dbl.DBLClient(self.bot, self.token,
                                    webhook_path='/dblwebhook',
                                    webhook_auth=config.get("dbl_password"),
-                                   webhook_port=config.get("dbl_port"))
+                                   webhook_port=config.get("dbl_port"), autopost=False)
         self.update_stats.start()
         self.clear_votes.start()
 
