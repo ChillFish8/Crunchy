@@ -44,7 +44,7 @@ REQUIRED_CACHE = [
 
 # Configure logger
 Logger.LOG_CACHE = False
-Logger.LOG_DATABASE = True
+Logger.LOG_DATABASE = False
 pool = futures.ThreadPoolExecutor()
 
 
