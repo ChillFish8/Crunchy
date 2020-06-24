@@ -261,7 +261,8 @@ if __name__ == "__main__":
         case_insensitive=True,
         fetch_offline_member=False,
         shard_count=SHARD_COUNT,
-        heartbeat_timeout=120,
+        heartbeat_timeout=60,
+        guild_subscriptions=False
     )
     crunchy.startup()
     change_presence.start(crunchy)
