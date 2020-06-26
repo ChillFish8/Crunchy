@@ -111,9 +111,12 @@ class Character(Feelings, CharactersChoice):
         self._base_defense = defense
         self._base_attack = attack
 
-        self._hearts = 1
+        self._hearts = 1  # 5 hearts you get a lvl up
         self._food = 3
-        self._treat = 0
+        self._treat = 0  # modifies how easily you can do shit
+
+        self._level = 1
+        self._chances = 3  # reset on level up
         super().__init__()
 
     def _unload_self(self) -> dict:
@@ -157,10 +160,10 @@ class Character(Feelings, CharactersChoice):
         hearts = "💔" * BASE_HEARTS
         hearts = f"**[ Hearts ]** `{hearts.replace('💔', '❤️', self.hearts)}`\n"
 
-        food = " " * BASE_HEARTS
+        food = " " * BASE_FOOD
         food = f"**[ Food & Drink ]** `{food.replace(' ', '🍔', self.food)}`\n"
 
-        treats = " " * BASE_HEARTS
+        treats = " " * BASE_TREATS
         treats = f"**[ Treats ]** `{treats.replace(' ', '🍬', self.treat)}`\n"
         return f"{hearts}\n{food}\n{treats}\n"
 
@@ -198,4 +201,13 @@ class Character(Feelings, CharactersChoice):
     def treat(self):
         return self._treat
 
-
+    def modify_hearts(self, mod: int):
+        if mod < 0 and self._hearts == 0:
+            self._chances -= 1
+            if self._chances <= 0:
+                return -1
+            else:
+                return 1
+        self._hearts += mod
+        if self._hearts >= 5:
+            return 2

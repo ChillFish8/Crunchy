@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from realms.character import Character
+from realms.datastores.database import MongoDatabase
 
 
 class UserCharacters:
@@ -22,14 +23,18 @@ class UserCharacters:
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id
-        self._db = database
+        self._db: MongoDatabase = database
         data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
+        self.money = data.pop('money', 0)
         self._rolls = rolls
         self._expires_in = data.pop('expires_in', expires_in)
         self.mod_callback = callback
+
+    def update_on_db(self):
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, money=self.money)
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
@@ -38,7 +43,7 @@ class UserCharacters:
         else:
             self.characters.append(character.to_dict())
             self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank})
+                                    {'characters': self.characters, 'rank': self.rank, 'money': self.money})
 
     def dump_character(self, character: Character):
         id_ = character.id
@@ -81,15 +86,18 @@ class UserCharacters:
         return self._rolls
 
     def get_time_obj(self):
-        return datetime.fromtimestamp(self._expires_in)
+        return datetime.fromtimestamp(self._expires_in) if self._expires_in is not None else self._expires_in
 
     @property
     def expires_in(self):
         if self._expires_in is not None:
-            delta = datetime.fromtimestamp(self._expires_in) - datetime.now()
-            hours, seconds = divmod(delta.total_seconds(), 3600)
-            minutes, seconds = divmod(seconds, 60)
-            return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
+            try:
+                delta = datetime.fromtimestamp(float(self._expires_in)) - datetime.now()
+                hours, seconds = divmod(delta.total_seconds(), 3600)
+                minutes, seconds = divmod(seconds, 60)
+                return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
+            except ValueError:
+                return self._expires_in
         return self._expires_in
 
     def _generate_block(self):

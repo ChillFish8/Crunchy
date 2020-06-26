@@ -54,6 +54,12 @@ class MongoDatabase:
             'rank': {'ranking': 0, 'power': 0, 'total_character': 0}
         }
 
+    def update_any(self, user_id: int, **kwargs):
+        if self.characters.find_one({'_id': user_id}) is not None:
+            return self.characters.find_one_and_update({'_id': user_id}, {'$set': kwargs})
+        else:
+            return self.characters.insert_one({'_id': user_id}, **kwargs)
+
     def update_characters(self, user_id: int, characters: list):
         return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'characters': characters}})
 
