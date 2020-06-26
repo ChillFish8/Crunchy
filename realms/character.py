@@ -157,10 +157,10 @@ class Character(Feelings, CharactersChoice):
         hearts = "💔" * BASE_HEARTS
         hearts = f"**[ Hearts ]** `{hearts.replace('💔', '❤️', self.hearts)}`\n"
 
-        food = " " * BASE_HEARTS
+        food = " " * BASE_FOOD
         food = f"**[ Food & Drink ]** `{food.replace(' ', '🍔', self.food)}`\n"
 
-        treats = " " * BASE_HEARTS
+        treats = " " * BASE_TREATS
         treats = f"**[ Treats ]** `{treats.replace(' ', '🍬', self.treat)}`\n"
         return f"{hearts}\n{food}\n{treats}\n"
 
