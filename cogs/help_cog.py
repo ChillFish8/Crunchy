@@ -86,8 +86,8 @@ class HelpCog(commands.Cog):
 
             f3_2 = f"⚙️  **User config**  ⚙️\n" \
                    f"" + "\n".join(self.CONFIG_COMMANDS)
-            embed1.add_field(name="\u200b", value=f1, inline=False)
 
+            embed1.add_field(name="\u200b", value=f1, inline=False)
             embed1.add_field(name="\u200b", value=f4, inline=False)
             embed1.add_field(name="\u200b", value=f3_2, inline=False)
 
