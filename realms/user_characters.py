@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from realms.character import Character
+from realms.datastores.database import MongoDatabase
 
 
 class UserCharacters:
@@ -22,7 +23,7 @@ class UserCharacters:
         THIS ONLY EXISTS WHEN RUNNING THE FILE AS MAIN!
         """
         self.user_id = user_id
-        self._db = database
+        self._db: MongoDatabase = database
         data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
@@ -33,11 +34,7 @@ class UserCharacters:
         self.mod_callback = callback
 
     def update_on_db(self):
-        if self._db.characters.find_one({'_id': self.user_id}) is not None:
-            self._db.update_characters(self.user_id, self.characters)
-        else:
-            self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank, 'money': self.money})
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, money=self.money)
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
