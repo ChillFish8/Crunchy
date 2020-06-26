@@ -36,9 +36,9 @@ class GeneralCommands(commands.Cog):
                         f"Name: `{ctx.guild}`\n"
                         f"Guild Id: `{ctx.guild.id}`\n\n"
                         f"__**Server Settings**__\n"
-                        f"Prefix: `{ctx.prefix}`\n"
-                        f"Premium: `{ctx.guild_config.premium}`\n"
-                        f"NSFW: `{ctx.guild_config.nsfw_enabled}`\n",
+                        f"Prefix: {ctx.prefix}\n"
+                        f"Premium: {ctx.guild_config.premium}\n"
+                        f"NSFW: {ctx.guild_config.nsfw_enabled}\n",
             color=self.bot.colour
         )
         embed.set_author(name=f"{ctx.guild.name}'s Server Settings:", icon_url=ctx.guild.icon_url)
