@@ -12,3 +12,4 @@
 /.idea
 /resources/archieve/
 /realms/__pycache__
+!**/__pycache__/
