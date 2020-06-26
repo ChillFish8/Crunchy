@@ -27,9 +27,17 @@ class UserCharacters:
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
+        self.money = data.pop('money', 0)
         self._rolls = rolls
         self._expires_in = data.pop('expires_in', expires_in)
         self.mod_callback = callback
+
+    def update_on_db(self):
+        if self._db.characters.find_one({'_id': self.user_id}) is not None:
+            self._db.update_characters(self.user_id, self.characters)
+        else:
+            self._db.add_characters(self.user_id,
+                                    {'characters': self.characters, 'rank': self.rank, 'money': self.money})
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
@@ -38,7 +46,7 @@ class UserCharacters:
         else:
             self.characters.append(character.to_dict())
             self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank})
+                                    {'characters': self.characters, 'rank': self.rank, 'money': self.money})
 
     def dump_character(self, character: Character):
         id_ = character.id
