@@ -63,7 +63,8 @@ class Display:
         # First Page  (General Details)
         embed = discord.Embed(color=self.bot.colour)
         embed.set_thumbnail(url=self.character.icon)
-        embed.set_author(name=f"{self.character.name} - General Info", icon_url=self.ctx.author.avatar_url)
+        embed.set_author(name=f"{self.character.name} - General Info - Level {self.character.level}",
+                         icon_url=self.ctx.author.avatar_url)
         embed.set_footer(text=f"Hint: {hinter.get_hint()}")
         delta = time.gmtime(self.character.last_active)
         embed.description = f"{self.character.get_emotion()}\n**Last active:** " \

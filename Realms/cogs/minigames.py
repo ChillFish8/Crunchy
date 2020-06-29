@@ -28,9 +28,9 @@ class LevelUpGames(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="minigame", aliases=["minigames", "mini", "games"])
-    async def mini_game(self, ctx):
-        pass
+    # @commands.command(name="minigame", aliases=["minigames", "mini", "games"])
+    # async def mini_game(self, ctx):
+    #    pass
 
 
 def setup(bot):

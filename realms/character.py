@@ -201,6 +201,10 @@ class Character(Feelings, CharactersChoice):
     def treat(self):
         return self._treat
 
+    @property
+    def level(self):
+        return self._level
+
     def modify_hearts(self, mod: int):
         if mod < 0 and self._hearts == 0:
             self._chances -= 1
