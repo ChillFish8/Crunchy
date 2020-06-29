@@ -62,7 +62,6 @@ class CrunchyBot(commands.AutoShardedBot):
             self.cache.add_cache_store(Store(name=collection[0], max_time=collection[1]))
         asyncio.get_event_loop().create_task(self.cache.background_task())
         self.started = False
-        self.allow_usage = False
 
     def startup(self):
         """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
@@ -95,8 +94,7 @@ class CrunchyBot(commands.AutoShardedBot):
                 print(f"Failed to load cog {cog}, Error: {e}")
 
     async def on_ready_once(self):
-        await asyncio.sleep(1)
-        self.allow_usage = True
+        pass
 
     async def on_shard_ready(self, shard_id):
         """ Log any shard connects """
@@ -156,7 +154,7 @@ class CrunchyBot(commands.AutoShardedBot):
 
     async def on_message(self, message):
         """ Used for case insensitive prefix """
-        if not self.is_ready() or message.author.bot or not self.allow_usage:
+        if not self.is_ready() or message.author.bot:
             return
 
         prefix = await self.get_custom_prefix(message)
