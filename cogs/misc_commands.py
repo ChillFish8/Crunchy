@@ -27,13 +27,14 @@ class Misc(commands.Cog):
                 else:
                     listed_items = await resp.json()
 
-        embed = discord.Embed(title="Today's Anime Picks!", color=self.bot.colour)
+        embed = discord.Embed(color=self.bot.colour)
         for i, anime in enumerate(listed_items):
             url_safe = anime.get('title').replace(" ", "-").replace(".", "").replace(":", "")
             url = "https://www.crunchyroll.com/{}".format(url_safe)
             embed.add_field(name="\u200b", value=f"**{i + 1} ) - [{anime.get('title')}]({url})**", inline=False)
-        embed.set_image(url=random.choice(RANDOM_THUMBS))
+        embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
         embed.set_footer(text="Part of Crunchy, Powered by CF8")
+        embed.set_author(name="Today's Anime Picks!", icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
 
