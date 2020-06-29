@@ -111,7 +111,14 @@ class CrunchyBot(commands.AutoShardedBot):
     async def on_command_error(self, ctx, exception):
         await self.error_handler.process_error(ctx, exception)
 
-    def has_voted(self, user_id):
+    def has_voted(self, user_id, force_db=False):
+        if force_db:
+            has_voted = self.database.get_vote(user_id)
+            self.cache.store("votes", user_id, has_voted)
+            if has_voted.get('expires_in', None) is not None:
+                return 1
+            else:
+                return 0
         has_voted = self.cache.get("votes", user_id)
         if has_voted is not None:
             if has_voted.get('expires_in', None) is not None:
