@@ -248,7 +248,6 @@ class ErrorHandler:
             embed.set_author(name="Command Error.",
                              icon_url="https://cdn.discordapp.com/emojis/588404204369084456.png")
             await self.webhook.send(embed=embed)
-            raise error
 
 
 @tasks.loop(minutes=2)
