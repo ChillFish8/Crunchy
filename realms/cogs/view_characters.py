@@ -29,12 +29,14 @@ class ViewCharacters(commands.Cog):
     database = Database.db
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: commands.Bot = bot
 
-    @commands.command(name="view", aliases=['inspect'])
+    @commands.command(name="view", aliases=['inspect', 'vc', 'viewcharacter'])
     async def character_details(self, ctx, *, character_name: str = None):
         if character_name is None:
-            return await ctx.send("<:HimeSad:676087829557936149> You haven't specified a character to inspect")
+            command = self.bot.get_command("viewcharacters")
+            await ctx.send("<:HimeSad:676087829557936149> You didnt give me anyone to get. Check your list here:")
+            return await command.invoke(ctx)
 
         user_area = UserCharacters(user_id=ctx.author.id, database=self.database)
         character_dict = user_area.get_character(search=character_name)
