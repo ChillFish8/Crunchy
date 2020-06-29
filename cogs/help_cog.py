@@ -22,14 +22,13 @@ class HelpCog(commands.Cog):
         "`support` **-** Join our support server!",
     ]
 
-    Search_COMMANDS = [
+    ANIME_COMMANDS = [
         "`animedetails` **-** Get details from Crunchyroll on an Anime.",
-        # "`manga` **-** Search for a Manga.", todo still needs scraping
+        "`todayspicks` **-** Get today's top 5 picks that you might want try.",
     ]
 
     LIVE_COMMANDS = [
         "`addreleasechannel` **-** Get anime releases to a channel.",
-        # "`todaysreleases` **-** Get today's anime releases.", todo work this out
         "`addnewschannel` **-** Get Crunchyroll payload to a channel.",
     ]
 
@@ -96,8 +95,8 @@ class HelpCog(commands.Cog):
             embed2.set_author(name=f"{ctx.author.name} - Crunchy's Commands: | Page 2 / 2",
                               icon_url=ctx.author.avatar_url)
 
-            f2 = f"<:9887_ServerOwner:653722257356750889>  **Search Functions**  <:9887_ServerOwner:653722257356750889>\n" \
-                 f"" + "\n".join(self.Search_COMMANDS)
+            f2 = f"<:9887_ServerOwner:653722257356750889>  **Anime Commands**  <:9887_ServerOwner:653722257356750889>\n" \
+                 f"" + "\n".join(self.ANIME_COMMANDS)
 
             f3 = f"<:CrunchyRollLogo:676087821596885013>  **Live Feeds**  <:CrunchyRollLogo:676087821596885013>\n" \
                  f"" + "\n".join(self.LIVE_COMMANDS)
