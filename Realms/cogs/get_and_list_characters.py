@@ -13,7 +13,7 @@ from realms.static import Database
 from utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 15
-VOTE_ROLLS_MOD = +25
+VOTE_ROLLS_MOD = +15
 RANDOM_EMOJIS = ['💞', '💗', '💖', '💓']
 DEFAULT = {
     'messages': []
@@ -59,7 +59,7 @@ class CharacterGets(commands.Cog):
         data['user'] = int(data['user'])
         if data['user'] in self.cool_down_checks:
             if self.cool_down_checks['user'].get_time_obj() is None:
-                self.cool_down_checks['user'].update_rolls(+25)
+                self.cool_down_checks['user'].update_rolls(VOTE_ROLLS_MOD)
             else:
                 del self.cool_down_checks['user']
 
@@ -92,8 +92,8 @@ class CharacterGets(commands.Cog):
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
 
-        if not Checks.has_rolls(user_characters):
-            if not ctx.has_voted(user_id=ctx.author.id):
+        if not Checks.has_rolls(user_characters) or ctx.author.id == 290923752475066368:
+            if not ctx.has_voted(user_id=ctx.author.id, force_db=True):
                 return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
                                       " upvote Crunchy to get more rolls and other awesome perks!\n"
                                       "https://top.gg/bot/656598065532239892/vote")
