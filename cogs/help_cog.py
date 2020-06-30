@@ -29,13 +29,13 @@ class HelpCog(commands.Cog):
 
     LIVE_COMMANDS = [
         "`addreleasechannel` **-** Get anime releases to a channel.",
-        "`addnewschannel` **-** Get Crunchyroll payload to a channel.",
+        "`addnewschannel` **-** Get Crunchyroll Anime news to a channel.",
     ]
 
     TRACKING_COMMANDS = [
         "`myrecommended` **-** View what animes people have recommended to you!",
         "`myfavourites` **-** Brings up your Favourite animes.",
-        "`myqueue` **-** Brings up your current watchlist.",
+        "`mywatchlist` **-** Brings up your current watchlist.",
 
         "`addanime` **-** Add an anime to your watchlist or favourites.",
         "`recommend` **-** Recommend an anime to a friend!",
