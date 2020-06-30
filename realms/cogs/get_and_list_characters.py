@@ -92,7 +92,7 @@ class CharacterGets(commands.Cog):
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
 
-        if not Checks.has_rolls(user_characters) or ctx.author.id == 290923752475066368:
+        if not Checks.has_rolls(user_characters):
             if not ctx.has_voted(user_id=ctx.author.id, force_db=True):
                 return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
                                       " upvote Crunchy to get more rolls and other awesome perks!\n"
