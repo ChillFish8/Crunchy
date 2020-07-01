@@ -103,15 +103,9 @@ class CharacterGets(commands.Cog):
 
         c = random.choice(self.group)
         character_obj = Character(name=c['name'],
-                                  icon=c['url'],
-                                  base_power=c['base_power'],
-                                  defense=c['defense'],
-                                  attack=c['attack'])
+                                  icon=c['url'])
         embed = discord.Embed(
             title=character_obj.name,
-            description=f"💪 **Power:** `{character_obj.power}`\n"
-                        f"⚔️ **Attack:** `{character_obj.attack}`\n"
-                        f"🛡️ **Defense:** `{character_obj.defense}`\n",
             color=self.bot.colour)
         embed.set_image(url=character_obj.icon)
         embed.set_footer(text=f"You have {user_characters.rolls_left - 1} rolls left!")
@@ -159,7 +153,7 @@ class CharacterGets(commands.Cog):
             embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
-                embed.add_field(value=f"** {x + i * 10 + 1} ) - {item['name']}**",
+                embed.add_field(value=f"** {x + i * 10 + 1} ) - {item['name']} ( Level {item.get('level', 1)} )**",
                                 name="\u200b",
                                 inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
