@@ -9,35 +9,18 @@
         body {
             background: linear-gradient(150deg, #E1542A 0%, #9900FF 80%);
         }
-
-        .wrapper-page > div:nth-child(4) {
-            display: none;
-        }
-
         #bot-details-page {
             padding-top: 64px !important;
         }
-
         .content {
             padding: 0 !important;
         }
-
-        .columns.is-tablet.is-desktop {
-            display: none;
-        }
-
-        #details {
-            display: none;
-        }
-
         .owners {
             display: none;
         }
-
         .content, .unhide, .container {
             visibility: visible;
         }
-
         .gradient {
             background: linear-gradient(150deg, #E1542A 0%, #9900FF 70%);
         }
@@ -51,33 +34,66 @@
             box-shadow: none !important;
             padding: 0 !important;
         }
+
         .longdescription {
             box-shadow: none !important;
             padding: 0 !important;
         }
+
         .content {
             box-shadow: none !important;
             background: transparent !important;
         }
+
+        /* Timos edit */
+        #bot-details-page #details .container {
+            border: initial;
+        }
+
+        #bot-img, #bot-info, .left-container, .bot-tags-title, #tags {
+            display: none;
+        }
+
+        .wrapper-page > div:nth-child(6) {
+            position: static;
+        }
+
+        .wrapper-page > div:nth-child(6) > div:nth-child(3) {
+
+        }
+
+        #bot-stats {
+            margin: 0 auto;
+            overflow: hidden;
+            max-width: 350px;
+            position: absolute;
+            top: 300px;
+            z-index: 50;
+        }
     </style>
 </head>
-<div class="content leading-normal tracking-normal text-white h-auto w-full overflow-x-hidden"
+<div class="content leading-normal tracking-normal text-white h-auto w-full"
      style="font-family: 'Source Sans Pro', sans-serif;">
-    <div class="overflow-x-hidden">
-        <div class="lg:flex justify-around">
+    <div class="pt-4">
+        <a class="cursor-pointer font-medium rounded-lg bg-red-700 hover:bg-red-900 px-2 py-1">
+            Report
+        </a>
+    </div>
+    <div class="pt-16">
+        <div class="lg:flex justify-around transform scale-100 lg:scale-125">
             <div class="flex justify-center">
-                <img class="h-56 object-contain p-1 bg-white bg-opacity-50 rounded-full"
+                <img class="h-64 object-contain p-1 bg-white bg-opacity-50 rounded-full"
                      src="https://images.discordapp.net/avatars/656598065532239892/39344a26ba0c5b2c806a60b9523017f3.png?size=512"
                      alt="">
             </div>
         </div>
-        <h1 class="block text-center text-white font-bold text-6xl"
+        <h1 class="block text-center text-white font-bold text-6xl transform scale-100 lg:scale-125"
             style="color: white !important; font-weight: bold !important; font-size: 4rem !important;">
             Crunchy
         </h1>
-        <p class="text-center font-semibold pb-2">A Crunchyroll inspired bot, perfect for<br> all your Anime and Manga
-            needs!</p>
-        <div class="block flex justify-center z-30 py-4">
+        <p class="text-center font-semibold pb-2 transform scale-100 lg:scale-125">A Crunchyroll inspired bot, perfect
+            for<br> all your Anime and Manga needs!</p>
+        <div class="block flex justify-center z-30 py-4 transform scale-100 lg:scale-125">
             <div class="static px-4">
                 <div class="relative rounded-lg border-b-2 border-r-2">
                     <a class="inline-block cursor-pointer text-4xl text-white font-semibold border-2 rounded-lg border-white px-4 items-center transform -translate-x-1 -translate-y-1 hover:translate-y-0 hover:translate-x-0 transition ease-linear duration-100"
@@ -99,10 +115,10 @@
                 </div>
             </div>
         </div>
-        <div class="block flex justify-center z-50 py-4 pb-24">
+        <div class="block flex justify-center z-50 py-4 pb-24 transform scale-100 lg:scale-125">
             <div class="static px-4">
                 <div class="relative">
-                    <a class="inline-block cursor-pointer text-xl text-white font-semibold border-2 rounded-lg border-white px-4 items-center"
+                    <a class="inline-block cursor-pointer text-xl text-white font-semibold border-2 rounded-lg border-white px-4 py-2 items-center"
                        href="https://github.com/ChillFish8/Crunchy"
                        style="color: white !important;">
                         GitHub
@@ -111,7 +127,7 @@
             </div>
             <div class="static px-4">
                 <div class="relative">
-                    <a class="inline-block cursor-default text-xl text-white font-semibold border-2 rounded-lg border-white px-4 items-center"
+                    <a class="inline-block cursor-default text-xl text-white font-semibold border-2 rounded-lg border-white px-4 py-2 items-center"
                        style="color: white !important;">
                         Prefix: `-` or Custom️
                     </a>
@@ -119,21 +135,17 @@
             </div>
             <div class="static px-4">
                 <div class="relative">
-                    <a class="inline-block cursor-pointer text-xl text-white font-semibold border-2 rounded-lg border-white px-4 items-center"
-                       href="https://crunchy-bot.live/home"
+                    <a class="inline-block cursor-pointer text-xl text-white font-semibold border-2 rounded-lg border-white px-4 py-2 items-center"
+                       href="https://discord.gg/tJmEzWM"
                        style="color: white !important;">
                         Support Server
                     </a>
                 </div>
             </div>
-            <a class="cursor-pointer font-medium rounded-lg bg-red-700 hover:bg-red-900 px-2 py-1">
-                Report
-            </a>
         </div>
     </div>
-
-    <div class="py-5 z-0 w-full" style="background-color: #2C2F33;">
-        <div class="container max-w-5xl mx-auto m-8">
+    <div class="py-5 z-0 w-full dark rounded-lg">
+        <div class="container pb-24 dark rounded-lg h-auto w-full py-10">
             <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-white"
                 style="color: white !important; font-weight: bold !important; font-size: 3rem !important;">
                 Live feeds, tracking and more.
@@ -142,214 +154,459 @@
                 <div class="h-1 mx-auto gradient w-96 opacity-100 my-0 py-0 rounded-full"></div>
             </div>
 
-            <div class="py-4"></div>
-            <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-white"
-                style="color: white !important; font-weight: bold !important; font-size: 3rem !important;">
-                Showcased Commands
-            </h1>
-            <div class="w-full mb-4">
-                <div class="h-1 mx-auto gradient w-96 opacity-100 my-0 py-0 rounded-full"></div>
-            </div>
-            <p class="text-xl font-semibold text-center italic">
-                Full list available on Crunchy's help command!
-                <a class="hidden text-teal-400 hover:text-teal-500 hover:underline cursor-pointer"
-                   href="https://crunchy-bot.live/commands">
-                    https://crunchy-bot.live/commands
-                </a>
-            </p>
-            <div class="pt-0 lg: pt-8"></div>
-            <div class="block flex justify-center transform scale-100 lg:scale-110">
-                <div class="w-4/5 pt-4">
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 lg:text-2xl md:text-lg sm:text-base font-semibold text-white text-center px-4 py-2">
-                                Command
+            <div class="flex flex-wrap py-5">
+                <div class="w-5/6 sm:w-1/2 p-6 self-center">
+                    <h3 class="text-3xl text-white font-bold leading-none mb-3"
+                        style="color: white !important; font-weight: bold !important; font-size: 2.5rem !important;">
+                        Tracking</h3>
+                    <p class="text-white mb-8 text-lg" style="font-weight: 500 !important;">
+                        Keep track of all your Anime and manga with the use of out Watchlist, Favourites and Recommended
+                        commands! Let users recommend you Anime or Manga, Favourite the ones you want to remember and
+                        save
+                        others for later with Watchlist!
+                    </p>
+                </div>
+
+                <div class="w-3/4 sm:w-1/2 p-4">
+                    <div class="embed w-full h-full rounded-l border-l-4 pb-4 transform scale-100"
+                         style="border-color: #e87e15; background-color: #23272A; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06); color: white !important;">
+                        <div class="block h-full">
+                            <div class="inline-block h-full">
+                                <div class="flex w-full pl-2">
+                                    <div class="flex">
+                                        <img src="https://images-ext-1.discordapp.net/external/ipStPVjgzmqg7s_dUIVecKUnGF312l0kM06spDh3ozc/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/290923752475066368/e5c62d816fae546259ff96f819bf3a33.webp"
+                                             class="inline-block rounded-full h-12 w-12 p-2">
+                                        <div class="inline-block font-medium p-2 hover:underline cursor-pointer self-center"
+                                             style="font-size: 20px;">ハーリさん (CF8)'s favourites
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content px-2 pt-4">
+                                    <a class="block font-semibold px-2">
+                                        <p class="inline-block text-white" style="color: white !important;">1 ) - </p>
+                                        <p class="inline-block pl-1 hover:underline cursor-pointer"
+                                           style="color: dodgerblue !important;">DARLING in the
+                                            FRANXX</p>
+                                    </a>
+                                    <a class="block font-semibold px-2">
+                                        <p class="inline-block text-white" style="color: white !important;">2 ) - </p>
+                                        <p class="inline-block pl-1 hyper hover:underline cursor-pointer"
+                                           style="color: dodgerblue !important;">Tower of God</p>
+                                    </a>
+                                    <a class="block font-semibold px-2">
+                                        <p class="inline-block text-white" style="color: white !important;">3 ) - </p>
+                                        <p class="inline-block pl-1" style="color: white !important;">ERASED</p>
+                                    </a>
+                                    <a class="block font-semibold px-2 pb-1">
+                                        <p class="inline-block text-white" style="color: white !important;">4 ) - </p>
+                                        <p class="inline-block pl-1 hyper hover:underline cursor-pointer"
+                                           style="color: dodgerblue !important;">Your lie in
+                                            April</p>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block lg:text-2xl md:text-base sm:text-sm font-semibold text-white text-center px-4 py-2">
-                                Description
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                Invite
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Invite me!
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                SetPrefix
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Set a custom prefix.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                Support
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Join our support server!
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default py-2">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                AnimeDetails
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Get details from Crunchyroll on an Anime.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                TodaysPicks
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Get today's top 5 picks that you might want try.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default py-2">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                AddReleaseChannel
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Get anime releases to a channel.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                AddNewsChannel
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Get Crunchyroll Anime news to a channel.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default py-2">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                MyFavourites
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Brings up your Favourite animes.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                MyRecommended
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                View what animes people have recommended to you!
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                AddAnime
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Add an anime to your watchlist or favourites.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                Recommend
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Recommend an anime to a friend!
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default py-2">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                Character
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                Get a random character, can you collect them all?
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block cursor-default">
-                        <div class="flex justify-around">
-                            <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
-                                ViewCharacters
-                            </div>
-                            <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
-                                View all of your collected characters.
+                            <div class="hidden lg:inline-block h-full pr-2  float-right">
+                                <img src="https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+            <div class="flex flex-wrap sm:flex-row py-5">
+                <div class="w-3/4  sm:w-1/2 p-4 ">
+                    <div class="embed w-full h-full rounded-l border-l-4 pb-4 transform scale-100"
+                         style="border-color: #e87e15; background-color: #23272A; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06); color: white !important;">
+                        <div class="block h-full">
+                            <div class="inline-block h-full">
+                                <div class="flex w-full pl-2 pt-2">
+                                    <div class="flex">
+                                        <img src="https://images-ext-1.discordapp.net/external/wxHt-1g-EhLUVIDxlM_TSnlfxCmFpLoMvzxPcAKykPU/%3Fv%3D1/https/cdn.discordapp.com/emojis/676087821596885013.png"
+                                             class="inline-block rounded-full h-12 w-12 p-2">
+                                        <div class="inline-block font-medium p-2 hover:underline cursor-pointer self-center"
+                                             style="font-size: 20px;">
+                                            Crunchyroll Anime News! - Click for more!
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content px-2">
+                                    <a class="block font-medium px-4 pl-2">
+                                    </a><a class="inline-block pl-2 hyper hover:underline cursor-pointer"
+                                           href="https://www.crunchyroll.com/anime-news/2020/06/12/hiro-mashimas-edens-zero-to-get-tv-anime-adaptation">Read
+                                    More</a>
+                                    <p class="inline-block text-white">|</p>
+                                    <a class="inline-block pl-1 hyper hover:underline cursor-pointer"
+                                       href="https://top.gg/bot/656598065532239892/vote">Vote for Crunchy</a>
+
+                                    <img class="p-2" src="//crunchy-bot.live/data/news/b1p2JiVlbHJ7c0s.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap w-full sm:w-1/2 p-6 mt-6">
+                    <div class="align-middle self-center">
+                        <h3 class="text-3xl text-white font-bold leading-none mb-3"
+                            style="color: white !important; font-weight: bold !important; font-size: 2.5rem !important;">
+                            Live Feeds</h3>
+                        <p class="text-white mb-8 text-lg" style="font-weight: 500 !important;">
+                            Get live News and Releases from Crunchyroll sent straight to your server with our
+                            unique webhook system, providing a fun and exciting way to get the latest info.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-5/6 sm:w-1/2 p-6 self-center">
+                <h3 class="text-3xl text-white font-bold leading-none mb-3"
+                    style="color: white !important; font-weight: bold !important; font-size: 2.5rem !important;">
+                    Tracking</h3>
+                <p class="text-white mb-8 text-lg" style="font-weight: 500 !important;">
+                    Collect Anime characters from over 60,000 to choose from!<br>
+                    Level them up by playing mini-games
+                    and raise your power by battling others.<br>
+                    Join forces with other users to create Guilds and battle other teams in legendary events.
+                </p>
+            </div>
+
+            <div class="w-3/4 sm:w-1/2 p-4">
+                <div class="embed w-full h-full rounded-l border-l-4 pb-4 transform scale-100"
+                     style="border-color: #e87e15; background-color: #23272A; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06); color: white !important;">
+                    <div class="block h-full">
+                        <div class="inline-block h-full">
+                            <div class="flex w-full pl-2">
+                                <div class="flex">
+                                    <img src="https://images-ext-1.discordapp.net/external/ipStPVjgzmqg7s_dUIVecKUnGF312l0kM06spDh3ozc/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/290923752475066368/e5c62d816fae546259ff96f819bf3a33.webp"
+                                         class="inline-block rounded-full h-12 w-12 p-2">
+                                    <div class="inline-block font-medium p-2 hover:underline cursor-pointer self-center"
+                                         style="font-size: 20px;">ハーリさん (CF8)'s favourites
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content px-2 pt-4">
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">1 ) - </p>
+                                    <p class="inline-block pl-1 hover:underline cursor-pointer"
+                                       style="color: dodgerblue !important;">DARLING in the
+                                        FRANXX</p>
+                                </a>
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">2 ) - </p>
+                                    <p class="inline-block pl-1 hyper hover:underline cursor-pointer"
+                                       style="color: dodgerblue !important;">Tower of God</p>
+                                </a>
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">3 ) - </p>
+                                    <p class="inline-block pl-1" style="color: white !important;">ERASED</p>
+                                </a>
+                                <a class="block font-semibold px-2 pb-1">
+                                    <p class="inline-block text-white" style="color: white !important;">4 ) - </p>
+                                    <p class="inline-block pl-1 hyper hover:underline cursor-pointer"
+                                       style="color: dodgerblue !important;">Your lie in
+                                        April</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hidden lg:inline-block h-full pr-2  float-right">
+                            <img src="https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" inline-block  sm:w-1/2 p-6 mt-6">
+            <div class="align-middle self-center">
+                <h3 class="text-3xl text-white font-bold leading-none mb-3"
+                    style="color: white !important; font-weight: bold !important; font-size: 2.5rem !important;">Waifu
+                    collection, MMO and more!</h3>
+                <p class="text-white mb-8 text-lg" style="font-weight: 500 !important;">
+                    Collect Waifus from over 60,000 to choose from!<br>
+                    Level them up by playing mini-games
+                    and raise your power by battling others.<br>
+                    Join forces with other users to create Guilds and battle other teams in legendary events.
+                </p>
+            </div>
+        </div>
+        <div class="inline-block flex flex-wrap sm:flex-row py-5">
+            <div class="w-3/4 sm:w-1/2 p-4 ">
+                <div class="embed w-full h-full rounded-l border-l-4 pb-4 transform scale-100"
+                     style="border-color: #e87e15; background-color: #23272A; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06); color: white !important;">
+                    <div class="block h-full">
+                        <div class="inline-block h-full">
+                            <div class="flex w-full pl-2">
+                                <div class="flex">
+                                    <img src="https://images-ext-1.discordapp.net/external/ipStPVjgzmqg7s_dUIVecKUnGF312l0kM06spDh3ozc/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/290923752475066368/e5c62d816fae546259ff96f819bf3a33.webp"
+                                         class="inline-block rounded-full h-12 w-12 p-2">
+                                    <div class="inline-block font-medium p-2 hover:underline cursor-pointer self-center"
+                                         style="font-size: 20px;">ハーリさん (CF8)'s characters
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content px-2 pt-4">
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">1 ) - </p>
+                                    <p class="inline-block pl-1" style="color: white !important;">Zero Two</p>
+                                    <p class="inline-block pl-1 font-medium" style="color: white !important;">( Level 4
+                                        )</p>
+                                </a>
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">2 ) - </p>
+                                    <p class="inline-block pl-1" style="color: white !important;">Hero</p>
+                                    <p class="inline-block pl-1 font-medium" style="color: white !important;">( Level 1
+                                        )</p>
+                                </a>
+                                <a class="block font-semibold px-2">
+                                    <p class="inline-block text-white" style="color: white !important;">3 ) - </p>
+                                    <p class="inline-block pl-1" style="color: white !important;">Eiichirou Natsuki</p>
+                                    <p class="inline-block pl-1 font-medium" style="color: white !important;">( Level 2
+                                        )</p>
+                                </a>
+                                <a class="block font-semibold px-2 pb-1">
+                                    <p class="inline-block text-white" style="color: white !important;">4 ) - </p>
+                                    <p class="inline-block pl-1" style="color: white !important;">Hwa Ryun</p>
+                                    <p class="inline-block pl-1 font-medium" style="color: white !important;">( Level 7
+                                        )</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hidden lg:inline-block h-full pr-2 float-right">
+                            <img src="https://cdn.discordapp.com/emojis/717784139943641088.png?v=1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap py-5">
+            <div class="w-5/6 sm:w-1/2 p-6 self-center">
+                <h3 class="text-3xl text-white font-bold leading-none mb-3"
+                    style="color: white !important; font-weight: bold !important; font-size: 2rem !important;">Lotta
+                    Lewds</h3>
+                <p class="text-white mb-8 text-lg" style="font-weight: 500 !important;">
+                    NSFW not for you and your server? Dont worry!<br>
+                    You can use the <i>"togglensfw" </i>
+                    command to disable NSFW for your server keeping it family friendly!
+                </p>
+            </div>
+
+            <div class="w-full sm:w-1/2 p-4">
+                <img alt="Watchlist Showing" class="rounded-full w-3/4 object-cover"
+                     src="https://crunchy-bot.live/static/images/home_svgs/002_noback_crop.png">
+            </div>
         </div>
     </div>
-    <section class="container mx-auto text-center py-6 mb-12 pb-12">
-        <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-white"
-            style="color: white !important; font-weight: bold !important; font-size: 3rem !important;">
-            Get started with Crunchy in your server now!
-        </h1>
-        <div class="w-full mb-4">
-            <div class="h-1 mx-auto bg-white w-1/6 opacity-25 my-0 py-0 rounded-t"></div>
+
+    <h1 class="w-full text-5xl font-bold leading-tight text-center text-white"
+        style="color: white !important; font-weight: bold !important; font-size: 3rem !important;">
+        Showcased Commands
+    </h1>
+    <p class="text-lg font-semibold text-center italic ">
+        Full list available on Crunchy's help command!
+        <a class="hidden text-teal-400 hover:text-teal-500 hover:underline cursor-pointer"
+           href="https://crunchy-bot.live/commands">
+            https://crunchy-bot.live/commands
+        </a>
+    </p>
+    <div class="w-full mb-4">
+        <div class="h-1 mx-auto gradient w-96 opacity-100 my-0 py-0 rounded-full"></div>
+    </div>
+
+
+    <div class="pt-0 lg: pt-8"></div>
+    <div class="block flex justify-center">
+        <div class="w-4/5 pt-4">
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 lg:text-2xl md:text-lg sm:text-base font-semibold text-white text-center px-4 py-2">
+                        Command
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block lg:text-2xl md:text-base sm:text-sm font-semibold text-white text-center px-4 py-2">
+                        Description
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        Invite
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Invite me!
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        SetPrefix
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Set a custom prefix.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        Support
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Join our support server!
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default py-2">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        AnimeDetails
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Get details from Crunchyroll on an Anime.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        TodaysPicks
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Get today's top 5 picks that you might want try.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default py-2">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        AddReleaseChannel
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Get anime releases to a channel.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        AddNewsChannel
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Get Crunchyroll Anime news to a channel.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default py-2">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        MyFavourites
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Brings up your Favourite animes.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        MyRecommended
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        View what animes people have recommended for you!
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        AddAnime
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Add an anime to your watchlist or favourites.
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        Recommend
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Recommend an anime to a friend!
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default py-2">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        Character
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        Get a random character, can you collect them all?
+                    </div>
+                </div>
+            </div>
+            <div class="block cursor-default">
+                <div class="flex justify-around">
+                    <div class="w-full lg:w-2/5 border-gray-700 border-b-2 text-center lg:text-xl md:text-lg sm:text-base font-semibold orange italic px-4 py-2">
+                        ViewCharacters
+                    </div>
+                    <div class="w-0 lg:w-3/4 hidden lg:block border-gray-700 border-b-2 lg:text-lg md:text-base sm:text-sm font-semibold text-white px-4 py-2">
+                        View all of your collected characters.
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="space-x-4 py-4">
-            <a class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-4 py-4 px-8 shadow-lg z-50"
-               href="https://discordapp.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=8">
-                Invite Crunchy
-            </a>
-        </div>
-    </section>
+    </div>
 </div>
+</div>
+<section class="unhide container mx-auto text-center py-6 mb-12 pb-12">
+    <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-white"
+        style="color: white !important; font-weight: bold !important; font-size: 3rem !important;">
+        Get started with Crunchy in your server now!
+    </h1>
+    <div class="w-full mb-4">
+        <div class="h-1 mx-auto bg-white w-1/6 opacity-25 my-0 py-0 rounded-t"></div>
+    </div>
+    <div class="space-x-4 py-4">
+        <a class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-4 py-4 px-8 shadow-lg z-50"
+           href="https://discordapp.com/oauth2/authorize?client_id=656598065532239892&scope=bot&permissions=8">
+            Invite Crunchy
+        </a>
+    </div>
+</section>
 </html>
