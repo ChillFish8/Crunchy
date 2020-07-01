@@ -1,8 +1,10 @@
 import json
 import pymongo
 
+from realms.datastores.events_db import EventsStore
 
-class MongoDatabase:
+
+class MongoDatabase(EventsStore):
     """
         This is the character system only Mongo DB class, this pull data from config.json and
         connects to the remote mongoDB (Falls back to local host if config missing)
@@ -40,7 +42,7 @@ class MongoDatabase:
 
         self.db = self.client["Crunchy"]
         self.characters = self.db["collected_characters"]
-        # super().__init__(self.db)
+        super().__init__(self.db)
 
     def close_conn(self):
         """ Logs us out of the data """

@@ -63,30 +63,8 @@ class Display:
         # First Page  (General Details)
         embed = discord.Embed(color=self.bot.colour)
         embed.set_thumbnail(url=self.character.icon)
-        embed.set_author(name=f"{self.character.name} - General Info - Level {self.character.level}",
+        embed.set_author(name=f"{self.character.name} - Level {self.character.level}",
                          icon_url=self.ctx.author.avatar_url)
-        embed.set_footer(text=f"Hint: {hinter.get_hint()}")
-        delta = time.gmtime(self.character.last_active)
-        embed.description = f"{self.character.get_emotion()}\n**Last active:** " \
-                            f"`{delta.tm_mday}/{delta.tm_mon}/{delta.tm_year} " \
-                            f"{delta.tm_hour}:{delta.tm_min}:{delta.tm_sec} GMT`\n"
-        embed.add_field(
-            name="\u200b",
-            value=f"**__Base Stats__**\n"
-                  f"💪 **Power:** `{self.character.power}`\n\n"
-                  f"⚔️ **Attack:** `{self.character.attack}`\n\n"
-                  f"🛡️ **Defense:** `{self.character.defense}`\n",
-            inline=True)
-        embed.add_field(
-            name="\u200b",
-            value=f"**__Character Stats__**\n"
-                  f"{self.character.render_character_info()}",
-            inline=True)
-        embed.add_field(
-            name="\u200b",
-            value=f"**__Modifiers__**\n"
-                  f"{self.character.render_modifiers()}",
-            inline=False)
         return embed
 
 def setup(bot):
