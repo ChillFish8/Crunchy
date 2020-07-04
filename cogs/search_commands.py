@@ -82,11 +82,12 @@ class Search(commands.Cog):
         embed.set_image(url=details.get('img_src'))
         embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
                          icon_url=ctx.author.avatar_url)
-
+        
         embed.description = f"⭐ **Rating** {details.get('score', 'unkown')} / 10\n" \
-                            f"📖 **Volumes** {details.get('volumes', 'unkown')}\n" \
-                            f"**Genres** {', '.join(details.get('Genres', ['unkown']))}\n" \
-                            f"__**Description:**__\n {details.get('description', 'No Description.')[:500]}\n"
+                            f"📖 **Volumes** {details.get('volumes', 'unkown')}\n"
+        embed.add_field(name="Genres", value=', '.join(details.get('Genres', ['unkown'])), inline=False)
+        embed.add_field(name="Description", value=details.get('description', 'No Description.')[:500], inline=False)
+
         return await ctx.send(embed=embed)
 
 
