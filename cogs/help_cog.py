@@ -24,6 +24,7 @@ class HelpCog(commands.Cog):
 
     ANIME_COMMANDS = [
         "`animedetails` **-** Get details from Crunchyroll on an Anime.",
+        "`mangadetails` **-** Get info on Manga straight to your chat.",
         "`todayspicks` **-** Get today's top 5 picks that you might want try.",
     ]
 
