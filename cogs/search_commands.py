@@ -86,7 +86,7 @@ class Search(commands.Cog):
         embed.description = f"⭐ **Rating** {details.get('score', 'unkown')} / 10\n" \
                             f"📖 **Volumes** {details.get('volumes', 'unkown')}\n" \
                             f"**Genres** {', '.join(details.get('Genres', ['unkown']))}\n" \
-                            f"__**Description:**__\n {details.get('description', 'No Description.')}\n"
+                            f"__**Description:**__\n {details.get('description', 'No Description.')[:500]}\n"
         return await ctx.send(embed=embed)
 
 
