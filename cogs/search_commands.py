@@ -61,7 +61,6 @@ class Search(commands.Cog):
 
         details_url = BASE_URL + "/manga/details?terms={}&legacy=True"
         url = details_url.format("+".join(args))
-        print(url)
         async with aiohttp.ClientSession() as sess:
             async with sess.get(url) as resp:
                 if resp.status != 200:
@@ -77,7 +76,6 @@ class Search(commands.Cog):
                                               "I couldn't find what you are searching for.")
         embed = discord.Embed(
             title=f"{details['title']}",
-            url=details.get('url'),
             color=self.bot.colour
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
