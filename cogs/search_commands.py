@@ -76,10 +76,12 @@ class Search(commands.Cog):
                                               "I couldn't find what you are searching for.")
         embed = discord.Embed(
             title=f"{details['title']}",
+            url=details.get('url'),
             color=self.bot.colour
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
-        embed.set_image(url=details.get('img_src'))
+        if details.get('img_src'):
+            embed.set_image(url=details.get('img_src'))
         embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
                          icon_url=ctx.author.avatar_url)
 
