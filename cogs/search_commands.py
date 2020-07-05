@@ -60,8 +60,10 @@ class Search(commands.Cog):
                                   "You need to give me something to search for!")
 
         details_url = BASE_URL + "/manga/details?terms={}&legacy=True"
+        url = details_url.format("+".join(args))
+        print(url)
         async with aiohttp.ClientSession() as sess:
-            async with sess.get(details_url.format("+".join(args))) as resp:
+            async with sess.get(url) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                           "Something seems to have gone wrong when searching for that."
