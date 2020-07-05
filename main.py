@@ -222,18 +222,14 @@ class ErrorHandler:
         elif isinstance(error, commands.MissingRequiredArgument):
             return
 
-        elif isinstance(error, commands.BadArgument):
-            return await ctx.send(
-                "<:HimeSad:676087829557936149> Sorry! but that's not a user i can find.")
-
-        elif isinstance(error, commands.MissingPermissions) and ctx.command not in (
+        elif isinstance(error, commands.MissingRequiredArgument) and ctx.command.name not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw'):
             return await ctx.send(
                 f"<:HimeSad:676087829557936149> You need to give me give me argument e.g "
                 f"`{ctx.prefix}{ctx.command.name} arg1 arg2`.")
 
-        elif ctx.command not in (
+        elif ctx.command.name not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
                 'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
             err = error
