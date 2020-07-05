@@ -26,6 +26,7 @@ class LevelUpGames(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+        self.on_event.start()
 
     async def get_channel(self, guild_id, channel_id) -> Union[int, discord.TextChannel]:
         channel = self.bot.get_channel(channel_id)
@@ -42,18 +43,18 @@ class LevelUpGames(commands.Cog):
     @tasks.loop(minutes=10)
     async def on_event(self):
         all_events = self.database.get_all_events()
-        for event in all_events():
-            resp = await self.get_channel(**event)
+        for event_guild in all_events():
+            resp = await self.get_channel(**event_guild)
             if resp == -1:
                 continue
             else:
                 if random.randint(1, 20) == 2:
-                    resp = await self.send_event(event)
+                    resp = await self.send_event(event_guild)
                     if resp != -1:
                         await asyncio.sleep(2)
 
-    async def send_event(self, event):
-        monster = await get_random_monster()
+    async def send_event(self, event_guild):
+        event_guild = await get_random_monster()
         pass
 
 
