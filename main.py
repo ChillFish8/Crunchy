@@ -19,7 +19,7 @@ from logger import Logger
 from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 with open('config.json', 'r') as file:
     config = json.load(file)
@@ -96,7 +96,7 @@ class CrunchyBot(commands.AutoShardedBot):
 
     async def on_ready_once(self):
         if not self.allow_connections:
-            await asyncio.sleep(60)
+            await asyncio.sleep(30)
             self.allow_connections = True
 
     async def on_shard_ready(self, shard_id):
