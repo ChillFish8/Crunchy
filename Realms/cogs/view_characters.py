@@ -1,16 +1,10 @@
-import json
-import random
-import time
 import discord
 
-from datetime import datetime
 from discord.ext import commands
-from discord.ext import tasks
 
 from realms.character import Character
 from realms.user_characters import UserCharacters
 from realms.static import Database
-from realms.hints import hinter
 
 NON_VOTE_ROLLS = 15
 VOTE_ROLLS_MOD = +25
