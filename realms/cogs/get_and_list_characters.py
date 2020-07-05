@@ -58,11 +58,16 @@ class CharacterGets(commands.Cog):
     async def on_dbl_vote(self, data):
         data['user'] = int(data['user'])
         if data['user'] in self.cool_down_checks:
-            print(self.cool_down_checks['user'])
-            if self.cool_down_checks['user'].get_time_obj() is None:
-                self.cool_down_checks['user'].update_rolls(VOTE_ROLLS_MOD)
+            print(self.cool_down_checks[data['user']].get_time_obj() )
+            if self.cool_down_checks[data['user']].get_time_obj() is None:
+                self.cool_down_checks[data['user']].update_rolls(VOTE_ROLLS_MOD)
             else:
-                del self.cool_down_checks['user']
+                del self.cool_down_checks[data['user']]
+
+    @commands.command()
+    @commands.is_owner()
+    async def fudge_vote(self, ctx):
+        await self.on_dbl_vote({"user": str(ctx.author.id)})
 
     @tasks.loop(seconds=10)
     async def remove_null(self):
@@ -99,8 +104,11 @@ class CharacterGets(commands.Cog):
                                       " upvote Crunchy to get more rolls and other awesome perks!\n"
                                       "https://top.gg/bot/656598065532239892/vote")
             else:
-                return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
-                                      f" come back in {user_characters.expires_in} hours when ive found some more characters!")
+                if self.cool_down_checks.get(ctx.author.id):
+                    return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                                          f" come back in {user_characters.expires_in} hours when ive found some more characters!")
+                else:
+                    user_characters.update_rolls(VOTE_ROLLS_MOD)
 
         c = random.choice(self.group)
         character_obj = Character(name=c['name'],
@@ -219,6 +227,9 @@ class CharacterGets(commands.Cog):
                 return self.bot.loop.create_task(pager.start())
             else:
                 return await ctx.send(embed=embeds[0])
+
+    async def cog_command_error(self, ctx, error):
+        raise error
 
     @classmethod
     def shutdown(cls):
