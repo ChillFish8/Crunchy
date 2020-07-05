@@ -159,6 +159,15 @@ class LiveFeedCommands(commands.Cog):
             return await ctx.send(
                 "<:HimeSad:676087829557936149> You need to mention a channel"
                 " or give me a channel Id for this command.")
+
+        elif isinstance(error, discord.Forbidden):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Oops! Looks like i dont have permission to do this command.")
+
+        elif isinstance(error, commands.BadArgument):
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Oops! I cant see that channel or "
+                "it is invalid, please try a different one.")
         else:
             raise error
 

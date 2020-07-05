@@ -58,6 +58,7 @@ class CharacterGets(commands.Cog):
     async def on_dbl_vote(self, data):
         data['user'] = int(data['user'])
         if data['user'] in self.cool_down_checks:
+            print(self.cool_down_checks['user'])
             if self.cool_down_checks['user'].get_time_obj() is None:
                 self.cool_down_checks['user'].update_rolls(VOTE_ROLLS_MOD)
             else:
