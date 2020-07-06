@@ -42,6 +42,7 @@ class MongoDatabase(EventsStore):
 
         self.db = self.client["Crunchy"]
         self.characters = self.db["collected_characters"]
+        self.parties = self.db["parties"]
         super().__init__(self.db)
 
     def close_conn(self):
@@ -76,13 +77,16 @@ class MongoDatabase(EventsStore):
 
     # Parties area
     def update_any_party(self, user_id: int, **kwargs):
-        if self.characters.find_one({'_id': user_id}) is not None:
-            return self.characters.find_one_and_update({'_id': user_id}, {'$set': kwargs})
+        if self.parties.find_one({'_id': user_id}) is not None:
+            return self.parties.find_one_and_update({'_id': user_id}, {'$set': kwargs})
         else:
-            return self.characters.insert_one({'_id': user_id}, **kwargs)
+            return self.parties.insert_one({'_id': user_id}, **kwargs)
+
+    def get_party(self, user_id: int):
+        return self.parties.find_one({'_id': user_id})
 
     def add_party(self, user_id: int, data: dict):
-        self.characters.insert_one({'_id': user_id, **data})
+        self.parties.insert_one({'_id': user_id, **data})
 
     def reset_party(self, user_id: int):
-        return self.characters.find_one_and_delete({'_id': user_id})
+        return self.parties.find_one_and_delete({'_id': user_id})
