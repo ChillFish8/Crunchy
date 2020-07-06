@@ -180,6 +180,16 @@ class CrunchyBot(commands.AutoShardedBot):
             message.content = message.content[len(f"<@!{self.user.id}> "):]
             await self.process_commands(message=message)
 
+        elif message.content.startswith(f"<@{self.user.id}>") or message.content.startswith(f"<@!{self.user.id}>"):
+            embed = discord.Embed(title=f"My prefix is \"{prefix}\" do \"{prefix}help\" to get started.")
+            try:
+                await message.channel.send(embed=embed)
+            except discord.Forbidden:
+                try:
+                    await message.author.send("Oops! I dont have the permissions to speak in that channel.")
+                except discord.Forbidden:
+                    pass
+
 
 class ErrorHandler:
     def __init__(self):
