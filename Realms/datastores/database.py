@@ -73,3 +73,16 @@ class MongoDatabase(EventsStore):
 
     def reset_characters(self, user_id: int):
         return self.characters.find_one_and_delete({'_id': user_id})
+
+    # Parties area
+    def update_any_party(self, user_id: int, **kwargs):
+        if self.characters.find_one({'_id': user_id}) is not None:
+            return self.characters.find_one_and_update({'_id': user_id}, {'$set': kwargs})
+        else:
+            return self.characters.insert_one({'_id': user_id}, **kwargs)
+
+    def add_party(self, user_id: int, data: dict):
+        self.characters.insert_one({'_id': user_id, **data})
+
+    def reset_party(self, user_id: int):
+        return self.characters.find_one_and_delete({'_id': user_id})
