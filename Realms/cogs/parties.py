@@ -42,15 +42,14 @@ class Party:
             '⚔️': self.confirm,
         }
 
-    @staticmethod
-    def format_characters(chars: list, target_pos: int = 0):
+    def format_characters(self, chars: list, target_pos: int = 0):
         texts = []
         current = "```prolog\n"
         for i, character in enumerate(chars):
             if i == target_pos:
-                current += f">>> [{i + 1}] {character.name.title()}\n"
+                current += f">>> [{i + (10 * self._page_no) + 1}] {character.name.title()}\n"
             else:
-                current += f"[{i + 1}] {character.name.lower()}\n"
+                current += f"[{i + (10 * self._page_no) + 1}] {character.name.lower()}\n"
             if ((i + 1) % 5) == 0:
                 current += "```"
                 texts.append(current)
@@ -63,8 +62,9 @@ class Party:
     def generate_embed(self):
         embed = discord.Embed(color=self.bot.colour)
         embed.set_author(name=f"{self.ctx.author.name}'s Party", icon_url=self.ctx.author.avatar_url)
-
-        chars = self._characters[self._page_no * 10: self._page_no + 10]
+        chars = self._characters[self._page_no * 10: self._page_no * 10 + 10]
+        if self._pointer >= len(chars):
+            self._pointer = (len(chars) - 1)
         sections = self.format_characters(chars, target_pos=self._pointer)
 
         # Character Lists
@@ -102,12 +102,12 @@ class Party:
             self._pointer += 1
 
     def page_left(self):
-        if self._page_no < self._total_pages:
-            self._page_no += 1
-
-    def page_right(self):
         if self._page_no != 0:
             self._page_no -= 1
+
+    def page_right(self):
+        if self._page_no < self._total_pages:
+            self._page_no += 1
 
     def select(self):
         pass
