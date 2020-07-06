@@ -183,13 +183,13 @@ class MarketCog(commands.Cog):
         embed.description = char_str
         return await ctx.send(embed=embed)
 
-    @commands.command(name="invitetoparty", aliases=['itp', 'partyinvite', 'partyinv'])
-    async def invite_user_to_party(self, ctx: commands.Context, member: discord.User):
-        pass
+    # @commands.command(name="invitetoparty", aliases=['itp', 'partyinvite', 'partyinv'])
+    # async def invite_user_to_party(self, ctx: commands.Context, member: discord.User):
+    #     pass
 
-    @commands.command(name="removefromparty", aliases=['rfp', 'remparty', 'partyremove'])
-    async def remove_from_party(self, ctx: commands.Context, member: discord.User):
-        pass
+    # @commands.command(name="removefromparty", aliases=['rfp', 'remparty', 'partyremove'])
+    # async def remove_from_party(self, ctx: commands.Context, member: discord.User):
+    #     pass
 
 
 def setup(bot):
