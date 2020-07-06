@@ -80,7 +80,7 @@ class MongoDatabase(EventsStore):
         if self.parties.find_one({'_id': user_id}) is not None:
             return self.parties.find_one_and_update({'_id': user_id}, {'$set': kwargs})
         else:
-            return self.parties.insert_one({'_id': user_id}, **kwargs)
+            return self.parties.insert_one({'_id': user_id, **kwargs})
 
     def get_party(self, user_id: int):
         return self.parties.find_one({'_id': user_id})
