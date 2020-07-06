@@ -48,3 +48,6 @@ class Character:
     def level(self):
         return self._level
 
+    @property
+    def stat_block(self):
+        return f"• STR 12 (+2), • DEX 16 (+5), • CON 12 (+2), • INT 16 (+3), • WIS 10 (-2), • CHA 18 (+4)"
