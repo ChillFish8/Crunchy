@@ -49,6 +49,8 @@ class Party:
             '⚔️': self.confirm,
         }
 
+        self._loaded_party = {}
+
     def format_characters(self, chars: list, target_pos: int = 0):
         texts = []
         current = "```prolog\n"
@@ -161,11 +163,16 @@ class Party:
     @property
     def challenge_rating(self):
         total_level = 0
-        for char in self._selected_party.values():
+        for i, char in enumerate(self._selected_party.values()):
             if char.get('id'):
                 char = self.user_area.get_character(id_=char.get('id'))
             else:
                 char = self.user_area.get_character(search=char.get('name'))
             char = Character().from_dict(char)
+            self._loaded_party[i] = char
             total_level += char.level
         return (total_level // 5) + 1
+
+    @property
+    def selected_characters(self):
+        return self._loaded_party
