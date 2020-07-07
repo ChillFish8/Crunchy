@@ -31,7 +31,8 @@ class LevelUpGames(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._encounters = {}
-        self._pending = {}
+        self._pending_accepts = {}
+        self._pending_interactions = {}
 
     @tasks.loop(seconds=30)
     async def clear_outdated(self):
@@ -61,17 +62,17 @@ class LevelUpGames(commands.Cog):
 
     @commands.command(name="acceptquest", aliases=['quest', 'accept'])
     async def accept_quest(self, ctx, *args):
-        if self._pending.get(ctx.author.id):
+        if self._pending_accepts.get(ctx.author.id):
             if len(args) == 0:
                 return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
                                       "They must be the number representing the quest!")
             else:
-                context = self._pending[ctx.author.id]
+                context = self._pending_accepts[ctx.author.id]
                 if ctx.channel.id == context.channel.id:
                     try:
                         quest_no = int(args[0])
                         if quest_no in range(1, 5):
-                            del self._pending[ctx.author.id]
+                            del self._pending_accepts[ctx.author.id]
                             self.bot.dispatch('quest_accept', quest_no, context.author)
                         else:
                             return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
@@ -80,8 +81,40 @@ class LevelUpGames(commands.Cog):
                         return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
                                               "They must be the number representing the quest!")
 
-    def submit_callback(self, ctx: commands.Context):
-        self._pending[ctx.author.id] = ctx
+    @commands.command(name="stack")
+    async def stack_cards(self, ctx, card_id: int=0, card_amount: int=0):
+        if not self._pending_accepts.get(ctx.author.id):
+            return await ctx.send("<:HimeSad:676087829557936149> You dont have a active encounter session running!")
+        else:
+            del self._pending_accepts[ctx.author.id]
+        if card_id == 0:
+            return await ctx.send("<:HimeSad:676087829557936149> You have to give me a card number between 1-5"
+                                  f" Example command: `{ctx.prefix}stack 1 2`")
+        if card_amount == 0:
+            return await ctx.send("<:HimeSad:676087829557936149> You have to give me a amount of cards between 1-5"
+                                  f" Example command: `{ctx.prefix}stack 1 2`")
+
+        self.bot.dispatch('encounter_command', 'stack', ctx.author)
+
+    @stack_cards.error
+    async def error_handler(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            return await ctx.send(f"Oops! That isn't a valid input, try: `{ctx.prefix}stack 1 2`.")
+
+    @commands.command()
+    async def attack(self, ctx):
+        if not self._pending_accepts.get(ctx.author.id):
+            return await ctx.send("<:HimeSad:676087829557936149> You dont have a active encounter session running!")
+        else:
+            del self._pending_accepts[ctx.author.id]
+
+        self.bot.dispatch('encounter_command', 'attack', ctx.author)
+
+    def submit_callback(self, ctx: commands.Context, interaction=False):
+        if interaction:
+            self._pending_interactions[ctx.author.id] = ctx
+        else:
+            self._pending_accepts[ctx.author.id] = ctx
 
     @commands.command(name="encounter")
     async def encounter(self, ctx):
