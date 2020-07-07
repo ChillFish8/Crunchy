@@ -1,6 +1,7 @@
 import json
 
-from random import randint, choice
+from random import randint, choice, shuffle
+from discord.ext import tasks
 
 
 BASE_HP = (20, 50)  # min, max
@@ -35,10 +36,15 @@ class Monster:
 with open(r'realms/generation/monster_name.json', 'r') as file:
     random_names = json.load(file)
 
+@tasks.loop(minutes=5)
+async def shuffler():
+    global random_names
+    shuffle(random_names)
+
 
 class MonsterManual:
     def __init__(self):
-        pass
+        shuffler.start()
 
     @staticmethod
     def get_random_monster(challenge_rating):
