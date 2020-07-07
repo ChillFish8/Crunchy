@@ -27,6 +27,7 @@ class Character:
 
         self.modifiers = {}
         self._level = 1
+        self._hp = random.randint(45, 70)
 
     def _unload_self(self) -> dict:
         items = self.__dict__
