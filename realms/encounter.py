@@ -51,4 +51,22 @@ class Encounter:
             await msg.delete()
 
     async def battle(self):
-        await self.ctx.send("wow")
+        def check(msg: discord.Message):
+            return (msg.author.id == self.ctx.author.id) and\
+                   (msg.channel.id == self.ctx.channel.id)
+
+        battling = True
+        while battling:
+            content = self.get_content(start=True)
+            await self.ctx.send(content)
+            try:
+                message = await self.bot.wait_for('message', timeout=30, check=check)
+            except asyncio.TimeoutError:
+                battling = False
+                await self.ctx.send("📛 This battle has expired! This is counted as failing to complete the quest.")
+
+    def get_content(self, start=False):
+        if start:
+            return f"**Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
+        else:
+            pass
