@@ -7,23 +7,23 @@ from discord.ext import commands
 from realms.parties import Party
 from realms.generation.monsters import MonsterManual, Monster
 
-
 HIME_CHEEK = "https://cdn.discordapp.com/emojis/717784139226546297.png?v=1"
 EMOJI = [
 
 ]
 
+
 class Encounter:
     def __init__(self, bot, ctx, party: Party, submit):
         self.bot = bot
-        self.ctx = ctx
+        self.ctx: commands.Context = ctx
         self.party = party
         self.monster_manual = MonsterManual()
         self.monster = None
         self.submit_callback = submit
 
     def get_rand_monster(self):
-        cr = randint(self.party.challenge_rating - 2, self.party.challenge_rating + 5)
+        cr = randint(self.party.challenge_rating, self.party.challenge_rating + 5)
         monster = self.monster_manual.get_random_monster(cr)
         return monster
 
@@ -40,12 +40,15 @@ class Encounter:
         msg = await self.ctx.send(embed=embed)
         self.submit_callback(self.ctx)
         try:
-            quest_no = await self.bot.wait_for('quest_accept', timeout=60)
+            quest_no, _ = await self.bot.wait_for(
+                'quest_accept',
+                timeout=60,
+                check=lambda no, user: user.id == self.ctx.author.id
+            )
             self.monster = random_monsters[quest_no - 1]
             return await self.battle()
         except asyncio.TimeoutError:
             await msg.delete()
 
     async def battle(self):
-        pass
-
+        await self.ctx.send("wow")
