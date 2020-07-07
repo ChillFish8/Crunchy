@@ -4,10 +4,10 @@ import time
 from datetime import datetime, timedelta
 from discord.ext import commands, tasks
 
-from realms.generation.monsters import MonsterManual
 from realms.static import Database
 from realms.user_characters import UserCharacters
 from realms.parties import Party
+from realms.encounter import Encounter
 
 HIME_MAD = "https://cdn.discordapp.com/emojis/676087826827444227.png?v=1"
 HIME_SAD = "https://cdn.discordapp.com/emojis/676087829557936149.png?v=1"
@@ -30,7 +30,6 @@ def format_time(time_stamp: float):
 class LevelUpGames(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.monster_manual = MonsterManual()
         self._encounters = {}
 
     @tasks.loop(seconds=30)
@@ -82,9 +81,9 @@ class LevelUpGames(commands.Cog):
                     return await ctx.send(embed=embed)
 
         user_area = UserCharacters(ctx.author.id, Database.db)
-        party =
-        contents = await self.monster_manual.get_random_monster(4)
-        await ctx.send(contents)
+        party = Party(self.bot, ctx, user_area=user_area)
+        encounter = Encounter(self.bot, ctx, party)
+        await encounter.menu()
 
 
 def setup(bot):
