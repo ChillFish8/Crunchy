@@ -8,7 +8,6 @@ from discord.ext import tasks
 
 
 from realms.static import Database
-from realms.generation.monsters import get_random_monster
 
 HAPPY_URL = [
     "https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png",
@@ -54,7 +53,6 @@ class LevelUpGames(commands.Cog):
                         await asyncio.sleep(2)
 
     async def send_event(self, event_guild):
-        event_guild = await get_random_monster()
         pass
 
 
