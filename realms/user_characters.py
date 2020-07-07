@@ -28,13 +28,13 @@ class UserCharacters:
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
-        self.money = data.pop('money', 0)
+        self.bank = data.pop('balance', {'copper': 50, 'gold': 10, 'platinum': 0})
         self._rolls = rolls
         self._expires_in = data.pop('expires_in', expires_in)
         self.mod_callback = callback
 
     def update_on_db(self):
-        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, money=self.money)
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank)
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
@@ -43,7 +43,7 @@ class UserCharacters:
         else:
             self.characters.append(character.to_dict())
             self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank, 'money': self.money})
+                                    {'characters': self.characters, 'rank': self.rank})
 
     def dump_character(self, character: Character):
         id_ = character.id
@@ -118,4 +118,16 @@ class UserCharacters:
     @property
     def amount_of_items(self):
         return len(self.characters)
+
+    @property
+    def platinum(self):
+        return self.bank['platinum']
+
+    @property
+    def gold(self):
+        return self.bank['gold']
+
+    @property
+    def copper(self):
+        return self.bank['copper']
 
