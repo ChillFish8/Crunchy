@@ -63,11 +63,6 @@ class CharacterGets(commands.Cog):
             else:
                 del self.cool_down_checks[data['user']]
 
-    @commands.command()
-    @commands.is_owner()
-    async def fudge_vote(self, ctx):
-        await self.on_dbl_vote({"user": str(ctx.author.id)})
-
     @tasks.loop(seconds=10)
     async def remove_null(self):
         self.cool_down_checks = dict(
