@@ -31,8 +31,6 @@ class Monster:
         return f"{self.name} - [ CR {self.cr} ]"
 
 
-
-
 with open(r'realms/generation/monster_name.json', 'r') as file:
     random_names = json.load(file)
 
