@@ -43,7 +43,6 @@ class MongoDatabase(EventsStore):
         self.db = self.client["Crunchy"]
         self.characters = self.db["collected_characters"]
         self.parties = self.db["parties"]
-        self.encounters = self.db["encounters"]
         super().__init__(self.db)
 
     def close_conn(self):
