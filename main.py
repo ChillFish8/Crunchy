@@ -147,6 +147,7 @@ class CrunchyBot(commands.AutoShardedBot):
             setattr(context, 'guild_config', guild_data)
         else:
             setattr(context, 'guild_config', None)
+        setattr(context, 'prefix', (await self.get_custom_prefix(context.message)))
         setattr(context, 'has_voted', self.has_voted)
         return context
 
