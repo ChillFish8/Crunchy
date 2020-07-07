@@ -23,6 +23,7 @@ class Monster:
     def __init__(self, **stats):
         self.name = None
         self.cr = None
+        self.initiative = randint(1, 20)
         for key, item in stats.items():
             setattr(self, key, item)
 
