@@ -63,13 +63,18 @@ class LevelUpGames(commands.Cog):
     async def accept_quest(self, ctx, *args):
         if self._pending.get(ctx.author.id):
             if len(args) == 0:
-                return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest!")
+                return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
+                                      "They must be the number representing the quest!")
             else:
                 context = self._pending[ctx.author.id]
                 if ctx.channel.id == context.channel.id:
                     try:
                         quest_no = int(args[0])
-                        self.bot.dispatch('quest_accept', quest_no)
+                        if quest_no in range(1, 5):                              
+                            self.bot.dispatch('quest_accept', quest_no)
+                        else:
+                            return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
+                                                  "They must be the number representing the quest!")
                     except ValueError:
                         return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
                                               "They must be the number representing the quest!")
