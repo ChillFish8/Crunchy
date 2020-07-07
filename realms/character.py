@@ -52,3 +52,7 @@ class Character:
     @property
     def stat_block(self):
         return f"• STR 12 (+2), • DEX 16 (+5), • CON 12 (+2), • INT 16 (+3), • WIS 10 (-2), • CHA 18 (+4)"
+
+    @property
+    def hp(self):
+        return self._hp
