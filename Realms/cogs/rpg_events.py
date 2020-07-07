@@ -31,6 +31,7 @@ class LevelUpGames(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._encounters = {}
+        self._pending = {}
 
     @tasks.loop(seconds=30)
     async def clear_outdated(self):
@@ -57,6 +58,24 @@ class LevelUpGames(commands.Cog):
     @commands.is_owner()
     async def fudge_vote(self, ctx):
         await self.on_dbl_vote({"user": str(ctx.author.id)})
+
+    @commands.command(name="acceptquest", aliases=['quest', 'accept'])
+    async def accept_quest(self, ctx, *args):
+        if self._pending.get(ctx.author.id):
+            if len(args) == 0:
+                return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest!")
+            else:
+                context = self._pending[ctx.author.id]
+                if ctx.channel.id == context.channel.id:
+                    try:
+                        quest_no = int(args[0])
+                        self.bot.dispatch('quest_accept', quest_no)
+                    except ValueError:
+                        return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
+                                              "They must be the number representing the quest!")
+
+    def submit_callback(self, ctx: commands.Context):
+        self._pending[ctx.author.id] = ctx
 
     @commands.command(name="encounter")
     async def encounter(self, ctx):
