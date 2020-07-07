@@ -43,6 +43,7 @@ class MongoDatabase(EventsStore):
         self.db = self.client["Crunchy"]
         self.characters = self.db["collected_characters"]
         self.parties = self.db["parties"]
+        self.encounters = self.db["encounters"]
         super().__init__(self.db)
 
     def close_conn(self):
@@ -90,3 +91,4 @@ class MongoDatabase(EventsStore):
 
     def reset_party(self, user_id: int):
         return self.parties.find_one_and_delete({'_id': user_id})
+
