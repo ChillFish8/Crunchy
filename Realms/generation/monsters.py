@@ -24,7 +24,8 @@ class MonsterManual:
         with open(r'realms/generation/monster_name.json', 'r') as file:
             self.random_names = json.load(file)
 
-    async def get_random_monster(self, challenge_rating):
+    @staticmethod
+    async def get_random_monster(challenge_rating):
         hp, dex, strength, loot, armour = get_stats()
         hp = hp * (challenge_rating + randint(0, 2)) / 2
 
@@ -53,4 +54,13 @@ class MonsterManual:
             loot['gold'] = randint(150, 350)
             loot['copper'] = randint(50, 500)
 
-        return ac, hp, dex, dex_mod, strength, str_mod, loot, armour
+        return {
+            'ac': ac,
+            'hp': hp,
+            'dex': dex,
+            'dex_mod': dex_mod,
+            'strength': strength,
+            'str_mod': str_mod,
+            'loot': loot,
+            'armour': armour
+        }
