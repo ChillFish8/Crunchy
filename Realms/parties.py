@@ -122,7 +122,7 @@ class Party:
             if self._selected_party[char].get('name') == target.name:
                 return
             elif not self._selected_party[char]:
-                self._selected_party[char] = {'name': target.name}
+                self._selected_party[char] = {'name': target.name, 'id': target.id}
                 return
 
     def un_select(self):
@@ -157,3 +157,15 @@ class Party:
     @property
     def party(self):
         return list(map(lambda c: f"**• {c.get('name')}**", self._selected_party.values()))
+    
+    @property
+    def challenge_rating(self):
+        total_level = 0
+        for char in self._selected_party.values():
+            if char.get('id'):
+                char = self.user_area.get_character(id_=char.get('id'))
+            else:
+                char = self.user_area.get_character(search=char.get('name'))
+            char = Character().from_dict(char)
+            total_level += char.level
+        return (total_level // 5) + 1
