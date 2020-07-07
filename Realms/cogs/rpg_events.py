@@ -7,6 +7,7 @@ from discord.ext import commands, tasks
 from realms.generation.monsters import MonsterManual
 from realms.static import Database
 from realms.user_characters import UserCharacters
+from realms.parties import Party
 
 HIME_MAD = "https://cdn.discordapp.com/emojis/676087826827444227.png?v=1"
 HIME_SAD = "https://cdn.discordapp.com/emojis/676087829557936149.png?v=1"
@@ -81,6 +82,7 @@ class LevelUpGames(commands.Cog):
                     return await ctx.send(embed=embed)
 
         user_area = UserCharacters(ctx.author.id, Database.db)
+        party =
         contents = await self.monster_manual.get_random_monster(4)
         await ctx.send(contents)
 
