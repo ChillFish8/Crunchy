@@ -128,19 +128,40 @@ class Encounter:
         for i, card in enumerate(cards.values()):
             card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ]`**\n"
 
-        text = f"__**This round's deck**__\n" \
+        text = f"**Monster HP:** {self.monster.hp}\n" \
+               f"\n" \
                f"Pick any amount of cards upto 5.\n" \
-               f" you can stack cards to increase damage but beware of the cost.\n\n" \
+               f" you can stack cards to increase damage but beware of the cost.\n" \
+               f"You can use `{self.ctx.prefix}stack <card number> <amount>` to stack cards and then " \
+               f"`{self.ctx.prefix}attack` to launch your attack!\n\n" \
                f"💎 **Mana Cost:**\n" \
                f"• 1 stack ( 1x damage ) - Costs 1 Mana\n" \
                f"• 2 stack ( 2x damage ) - Costs 3 Mana\n" \
-               f"• 3 stack ( 3x damage ) - Costs 6 Mana\n\n" \
+               f"• 3 stack ( 3x damage ) - Costs 6 Mana\n" \
+               f"\n" \
                f"<:mana_bottle:730069998240006174> **Mana:** `{mana}`\n" \
                f"\n" \
                f"⚔️ **Cards:**\n" \
                f"{card_block}"
 
-        await self.ctx.send(text)
+        embed = discord.Embed(color=self.bot.colour)
+        embed.set_author(name="This round's deck", icon_url=self.ctx.author.avatar_url)
+        embed.description = text
+        embed.set_footer(text=f"Use \"{self.ctx.prefix}stack <card number> <amount>\" to stack cards.")
+        await self.ctx.send(embed=embed)
+
+        running = True
+        while running:
+            try:
+                self.submit_callback(self.ctx, interaction=False)
+                command, user = await self.bot.wait_for(
+                    'encounter_command',
+                    timeout=30,
+                    check=lambda c, u: u.id == self.ctx.author.id
+                )
+                print(command, user)
+            except asyncio.TimeoutError:
+                return -1
 
     async def monster_turn(self):
         return "oh no!"
