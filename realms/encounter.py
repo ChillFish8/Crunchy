@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import re
+import itertools
 
 from random import randint
 from discord.ext import commands
@@ -31,6 +32,7 @@ class Encounter:
         self.monster_manual = MonsterManual()
         self.monster = None
         self.submit_callback = submit
+        self.turn = None
 
     def get_rand_monster(self) -> Monster:
         cr = randint(self.party.challenge_rating, self.party.challenge_rating + 5)
@@ -66,7 +68,7 @@ class Encounter:
                    (msg.channel.id == self.ctx.channel.id) and \
                     msg.content.startswith(self.ctx.prefix)
 
-        content = self.get_content(start=True)
+        content = await self.get_content(start=True)
         await self.ctx.send(content)
         valid = False
         while not valid:
@@ -78,7 +80,7 @@ class Encounter:
                     user_initiative = self.process_roll(result.args_to_str)
                     if user_initiative in range(1, 21):
                         valid = True
-                        content = self.get_content(stage=0, user_initiative=user_initiative)
+                        content = await self.get_content(stage=0, user_initiative=user_initiative)
                         await self.ctx.send(content)
             except asyncio.TimeoutError:
                 return await self.ctx.send("📛 This battle has expired! This is counted as failing to complete the quest.")
@@ -86,28 +88,35 @@ class Encounter:
         stage = 1
         battling = True
         while battling:
-            content = self.get_content(stage=stage)
-            await self.ctx.send(content)
-            try:
-                message = await self.bot.wait_for('message', timeout=30, check=check)
-                print(message.content)
-                stage += 1
-            except asyncio.TimeoutError:
-                battling = False
-                await self.ctx.send("📛 This battle has expired! This is counted as failing to complete the quest.")
+            content = await self.get_content(stage=stage)
+            if content is None:
+                pass
+            elif content == -1:
+                return await self.ctx.send(
+                    "📛 This battle has expired! This is counted as failing to complete the quest.")
+            else:
+                await self.ctx.send(content)
 
-    def get_content(self, start=False, stage=0, **kwargs) -> str:
+    async def get_content(self, start=False, stage=0, **kwargs):
         if start:
             return f"**Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
         elif stage == 0:
             if self.monster.initiative > kwargs.get('user_initiative'):
+                self.turn = itertools.cycle([self.monster_turn, self.human_turn])
                 return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:HimeSad:676087829557936149> **it goes first!**"
             else:
+                self.turn = itertools.cycle([self.human_turn, self.monster_turn])
                 return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:cheeky:717784139226546297> **you go first!**"
         else:
-            return "wopw"
+            return await next(self.turn)()
+
+    async def human_turn(self):
+        return -1
+
+    async def monster_turn(self):
+        return "oh no!"
 
     @staticmethod
     def process_roll(dice: str, expected=(1, 20)) -> int:
@@ -115,6 +124,7 @@ class Encounter:
             return 0
         if dice[0].isalpha():
             dice = "1" + dice
+
         amount, dice_sides, *_ = dice_regex.findall(dice)[0]
         if {int(amount), int(dice_sides)} & set(expected):
             total = 0
