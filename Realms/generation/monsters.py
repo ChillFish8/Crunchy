@@ -21,8 +21,16 @@ def get_stats():
 
 class Monster:
     def __init__(self, **stats):
+        self.name = None
+        self.cr = None
         for key, item in stats.items():
             setattr(self, key, item)
+
+    @property
+    def format_name(self):
+        return f"{self.name} - [ CR {self.cr} ]"
+
+
 
 
 with open(r'realms/generation/monster_name.json', 'r') as file:
@@ -65,6 +73,7 @@ class MonsterManual:
 
         return Monster(**{
             'name': choice(random_names),
+            'cr': challenge_rating,
             'ac': ac,
             'hp': hp,
             'dex': dex,
