@@ -2,7 +2,6 @@ import discord
 
 from discord.ext import commands
 
-from realms.datastores.database import MongoDatabase
 from realms.static import Database
 from realms.user_characters import UserCharacters
 
