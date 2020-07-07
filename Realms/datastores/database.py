@@ -90,4 +90,3 @@ class MongoDatabase(EventsStore):
 
     def reset_party(self, user_id: int):
         return self.parties.find_one_and_delete({'_id': user_id})
-
