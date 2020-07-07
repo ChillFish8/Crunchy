@@ -1,6 +1,6 @@
 import json
 
-from random import randint
+from random import randint, choice
 
 
 BASE_HP = (20, 50)  # min, max
@@ -19,13 +19,22 @@ def get_stats():
     return hp, dex, strength, loot, armour
 
 
+class Monster:
+    def __init__(self, **stats):
+        for key, item in stats.items():
+            setattr(self, key, item)
+
+
+with open(r'realms/generation/monster_name.json', 'r') as file:
+    random_names = json.load(file)
+
+
 class MonsterManual:
     def __init__(self):
-        with open(r'realms/generation/monster_name.json', 'r') as file:
-            self.random_names = json.load(file)
+        pass
 
     @staticmethod
-    async def get_random_monster(challenge_rating):
+    def get_random_monster(challenge_rating):
         hp, dex, strength, loot, armour = get_stats()
         hp = hp * (challenge_rating + randint(0, 2)) / 2
 
@@ -54,7 +63,8 @@ class MonsterManual:
             loot['gold'] = randint(150, 350)
             loot['copper'] = randint(50, 500)
 
-        return {
+        return Monster(**{
+            'name': choice(random_names),
             'ac': ac,
             'hp': hp,
             'dex': dex,
@@ -63,4 +73,4 @@ class MonsterManual:
             'str_mod': str_mod,
             'loot': loot,
             'armour': armour
-        }
+        })
