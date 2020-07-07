@@ -4,13 +4,11 @@ from discord.ext import commands
 
 from realms.static import Database
 from realms.user_characters import UserCharacters
-from realms.generation.monsters import MonsterManual
 
 
 class MarketCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.monster_manual = MonsterManual()
 
     @commands.command(aliases=['balance', 'bal'])
     async def pocket(self, ctx: commands.Context):
@@ -22,12 +20,6 @@ class MarketCog(commands.Cog):
                             f"\🔸**Copper Pieces -** `{user_area.copper}cp`\n"
         embed.set_footer(text="You can earn money by completing quests and voting.")
         await ctx.send(embed=embed)
-
-    @commands.command(name="encounter")
-    async def encounter(self, ctx: commands.Context):
-        contents = await self.monster_manual.get_random_monster(4)
-        await ctx.send(contents)
-    
 
 
 
