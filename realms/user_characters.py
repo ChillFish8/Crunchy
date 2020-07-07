@@ -34,7 +34,7 @@ class UserCharacters:
         self.mod_callback = callback
 
     def update_on_db(self):
-        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank)
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, balance=self.bank)
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
@@ -43,7 +43,7 @@ class UserCharacters:
         else:
             self.characters.append(character.to_dict())
             self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank})
+                                    {'characters': self.characters, 'rank': self.rank, 'balance': self.bank})
 
     def dump_character(self, character: Character):
         id_ = character.id
@@ -118,6 +118,9 @@ class UserCharacters:
     @property
     def amount_of_items(self):
         return len(self.characters)
+
+    def update_balance(self, platinum=0, gold=0, copper=0):
+        self._db.
 
     @property
     def platinum(self):
