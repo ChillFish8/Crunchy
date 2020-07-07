@@ -244,7 +244,7 @@ class ErrorHandler:
 
         elif ctx.command.name not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
-                'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall'):
+                'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall', 'stack'):
             err = error
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
