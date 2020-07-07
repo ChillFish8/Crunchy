@@ -120,7 +120,11 @@ class UserCharacters:
         return len(self.characters)
 
     def update_balance(self, platinum=0, gold=0, copper=0):
-        self._db.
+        self.bank['platinum'] += platinum
+        self.bank['gold'] += platinum
+        self.bank['copper'] += platinum
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, balance=self.bank)
+        return self.bank
 
     @property
     def platinum(self):
