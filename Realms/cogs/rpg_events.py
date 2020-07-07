@@ -70,8 +70,9 @@ class LevelUpGames(commands.Cog):
                 if ctx.channel.id == context.channel.id:
                     try:
                         quest_no = int(args[0])
-                        if quest_no in range(1, 5):                              
-                            self.bot.dispatch('quest_accept', quest_no)
+                        if quest_no in range(1, 5):
+                            del self._pending[ctx.author.id]
+                            self.bot.dispatch('quest_accept', quest_no, context.author)
                         else:
                             return await ctx.send("<:HimeSad:676087829557936149> That's not a valid quest! "
                                                   "They must be the number representing the quest!")
@@ -106,8 +107,8 @@ class LevelUpGames(commands.Cog):
 
         user_area = UserCharacters(ctx.author.id, Database.db)
         party = Party(self.bot, ctx, user_area=user_area)
-        encounter = Encounter(self.bot, ctx, party)
-        await encounter.menu()
+        encounter = Encounter(self.bot, ctx, party, self.submit_callback)
+        return await encounter.menu()
 
 
 def setup(bot):
