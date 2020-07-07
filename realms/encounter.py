@@ -3,7 +3,7 @@ import asyncio
 import re
 import itertools
 
-from random import randint
+from random import randint, choice
 from discord.ext import commands
 
 from realms.parties import Party
@@ -96,10 +96,11 @@ class Encounter:
                     "📛 This battle has expired! This is counted as failing to complete the quest.")
             else:
                 await self.ctx.send(content)
+            battling = False
 
     async def get_content(self, start=False, stage=0, **kwargs):
         if start:
-            return f"**Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
+            return f"**You accepted the challenge against `{self.monster.name}`.\n Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
         elif stage == 0:
             if self.monster.initiative > kwargs.get('user_initiative'):
                 self.turn = itertools.cycle([self.monster_turn, self.human_turn])
@@ -110,10 +111,36 @@ class Encounter:
                 return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:cheeky:717784139226546297> **you go first!**"
         else:
-            return await next(self.turn)()
+            return await self.human_turn()
+            # return await next(self.turn)()
 
     async def human_turn(self):
-        return -1
+        mana = 6
+        cards = {
+            0: choice(self.party.selected_characters),
+            1: choice(self.party.selected_characters),
+            2: choice(self.party.selected_characters),
+            3: choice(self.party.selected_characters),
+            4: choice(self.party.selected_characters),
+        }
+
+        card_block = ""
+        for i, card in enumerate(cards.values()):
+            card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ]`**\n"
+
+        text = f"__**This round's deck**__\n" \
+               f"Pick any amount of cards upto 5.\n" \
+               f" you can stack cards to increase damage but beware of the cost.\n\n" \
+               f"💎 **Mana Cost:**\n" \
+               f"• 1 stack ( 1x damage ) - Costs 1 Mana\n" \
+               f"• 2 stack ( 2x damage ) - Costs 3 Mana\n" \
+               f"• 3 stack ( 3x damage ) - Costs 6 Mana\n\n" \
+               f"<:mana_bottle:730069998240006174> **Mana:** `{mana}`\n" \
+               f"\n" \
+               f"⚔️ **Cards:**\n" \
+               f"{card_block}"
+
+        await self.ctx.send(text)
 
     async def monster_turn(self):
         return "oh no!"
