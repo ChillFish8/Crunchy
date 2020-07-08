@@ -28,11 +28,7 @@ class Deck:
     def __init__(self, characters: list):
         self._selected = [choice(characters) for _ in range(5)]
         self._stacked = {}
-        self._attacks = {
-            0: '',
-            1: '',
-            2: ''
-        }
+        self._attacks = []
 
     def stack(self, index, amount) -> (int, None):
         if len(self._stacked) >= 3:
@@ -46,9 +42,7 @@ class Deck:
                 stack.append(self._selected[i])
             if len(stack) == amount:
                 self._stacked[char.id] = stack
-                for k, v in self._attacks.items():
-                    if not v:
-                        self._attacks[k] = char.id
+                self._attacks.append(char_.id)
                 return 1, stack
         return 0, None
 
@@ -65,6 +59,13 @@ class Deck:
             else:
                 card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ]`**\n"
         return card_block
+
+    @property
+    def attacks(self):
+        attacks = []
+        for atk in self._attacks:
+            attacks.append(self._stacked[atk])
+        return attacks
 
 class Encounter:
     def __init__(self, bot, ctx, party: Party, submit):
@@ -196,12 +197,47 @@ class Encounter:
                     key = command.args[0] - 1
                     if key in range(5):
                         resp, details = deck.stack(key, command.args[1])
-                        await self.ctx.send(
-                            f"Success! You stacked {details[0].name} {command.args[1]} times! Your deck is now:\n"
-                            f"{deck.show_cards}"
-                        )
+                        if details is not None:
+                            await self.ctx.send(
+                                f"**Success!** You stacked {details[0].name} {command.args[1]} times! Your deck is now:\n"
+                                f"{deck.show_cards}"
+                            )
+                        else:
+                            if resp == 0:
+                                await self.ctx.send(
+                                    "**Oops!** You dont have enough identical cards to stack that many!\n")
+                            elif resp == -1:
+                                await self.ctx.send(
+                                    "**Oops!** You have already ready up'd your cards. Time to attack!\n")
+                elif command.name == "attack":
+                    if len(deck.attacks) <= 0:
+                        await self.ctx.send("You haven't stacked any cards to attack with!")
+                    else:
+                        msg = await self.ctx.send("*You attack!* Rolling attacks...")
+                        new_content = await self._apply_attack(deck)
+                        await msg.edit(content=new_content)
             except asyncio.TimeoutError:
                 return -1
+
+    async def _apply_attack(self, deck: Deck):
+        total_damage = 0
+        rolls = []
+        for i, attack in enumerate(deck.attacks):
+            character = attack[0]
+            roll_to_hit = character.roll_attack()
+            if roll_to_hit >= self.monster.ac:
+                rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}.` **HIT!**\n")
+                multiplier = len(attack)
+                damage = character.roll_damage() * multiplier
+                total_damage += damage
+            else:
+                rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}.` **MISS!**\n")
+
+        self.monster.hp -= total_damage
+        msg = f"**You launch {len(deck.attacks)} attacks! - AC to beat: {self.monster.ac}**\n" \
+              f"You deal a total of {total_damage} damage!\n"
+        msg += "".join(rolls)
+        return msg
 
     async def monster_turn(self):
         return "oh no!"
