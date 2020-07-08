@@ -29,6 +29,7 @@ class Deck:
         self._selected = [choice(characters) for _ in range(5)]
         self._stacked = {}
         self._attacks = []
+        self._previous_stack_indexes = []
 
     def stack(self, index, amount) -> (int, None):
         if len(self._stacked) >= 3:
@@ -36,13 +37,14 @@ class Deck:
 
         stack = []
         char = self._selected[index]
-        print(self._selected)
+
         for i, char_ in enumerate(self._selected):
             if char_.id == char.id:
                 stack.append(self._selected[i])
             if len(stack) == amount:
                 self._stacked[char.id] = stack
                 self._attacks.append(char_.id)
+                self._previous_stack_indexes.append(index)
                 return 1, stack
         return 0, None
 
@@ -169,7 +171,7 @@ class Encounter:
                f"You can use `{self.ctx.prefix}stack <card number> <amount>` to stack cards and then " \
                f"`{self.ctx.prefix}attack` to launch your attack!\n\n" \
                f"💎 **Card Stacking:**\n" \
-               f"• 1 stack ( 1x damage )a\n" \
+               f"• 1 stack ( 1x damage )\n" \
                f"• 2 stack ( 2x damage )\n" \
                f"• 3 stack ( 3x damage )\n" \
                f"\n" \
@@ -238,7 +240,7 @@ class Encounter:
         msg = f"**You launch {len(deck.attacks)} attacks! - AC to beat: {self.monster.ac}**\n" \
               f"You deal a total of {total_damage} damage!\n"
         msg += "".join(rolls)
-        msg += "\n\n\u200b"
+        msg += "\n\u200b"
         return msg
 
     async def monster_turn(self):

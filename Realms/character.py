@@ -54,7 +54,7 @@ class Character:
 
     @classmethod
     def roll_attack(cls):
-        return random.randint(1, 20)
+        return random.randint(1, 20) + 4
 
     @property
     def hp(self):
