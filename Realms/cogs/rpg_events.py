@@ -27,6 +27,12 @@ def format_time(time_stamp: float):
         return f"{hours}h, {minutes}m, {secs}s."
 
 
+class PartialCommand:
+    def __init__(self, command, *args):
+        self.name = command
+        self.args = args
+
+
 class LevelUpGames(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -83,18 +89,16 @@ class LevelUpGames(commands.Cog):
 
     @commands.command(name="stack")
     async def stack_cards(self, ctx, card_id: int=0, card_amount: int=0):
-        if not self._pending_accepts.get(ctx.author.id):
+        if not self._pending_interactions.get(ctx.author.id):
             return await ctx.send("<:HimeSad:676087829557936149> You dont have a active encounter session running!")
         else:
-            del self._pending_accepts[ctx.author.id]
+            del self._pending_interactions[ctx.author.id]
         if card_id == 0:
             return await ctx.send("<:HimeSad:676087829557936149> You have to give me a card number between 1-5"
                                   f" Example command: `{ctx.prefix}stack 1 2`")
-        if card_amount == 0:
-            return await ctx.send("<:HimeSad:676087829557936149> You have to give me a amount of cards between 1-5"
-                                  f" Example command: `{ctx.prefix}stack 1 2`")
 
-        self.bot.dispatch('encounter_command', 'stack', ctx.author)
+        temp = PartialCommand('stack', card_id, card_amount)
+        self.bot.dispatch('encounter_command', temp, ctx.author)
 
     @stack_cards.error
     async def error_handler(self, ctx, error):
@@ -103,12 +107,13 @@ class LevelUpGames(commands.Cog):
 
     @commands.command()
     async def attack(self, ctx):
-        if not self._pending_accepts.get(ctx.author.id):
+        if not self._pending_interactions.get(ctx.author.id):
             return await ctx.send("<:HimeSad:676087829557936149> You dont have a active encounter session running!")
         else:
-            del self._pending_accepts[ctx.author.id]
+            del self._pending_interactions[ctx.author.id]
 
-        self.bot.dispatch('encounter_command', 'attack', ctx.author)
+        temp = PartialCommand('attack')
+        self.bot.dispatch('encounter_command', temp, ctx.author)
 
     def submit_callback(self, ctx: commands.Context, interaction=False):
         if interaction:
