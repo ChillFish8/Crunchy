@@ -139,7 +139,7 @@ class Encounter:
                     "📛 This battle has expired! This is counted as failing to complete the quest.")
             else:
                 await self.ctx.send(content)
-            battling = False
+            await asyncio.sleep(0.5)
 
     async def get_content(self, start=False, stage=0, **kwargs):
         if start:
@@ -154,11 +154,11 @@ class Encounter:
                 return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:cheeky:717784139226546297> **you go first!**"
         else:
-            return await self.human_turn()
-            # return await next(self.turn)()
+            return await next(self.turn)()
 
     async def human_turn(self):
-        mana = 6
+        msg = await self.ctx.send(
+            f"⚔️{self.ctx.author.mention}️ **It's your turn, get ready to stack and attack!**")
         deck = Deck(self.party.selected_characters)
         card_block = deck.show_cards
 
@@ -168,12 +168,10 @@ class Encounter:
                f" you can stack cards to increase damage but beware of the cost.\n" \
                f"You can use `{self.ctx.prefix}stack <card number> <amount>` to stack cards and then " \
                f"`{self.ctx.prefix}attack` to launch your attack!\n\n" \
-               f"💎 **Mana Cost:**\n" \
-               f"• 1 stack ( 1x damage ) - Costs 1 Mana\n" \
-               f"• 2 stack ( 2x damage ) - Costs 2 Mana\n" \
-               f"• 3 stack ( 3x damage ) - Costs 6 Mana\n" \
-               f"\n" \
-               f"<:mana_bottle:730069998240006174> **Mana:** `{mana}`\n" \
+               f"💎 **Card Stacking:**\n" \
+               f"• 1 stack ( 1x damage )a\n" \
+               f"• 2 stack ( 2x damage )\n" \
+               f"• 3 stack ( 3x damage )\n" \
                f"\n" \
                f"⚔️ **Cards:**\n" \
                f"{card_block}"
@@ -181,8 +179,8 @@ class Encounter:
         embed = discord.Embed(color=self.bot.colour)
         embed.set_author(name="This round's deck", icon_url=self.ctx.author.avatar_url)
         embed.description = text
-        embed.set_footer(text=f"Use \"{self.ctx.prefix}stack <card number> <amount>\" to stack cards.")
-        await self.ctx.send(embed=embed)
+        embed.set_footer(text=f"Use {self.ctx.prefix}stack <card number> <amount> to stack cards.")
+        await msg.edit(embed=embed)
 
         running = True
         while running:
@@ -216,19 +214,22 @@ class Encounter:
                         msg = await self.ctx.send("*You attack!* Rolling attacks...")
                         new_content = await self._apply_attack(deck)
                         await msg.edit(content=new_content)
+                        await asyncio.sleep(1)
+                        running = False
             except asyncio.TimeoutError:
                 return -1
 
     async def _apply_attack(self, deck: Deck):
+        await asyncio.sleep(1)
         total_damage = 0
         rolls = []
         for i, attack in enumerate(deck.attacks):
             character = attack[0]
             roll_to_hit = character.roll_attack()
             if roll_to_hit >= self.monster.ac:
-                rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}.` **HIT!**\n")
                 multiplier = len(attack)
                 damage = character.roll_damage() * multiplier
+                rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}, Damage {damage}.` **HIT!**\n")
                 total_damage += damage
             else:
                 rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}.` **MISS!**\n")
@@ -237,10 +238,12 @@ class Encounter:
         msg = f"**You launch {len(deck.attacks)} attacks! - AC to beat: {self.monster.ac}**\n" \
               f"You deal a total of {total_damage} damage!\n"
         msg += "".join(rolls)
+        msg += "\n\n\u200b"
         return msg
 
     async def monster_turn(self):
-        return "oh no!"
+        msg = await self.ctx.send("It's the monster's turn get ready to roll saves!")
+        await asyncio.sleep(2)
 
     @staticmethod
     def process_roll(dice: str, expected=(1, 20)) -> int:
