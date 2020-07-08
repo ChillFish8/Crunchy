@@ -24,6 +24,48 @@ class PartialCommand:
         return "" + " ".join(self.args)
 
 
+class Deck:
+    def __init__(self, characters: list):
+        self._selected = [choice(characters) for _ in range(5)]
+        self._stacked = {}
+        self._attacks = {
+            0: '',
+            1: '',
+            2: ''
+        }
+
+    def stack(self, index, amount) -> (int, None):
+        if len(self._stacked) >= 3:
+            return -1, None
+
+        stack = []
+        char = self._selected[index]
+        print(self._selected)
+        for i, char_ in enumerate(self._selected):
+            if char_.id == char.id:
+                stack.append(self._selected[i])
+            if len(stack) == amount:
+                self._stacked[char.id] = stack
+                for k, v in self._attacks.items():
+                    if not v:
+                        self._attacks[k] = char.id
+                return 1, stack
+        return 0, None
+
+    @property
+    def show_cards(self):
+        card_block = ""
+        previous = []
+        for i, card in enumerate(self._selected):
+            if card.id in self._stacked:
+                if card.id not in previous:
+                    previous.append(card.id)
+                    card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ] " \
+                                  f"x {len(self._stacked[card.id])}`**\n"
+            else:
+                card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ]`**\n"
+        return card_block
+
 class Encounter:
     def __init__(self, bot, ctx, party: Party, submit):
         self.bot = bot
@@ -116,27 +158,18 @@ class Encounter:
 
     async def human_turn(self):
         mana = 6
-        cards = {
-            0: choice(self.party.selected_characters),
-            1: choice(self.party.selected_characters),
-            2: choice(self.party.selected_characters),
-            3: choice(self.party.selected_characters),
-            4: choice(self.party.selected_characters),
-        }
-
-        card_block = ""
-        for i, card in enumerate(cards.values()):
-            card_block += f"**`{i + 1}) - {card.name} - [ Level: {card.level}, HP: {card.hp} ]`**\n"
+        deck = Deck(self.party.selected_characters)
+        card_block = deck.show_cards
 
         text = f"**Monster HP:** {self.monster.hp}\n" \
                f"\n" \
-               f"Pick any amount of cards upto 5.\n" \
+               f"Pick any amount of cards to upto 3 attacks.\n" \
                f" you can stack cards to increase damage but beware of the cost.\n" \
                f"You can use `{self.ctx.prefix}stack <card number> <amount>` to stack cards and then " \
                f"`{self.ctx.prefix}attack` to launch your attack!\n\n" \
                f"💎 **Mana Cost:**\n" \
                f"• 1 stack ( 1x damage ) - Costs 1 Mana\n" \
-               f"• 2 stack ( 2x damage ) - Costs 3 Mana\n" \
+               f"• 2 stack ( 2x damage ) - Costs 2 Mana\n" \
                f"• 3 stack ( 3x damage ) - Costs 6 Mana\n" \
                f"\n" \
                f"<:mana_bottle:730069998240006174> **Mana:** `{mana}`\n" \
@@ -153,13 +186,20 @@ class Encounter:
         running = True
         while running:
             try:
-                self.submit_callback(self.ctx, interaction=False)
+                self.submit_callback(self.ctx, interaction=True)
                 command, user = await self.bot.wait_for(
                     'encounter_command',
                     timeout=30,
                     check=lambda c, u: u.id == self.ctx.author.id
                 )
-                print(command, user)
+                if command.name == "stack":
+                    key = command.args[0] - 1
+                    if key in range(5):
+                        resp, details = deck.stack(key, command.args[1])
+                        await self.ctx.send(
+                            f"Success! You stacked {details[0].name} {command.args[1]} times! Your deck is now:\n"
+                            f"{deck.show_cards}"
+                        )
             except asyncio.TimeoutError:
                 return -1
 
@@ -183,5 +223,5 @@ class Encounter:
             return 0
 
     @classmethod
-    async def process_commands_internally(cls, command: str, args: list):
+    async def process_commands_internally(cls, command: str, args: list) -> PartialCommand:
         return PartialCommand(command, *args)
