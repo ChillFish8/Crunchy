@@ -93,8 +93,12 @@ class LevelUpGames(commands.Cog):
             return await ctx.send("<:HimeSad:676087829557936149> You dont have a active encounter session running!")
         else:
             del self._pending_interactions[ctx.author.id]
-        if card_id == 0:
+        if 0 <= card_id > 5:
             return await ctx.send("<:HimeSad:676087829557936149> You have to give me a card number between 1-5"
+                                  f" Example command: `{ctx.prefix}stack 1 2`")
+
+        if 0 <= card_amount > 5:
+            return await ctx.send("<:HimeSad:676087829557936149> You have to give me a amount of cards between 1-5"
                                   f" Example command: `{ctx.prefix}stack 1 2`")
 
         temp = PartialCommand('stack', card_id, card_amount)
