@@ -50,7 +50,7 @@ class Character:
         return self._level
 
     def roll_damage(self):
-        return sum([random.randint(1, 6) for _ in range(self._level)])
+        return sum([random.randint(1, 12) for _ in range(self._level)])
 
     @classmethod
     def roll_attack(cls):
