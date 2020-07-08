@@ -56,3 +56,6 @@ class Character:
     @property
     def hp(self):
         return self._hp
+
+    def __repr__(self):
+        return f"{self.name}, {self.id}"
