@@ -30,6 +30,7 @@ class Deck:
         self._stacked = {}
         self._attacks = []
         self._previous_stack_indexes = []
+        self.character_xp_area = {}
 
     def stack(self, index, amount) -> (int, None):
         if len(self._stacked) >= 3:
@@ -40,6 +41,9 @@ class Deck:
 
         for i, char_ in enumerate(self._selected):
             if char_.id == char.id:
+                if not self.character_xp_area.get(char.id):
+                    self.character_xp_area[char.id] = 0
+                self.character_xp_area[char.id] += 1
                 stack.append(self._selected[i])
             if len(stack) == amount:
                 self._stacked[char.id] = stack
@@ -78,6 +82,7 @@ class Encounter:
         self.monster = None
         self.submit_callback = submit
         self.turn = None
+        self._deck = None
 
     def get_rand_monster(self) -> Monster:
         cr = randint(self.party.challenge_rating, self.party.challenge_rating + 5)
@@ -135,13 +140,19 @@ class Encounter:
         while battling:
             content = await self.get_content(stage=stage)
             if content is None:
-                pass
+                continue
             elif content == -1:
                 return await self.ctx.send(
                     "📛 This battle has expired! This is counted as failing to complete the quest.")
             else:
                 await self.ctx.send(content)
+            if self.monster.hp <= 0:
+                await self.ctx.send("**Success!** You defeated the monster and completed the quest, well done you! "
+                                    "<:exitment:717784139641651211>\n"
+                                    "Here is the battle winnings:\n")
             await asyncio.sleep(0.5)
+
+    async def show_end_screen(self):
 
     async def get_content(self, start=False, stage=0, **kwargs):
         if start:
@@ -162,6 +173,7 @@ class Encounter:
         msg = await self.ctx.send(
             f"⚔️{self.ctx.author.mention}️ **It's your turn, get ready to stack and attack!**")
         deck = Deck(self.party.selected_characters)
+        self._deck = deck
         card_block = deck.show_cards
 
         text = f"**Monster HP:** {self.monster.hp}\n" \
@@ -223,6 +235,7 @@ class Encounter:
 
     async def _apply_attack(self, deck: Deck):
         await asyncio.sleep(1)
+
         total_damage = 0
         rolls = []
         for i, attack in enumerate(deck.attacks):
@@ -231,6 +244,7 @@ class Encounter:
             if roll_to_hit >= self.monster.ac:
                 multiplier = len(attack)
                 damage = character.roll_damage() * multiplier
+                deck.character_xp_area[character.id] += (damage * 5)
                 rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}, Damage {damage}.` **HIT!**\n")
                 total_damage += damage
             else:
