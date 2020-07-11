@@ -300,7 +300,7 @@ class ViewTracked(commands.Cog):
             embeds.append(embed)
         return embeds
 
-    @commands.command(aliases=['myw', 'watchlist'])
+    @commands.command(aliases=['myw', 'watchlist', "mywatchlist"])
     async def my_watchlist(self, ctx, user: discord.Member = None):
         """ Get your or someone else's watch list """
         if user is not None:
@@ -330,7 +330,7 @@ class ViewTracked(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
-    @commands.command(aliases=['myf', 'favourites'])
+    @commands.command(aliases=['myf', 'favourites', 'myfavourites'])
     async def my_favourites(self, ctx, user: discord.Member = None):
         """ Get your or someone else's favourites list """
         if user is not None:
@@ -361,7 +361,7 @@ class ViewTracked(commands.Cog):
             else:
                 return await ctx.send(embed=embeds[0])
 
-    @commands.command(aliases=['myr', 'recommended'])
+    @commands.command(aliases=['myr', 'recommended', "myrecommended"])
     async def my_recommended(self, ctx, user: discord.Member = None):
         """ Get your or someone else's recommended list """
         if user is not None:
