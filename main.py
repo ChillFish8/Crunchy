@@ -205,6 +205,7 @@ class ErrorHandler:
             self.session = aiohttp.ClientSession()
             if self.webhook is None:
                 self.webhook = Webhook.from_url(self.ERROR_WEBHOOK_URL, adapter=AsyncWebhookAdapter(self.session))
+        error = getattr(error, 'original', error)
 
         if isinstance(error, commands.CommandNotFound):
             return
