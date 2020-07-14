@@ -34,12 +34,13 @@ class Search(commands.Cog):
                 else:
                     details = await resp.json()
                     if len(details) >= 1:
+                        title = details[0]['title']
                         details = details[0]['data']
                     else:
                         return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                               "I couldn't find what you are searching for.")
         embed = discord.Embed(
-            title=f"<:CrunchyRollLogo:676087821596885013>  {details['title']}  <:CrunchyRollLogo:676087821596885013>",
+            title=f"<:CrunchyRollLogo:676087821596885013>  {title}  <:CrunchyRollLogo:676087821596885013>",
             url=f"https://www.crunchyroll.com/{details['title'].lower().replace(' ', '-')}",
             color=self.bot.colour
         )
