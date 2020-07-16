@@ -74,7 +74,7 @@ class Deck:
         return attacks
 
 class Encounter:
-    def __init__(self, bot, ctx, party: Party, submit):
+    def __init__(self, bot, ctx, party: Party, submit, user_area):
         self.bot = bot
         self.ctx: commands.Context = ctx
         self.party = party
@@ -83,6 +83,7 @@ class Encounter:
         self.submit_callback = submit
         self.turn = None
         self._deck = None
+        self._user_area = user_area
 
     def get_rand_monster(self) -> Monster:
         cr = randint(self.party.challenge_rating, self.party.challenge_rating + 5)
@@ -139,6 +140,9 @@ class Encounter:
         battling = True
         while battling:
             content = await self.get_content(stage=stage)
+            if self.monster.hp <= 0:
+                await self.show_end_screen()
+                battling = False
             if content is None:
                 continue
             elif content == -1:
@@ -146,13 +150,29 @@ class Encounter:
                     "📛 This battle has expired! This is counted as failing to complete the quest.")
             else:
                 await self.ctx.send(content)
-            if self.monster.hp <= 0:
-                await self.ctx.send("**Success!** You defeated the monster and completed the quest, well done you! "
-                                    "<:exitment:717784139641651211>\n"
-                                    "Here is the battle winnings:\n")
             await asyncio.sleep(0.5)
 
     async def show_end_screen(self):
+        await self.ctx.send("*The monster stumbles back and finally collapses. Dead.*")
+        await asyncio.sleep(2)
+        text = "🎉 **Quest Complete!** 🎉\n" \
+               "\n" \
+               "You successfully defeated {monster}!\n" \
+               "*You search through the remains of the monster to find loot*\n" \
+               "\n" \
+               "***You gain the following rewards:***\n" \
+               "> 💠 `{plat}` **Platinum Pieces**\n" \
+               "> 🔹 `{gold}` **Gold Pieces**\n" \
+               "> 🔸 `{cop}` **Copper Pieces**\n"
+
+        await self.ctx.send(
+            text.format(
+                monster=self.monster.name,
+                plat=self.monster.loot['platinum'],
+                gold=self.monster.loot['gold'],
+                cop=self.monster.loot['copper']
+            )
+        )
 
     async def get_content(self, start=False, stage=0, **kwargs):
         if start:
