@@ -41,7 +41,7 @@ class Search(commands.Cog):
                                               "I couldn't find what you are searching for.")
         embed = discord.Embed(
             title=f"<:CrunchyRollLogo:676087821596885013>  {title}  <:CrunchyRollLogo:676087821596885013>",
-            url=f"https://www.crunchyroll.com/{details['title'].lower().replace(' ', '-')}",
+            url=f"https://www.crunchyroll.com/{title.lower().replace(' ', '-')}",
             color=self.bot.colour
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
