@@ -43,8 +43,10 @@ async def shuffler():
 
 
 class MonsterManual:
+    shuffler.start()
+
     def __init__(self):
-        shuffler.start()
+        pass
 
     @staticmethod
     def get_random_monster(challenge_rating):
