@@ -1,7 +1,6 @@
 import discord
 import time
 
-from datetime import datetime, timedelta
 from discord.ext import commands, tasks
 
 from realms.static import Database
@@ -125,7 +124,7 @@ class LevelUpGames(commands.Cog):
         else:
             self._pending_accepts[ctx.author.id] = ctx
 
-    @commands.command(name="encounter")
+    @commands.command()
     async def encounter(self, ctx):
         if self._encounters.get(ctx.author.id):
             if self._encounters.get(ctx.author.id)['uses'] >= LIMIT:
@@ -149,7 +148,7 @@ class LevelUpGames(commands.Cog):
 
         user_area = UserCharacters(ctx.author.id, Database.db)
         party = Party(self.bot, ctx, user_area=user_area)
-        encounter = Encounter(self.bot, ctx, party, self.submit_callback)
+        encounter = Encounter(self.bot, ctx, party, self.submit_callback, user_area)
         return await encounter.menu()
 
 
