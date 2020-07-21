@@ -8,6 +8,7 @@ from discord.ext import commands
 
 from realms.parties import Party
 from realms.generation.monsters import MonsterManual, Monster
+from realms.character import Character
 
 HIME_CHEEK = "https://cdn.discordapp.com/emojis/717784139226546297.png?v=1"
 dice_regex = re.compile("^([1-9]*)[dD]([1-9][0-9]*)")
@@ -134,7 +135,8 @@ class Encounter:
                         content = await self.get_content(stage=0, user_initiative=user_initiative)
                         await self.ctx.send(content)
             except asyncio.TimeoutError:
-                return await self.ctx.send("📛 This battle has expired! This is counted as failing to complete the quest.")
+                return await self.ctx.send(
+                    "📛 This battle has expired! This is counted as failing to complete the quest.")
 
         stage = 1
         battling = True
@@ -176,15 +178,18 @@ class Encounter:
 
     async def get_content(self, start=False, stage=0, **kwargs):
         if start:
-            return f"**You accepted the challenge against `{self.monster.name}`.\n Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
+            return f"**You accepted the challenge against `{self.monster.name}`.\n " \
+                   f"Roll initiative! Do:** `{self.ctx.prefix}roll 1d20`"
         elif stage == 0:
             if self.monster.initiative > kwargs.get('user_initiative'):
                 self.turn = itertools.cycle([self.monster_turn, self.human_turn])
-                return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
+                return f"**The monster rolled a {self.monster.initiative}, " \
+                       f"you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:HimeSad:676087829557936149> **it goes first!**"
             else:
                 self.turn = itertools.cycle([self.human_turn, self.monster_turn])
-                return f"**The monster rolled a {self.monster.initiative}, you rolled a {kwargs.get('user_initiative')}.**" \
+                return f"**The monster rolled a {self.monster.initiative}, " \
+                       f"you rolled a {kwargs.get('user_initiative')}.**" \
                        f" <:cheeky:717784139226546297> **you go first!**"
         else:
             return await next(self.turn)()
@@ -231,7 +236,8 @@ class Encounter:
                         resp, details = deck.stack(key, command.args[1])
                         if details is not None:
                             await self.ctx.send(
-                                f"**Success!** You stacked {details[0].name} {command.args[1]} times! Your deck is now:\n"
+                                f"**Success!** You stacked {details[0].name} {command.args[1]} "
+                                f"times! Your deck is now:\n"
                                 f"{deck.show_cards}"
                             )
                         else:
@@ -279,7 +285,51 @@ class Encounter:
 
     async def monster_turn(self):
         msg = await self.ctx.send("It's the monster's turn get ready to roll saves!")
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
+
+        roll_to_hit = self.monster.roll_to_hit()
+        targeted: Character = choice(self.party.selected_characters)
+        await msg.edit(
+            content=f"The monster makes a melee attack against {targeted.name},\n"
+                    f"It rolls {roll_to_hit}, roll `{self.ctx.prefix}roll 1d20` "
+                    f"to try dodge out of the way!\n"
+        )
+
+        def check(msg_check: discord.Message):
+            return (msg_check.author.id == self.ctx.author.id) and \
+                   (msg_check.channel.id == self.ctx.channel.id) and \
+                   msg_check.content.startswith(self.ctx.prefix)
+
+        valid, user_roll_to_doge = False, 0
+        while not valid:
+            try:
+                message = await self.bot.wait_for('message', timeout=20, check=check)
+                command, *args = message.content.split(" ")
+                if command.lower() == "roll":
+                    user_roll_to_doge = self.process_roll(args[0])
+                    if user_roll_to_doge > 0:
+                        valid = True
+            except asyncio.TimeoutError:
+                await self.ctx.send(
+                    "📛 This battle has expired! This is counted as failing to complete the quest.")
+                return
+
+        if user_roll_to_doge > roll_to_hit:
+            await self.ctx.send(
+                f"*{targeted.name} narrowly avoids the attack*, they take no damage.")
+        else:
+            damage, dead = self.monster.roll_damage(), False
+            for k, char in self.party.selected_characters.items():
+                if char.id == targeted.id:
+                    dead = self.party.change_characters_hp(k, -damage)
+                    break
+            if dead:
+                await self.ctx.send(
+                    f"*The monster lands a blow on {targeted.name}*, they take {damage} and get knocked out!\n"
+                    f"*This character is out of action until you heal them after battle.*")
+            else:
+                await self.ctx.send(
+                    f"*The monster lands a blow on {targeted.name}*, they take {damage}. Ouch!")
 
     @staticmethod
     def process_roll(dice: str, expected=(1, 20)) -> int:
@@ -289,7 +339,7 @@ class Encounter:
             dice = "1" + dice
 
         amount, dice_sides, *_ = dice_regex.findall(dice)[0]
-        if {int(amount), int(dice_sides)} & set(expected):
+        if int(amount) == expected[0] and int(dice_sides) == expected[1]:
             total = 0
             for _ in range(int(amount)):
                 total += randint(1, int(dice_sides))
