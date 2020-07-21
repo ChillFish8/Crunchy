@@ -60,5 +60,8 @@ class Character:
     def hp(self):
         return self._hp
 
+    def change_hp(self, mod):
+        self._hp += mod
+
     def __repr__(self):
         return f"{self.name}, {self.id}"
