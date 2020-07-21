@@ -25,12 +25,19 @@ class Monster:
         self.name = None
         self.cr = None
         self.initiative = randint(1, 20)
+        self.str_mod = 0
         for key, item in stats.items():
             setattr(self, key, item)
 
     @property
     def format_name(self):
         return f"{self.name} - [ CR {self.cr} ]"
+
+    def roll_to_hit(self):
+        return randint(1, 20) + self.str_mod + 2
+
+    def roll_damage(self):
+        return randint(1, ((self.cr // 2) + 1) * 8) + self.str_mod
 
 
 with open(r'realms/generation/monster_name.json', 'r') as file:
