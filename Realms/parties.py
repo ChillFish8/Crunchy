@@ -176,3 +176,17 @@ class Party:
     @property
     def selected_characters(self):
         return self._loaded_party
+
+    def change_characters_hp(self, index, mod):
+        self._loaded_party[index].change_hp(mod)
+        if self._loaded_party[index] .hp <= 0:
+            dead = True
+            self._loaded_party.pop(index)
+            self._db.update_any_party(
+                self.ctx.author.id,
+                party_choice=self._loaded_party
+            )
+        else:
+            dead = False
+        self.user_area.update_character(self._loaded_party[index])
+        return dead
