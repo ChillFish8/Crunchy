@@ -1,6 +1,7 @@
 import discord
 import time
 
+from datetime import timedelta
 from discord.ext import commands, tasks
 
 from realms.static import Database
@@ -128,7 +129,7 @@ class LevelUpGames(commands.Cog):
     async def encounter(self, ctx):
         if self._encounters.get(ctx.author.id):
             if self._encounters.get(ctx.author.id)['uses'] >= LIMIT:
-                if not ctx.has_voted(user_id=ctx.author.id):
+                if not ctx.has_voted(user_id=ctx.author.id, force_db=True):
                     embed = discord.Embed(title="Slow down adventurer!", color=self.bot.colour)
                     embed.set_thumbnail(url=HIME_MAD)
                     embed.description = "I dont have an unlimited stock " \
@@ -145,7 +146,17 @@ class LevelUpGames(commands.Cog):
                                         f"{format_time(self._encounters.get(ctx.author.id)['timestamp'])}"
                     embed.set_footer(text="Voting helps support the development of Crunchy.")
                     return await ctx.send(embed=embed)
-
+            else:
+                self._encounters[ctx.author.id]['uses'] += 1
+                if self._encounters[ctx.author.id]['uses'] >= LIMIT:
+                    self._encounters[ctx.author.id]['timestamp'] = time.time() + timedelta(hours=12).total_seconds()
+        else:
+            self._encounters[ctx.author.id] = {
+                'uses': 1,
+                'timestamp': None
+            }
+            if self._encounters[ctx.author.id]['uses'] >= LIMIT:
+                self._encounters[ctx.author.id]['timestamp'] = time.time() + timedelta(hours=12).total_seconds()
         user_area = UserCharacters(ctx.author.id, Database.db)
         party = Party(self.bot, ctx, user_area=user_area)
         encounter = Encounter(self.bot, ctx, party, self.submit_callback, user_area)

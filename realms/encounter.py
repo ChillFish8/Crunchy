@@ -125,7 +125,7 @@ class Encounter:
         valid = False
         while not valid:
             try:
-                message = await self.bot.wait_for('message', timeout=120, check=check)
+                message = await self.bot.wait_for('message', timeout=30, check=check)
                 command, *args = message.content.split(" ")
                 result = await self.process_commands_internally(command, args)
                 if result.command == "roll":
@@ -155,8 +155,8 @@ class Encounter:
             await asyncio.sleep(0.5)
 
     async def show_end_screen(self):
-        await self.ctx.send("*The monster stumbles back and finally collapses. Dead.*")
-        await asyncio.sleep(2)
+        await self.ctx.send("*The monster stumbles back and finally collapses. Dead.*\n\n")
+        await asyncio.sleep(1.5)
         text = "🎉 **Quest Complete!** 🎉\n" \
                "\n" \
                "You successfully defeated {monster}!\n" \
@@ -174,6 +174,11 @@ class Encounter:
                 gold=self.monster.loot['gold'],
                 cop=self.monster.loot['copper']
             )
+        )
+        self._user_area.update_balance(
+            platinum=self.monster.loot['platinum'],
+            gold=self.monster.loot['gold'],
+            copper=self.monster.loot['copper']
         )
 
     async def get_content(self, start=False, stage=0, **kwargs):
@@ -227,7 +232,7 @@ class Encounter:
                 self.submit_callback(self.ctx, interaction=True)
                 command, user = await self.bot.wait_for(
                     'encounter_command',
-                    timeout=30,
+                    timeout=20,
                     check=lambda c, u: u.id == self.ctx.author.id
                 )
                 if command.name == "stack":

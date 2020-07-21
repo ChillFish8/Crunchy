@@ -121,8 +121,8 @@ class UserCharacters:
 
     def update_balance(self, platinum=0, gold=0, copper=0):
         self.bank['platinum'] += platinum
-        self.bank['gold'] += platinum
-        self.bank['copper'] += platinum
+        self.bank['gold'] += gold
+        self.bank['copper'] += copper
         self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, balance=self.bank)
         return self.bank
 
