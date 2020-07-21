@@ -152,7 +152,7 @@ class CrunchyBot(commands.AutoShardedBot):
 
     async def get_custom_prefix(self, message: discord.Message):
         """ Fetches guild data either from cache or fetches it """
-        
+
         if message.guild is not None and self.user.id != 641590528026083338:
             guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:

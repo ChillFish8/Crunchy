@@ -56,6 +56,14 @@ class HelpCog(commands.Cog):
         "`character ` **-** Get a random character, can you collect them all?",
         "`viewcharacters` **-** View all of your collected characters.",
         "`removecharacter ` **-** Remove a collect character.",  # todo
+        "`party` **-** see your selected party for encounters.",
+        "`setparty` **-** set your party from your characters.",
+    ]
+
+    RPG_COMMANDS = [
+        "`encounter ` **-** select a random encounter quest.",
+        "`viewcharacters` **-** View all of your collected characters.",
+        "`removecharacter ` **-** Remove a collect character.",  # todo
     ]
 
     NSFW_COMMANDS = [
@@ -104,9 +112,12 @@ class HelpCog(commands.Cog):
 
             f5 = f"<:HimeHappy:677852789074034691>  **Character Collection**  <:HimeHappy:677852789074034691>\n" \
                  f"" + "\n".join(self.CHARACTER_COMMANDS)
+            f7 = f"<:HimeHappy:677852789074034691>  **Character RPG**  <:HimeHappy:677852789074034691>\n" \
+                 f"" + "\n".join(self.RPG_COMMANDS)
 
             embed2.add_field(name="\u200b", value=f3, inline=False)
             embed2.add_field(name="\u200b", value=f5, inline=False)
+            embed2.add_field(name="\u200b", value=f7, inline=False)
             embed2.add_field(name="\u200b", value=f2, inline=False)
 
             if ctx.guild_config is not None:
