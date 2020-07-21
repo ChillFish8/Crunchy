@@ -62,8 +62,7 @@ class HelpCog(commands.Cog):
 
     RPG_COMMANDS = [
         "`encounter ` **-** select a random encounter quest.",
-        "`viewcharacters` **-** View all of your collected characters.",
-        "`removecharacter ` **-** Remove a collect character.",  # todo
+        "`balance` **-** See your campaign balance."
     ]
 
     NSFW_COMMANDS = [
