@@ -58,10 +58,12 @@ class UserCharacters:
 
     def get_character(self, search: str=None, id_: int=None) -> [dict, None]:
         for character in self.characters:
-            if character['name'].lower() == search.lower():
-                return character
-            elif character['id'] == id_:
-                return character
+            if search is not None:
+                if character['name'].lower() == search.lower():
+                    return character
+            elif id_ is not None:
+                if character['id'] == id_:
+                    return character
         if search is not None:
             for character in self.characters:
                 if search.lower() in character['name'].lower():
