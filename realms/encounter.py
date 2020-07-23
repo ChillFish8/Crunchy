@@ -232,7 +232,7 @@ class Encounter:
                 self.submit_callback(self.ctx, interaction=True)
                 command, user = await self.bot.wait_for(
                     'encounter_command',
-                    timeout=20,
+                    timeout=60,
                     check=lambda c, u: u.id == self.ctx.author.id
                 )
                 if command.name == "stack":
@@ -308,7 +308,7 @@ class Encounter:
         valid, user_roll_to_doge = False, 0
         while not valid:
             try:
-                message = await self.bot.wait_for('message', timeout=20, check=check)
+                message = await self.bot.wait_for('message', timeout=60, check=check)
                 command, *args = message.content.split(" ")
                 if command.lower() == "roll":
                     user_roll_to_doge = self.process_roll(args[0])

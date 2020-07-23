@@ -56,12 +56,12 @@ class HelpCog(commands.Cog):
         "`character ` **-** Get a random character, can you collect them all?",
         "`viewcharacters` **-** View all of your collected characters.",
         "`removecharacter ` **-** Remove a collect character.",  # todo
-        "`party` **-** see your selected party for encounters.",
-        "`setparty` **-** set your party from your characters.",
+        # "`party` **-** see your selected party for encounters.",
+        # "`setparty` **-** set your party from your characters.",
     ]
 
     RPG_COMMANDS = [
-        "`encounter ` **-** select a random encounter quest.",
+        #"`encounter ` **-** select a random encounter quest.",
         "`balance` **-** See your campaign balance."
     ]
 
