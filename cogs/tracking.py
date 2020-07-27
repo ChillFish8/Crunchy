@@ -444,11 +444,22 @@ class RemoveTracked(commands.Cog):
                 return await ctx.send(embed=embeds[0])
 
     @commands.command(name="removewatchlist", aliases=['rw'])
-    async def remove_watchlist(self, ctx, index: int = None):
+    async def remove_watchlist(self, ctx: commands.Context, index=None):
         """ Remove something from watch list """
         user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            return await self.show_area(ctx, user_area)
+            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            command: commands.Command = self.bot.get_command("my_watchlist")
+            return await command.invoke(ctx)
+        try:
+            index = int(index)
+        except ValueError:
+            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
+                           "a item specify the number that is listed next to the item.\n"
+                           f"Example command: `{ctx.prefix}rw 1`")
+            command: commands.Command = self.bot.get_command("my_watchlist")
+            return await command.invoke(ctx)
+
         if index < 0:
             return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
@@ -456,11 +467,23 @@ class RemoveTracked(commands.Cog):
             return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
     @commands.command(name="removefavourite", aliases=['rf'])
-    async def remove_favourites(self, ctx, index: int = None):
+    async def remove_favourites(self, ctx, index=None):
         """ Remove something from favourites list """
         user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            return await self.show_area(ctx, user_area)
+            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            command: commands.Command = self.bot.get_command("my_favourites")
+            return await command.invoke(ctx)
+
+        try:
+            index = int(index)
+        except ValueError:
+            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
+                           "a item specify the number that is listed next to the item.\n"
+                           f"Example command: `{ctx.prefix}rf 1`")
+            command: commands.Command = self.bot.get_command("my_favourites")
+            return await command.invoke(ctx)
+
         if index < 0:
             return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
@@ -468,16 +491,27 @@ class RemoveTracked(commands.Cog):
             return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
     @commands.command(name="removerecommended", aliases=['rr'])
-    async def remove_recommended(self, ctx, index: int = None):
+    async def remove_recommended(self, ctx, index=None):
         """ Remove something from recommended list """
         user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            return await self.show_area(ctx, user_area)
+            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            command: commands.Command = self.bot.get_command("my_recommended")
+            return await command.invoke(ctx)
+
+        try:
+            index = int(index)
+        except ValueError:
+            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
+                           "a item specify the number that is listed next to the item.\n"
+                           f"Example command: `{ctx.prefix}rr 1`")
+            command: commands.Command = self.bot.get_command("my_recommended")
+            return await command.invoke(ctx)
+
         if index < 0:
             return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
             deleted = user_area.remove_content(index - 1)
-            print(deleted)
             return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
 
