@@ -88,7 +88,7 @@ class UserCharacters:
         return self._rolls
 
     def get_time_obj(self):
-        return datetime.fromtimestamp(self._expires_in) if self._expires_in is not None else self._expires_in
+        return datetime.fromtimestamp(int(self._expires_in)) if self._expires_in is not None else self._expires_in
 
     @property
     def expires_in(self):
