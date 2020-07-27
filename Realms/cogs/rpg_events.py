@@ -164,4 +164,5 @@ class LevelUpGames(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(LevelUpGames(bot))
+    pass
+    # bot.add_cog(LevelUpGames(bot))
