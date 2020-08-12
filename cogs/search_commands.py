@@ -18,7 +18,7 @@ class Search(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="animedetails", aliases=['ad'])
+    @commands.command(name="animedetails", aliases=['ad', 'anime'])
     async def anime_details(self, ctx, *args):
         if len(args) <= 0:
             return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
@@ -54,7 +54,7 @@ class Search(commands.Cog):
                             f"__**Description:**__\n {details.get('desc_long', details.get('desc_short', 'No Description.'))}\n"
         return await ctx.send(embed=embed)
 
-    @commands.command(name="mangadetails", aliases=['md'])
+    @commands.command(name="mangadetails", aliases=['md', 'manga'])
     async def manga_details(self, ctx, *args):
         if len(args) <= 0:
             return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
@@ -86,10 +86,52 @@ class Search(commands.Cog):
         embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
                          icon_url=ctx.author.avatar_url)
 
-        embed.description = f"⭐ **Rating** {details.get('score', 'unkown')} / 10\n" \
-                            f"📖 **Volumes** {details.get('volumes', 'unkown')}\n"
-        embed.add_field(name="Genres", value=', '.join(details.get('Genres', ['unkown'])), inline=False)
+        embed.description = f"⭐ **Rating** {details.get('score', 'unknown')} / 10\n" \
+                            f"📖 **Volumes** {details.get('volumes', 'unknown')}\n"
+        embed.add_field(name="Genres", value=', '.join(details.get('Genres', ['unknown'])), inline=False)
         embed.add_field(name="Description", value=details.get('description', 'No Description.')[:500], inline=False)
+
+        return await ctx.send(embed=embed)
+
+    @commands.command(name="webtoondetails", aliases=['wtd', 'wt', 'webtoon'])
+    async def webtoon_details(self, ctx, *args):
+        if len(args) <= 0:
+            return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
+                                  "You need to give me something to search for!")
+
+        details_url = BASE_URL + "/webtoon/details?terms={}"
+        url = details_url.format("+".join(args))
+        async with aiohttp.ClientSession() as sess:
+            async with sess.get(url) as resp:
+                if resp.status != 200:
+                    return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
+                                          "Something seems to have gone wrong when searching for that."
+                                          " Please try again later!")
+                else:
+                    details = await resp.json()
+                    if len(details) >= 1:
+                        details = details[0]
+                    else:
+                        return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
+                                              "I couldn't find what you are searching for.")
+
+        embed = discord.Embed(
+            title=f"<:webtoon:742857781232795741>  {details['title']}  <:webtoon:742857781232795741>",
+            url=details.get('url'),
+            color=self.bot.colour
+        )
+        embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
+        if details.get('banner_src'):
+            embed.set_image(url=details.get('banner_src'))
+        embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
+                         icon_url=ctx.author.avatar_url)
+        embed.description = f"" \
+                            f"⭐ **Rating** {details.get('rating', 'unknown')} / 10\n\n" \
+                            f"📖 **Subscribers** {details.get('subscribers', '0')}\n\n"
+        embed.add_field(
+            name="Description",
+            value=details.get('summary', 'No Description.')[:500] + f" [read now]({details.get('first_ep_url', '')})",
+            inline=False)
 
         return await ctx.send(embed=embed)
 
