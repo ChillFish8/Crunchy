@@ -25,6 +25,7 @@ class HelpCog(commands.Cog):
     ANIME_COMMANDS = [
         "`animedetails` **-** Get details from Crunchyroll on an Anime.",
         "`mangadetails` **-** Get info on Manga straight to your chat.",
+        "`webtoondetails` **-** Get info on Webtoons straight to your chat! **new**",
         "`todayspicks` **-** Get today's top 5 picks that you might want try.",
     ]
 
@@ -55,14 +56,9 @@ class HelpCog(commands.Cog):
     CHARACTER_COMMANDS = [
         "`character ` **-** Get a random character, can you collect them all?",
         "`viewcharacters` **-** View all of your collected characters.",
-        "`removecharacter ` **-** Remove a collect character.",  # todo
+        # "`removecharacter ` **-** Remove a collect character.",  # todo
         # "`party` **-** see your selected party for encounters.",
         # "`setparty` **-** set your party from your characters.",
-    ]
-
-    RPG_COMMANDS = [
-        #"`encounter ` **-** select a random encounter quest.",
-        "`balance` **-** See your campaign balance."
     ]
 
     NSFW_COMMANDS = [
@@ -111,12 +107,9 @@ class HelpCog(commands.Cog):
 
             f5 = f"<:HimeHappy:677852789074034691>  **Character Collection**  <:HimeHappy:677852789074034691>\n" \
                  f"" + "\n".join(self.CHARACTER_COMMANDS)
-            f7 = f"<:HimeHappy:677852789074034691>  **Character RPG**  <:HimeHappy:677852789074034691>\n" \
-                 f"" + "\n".join(self.RPG_COMMANDS)
 
             embed2.add_field(name="\u200b", value=f3, inline=False)
             embed2.add_field(name="\u200b", value=f5, inline=False)
-            embed2.add_field(name="\u200b", value=f7, inline=False)
             embed2.add_field(name="\u200b", value=f2, inline=False)
 
             if ctx.guild_config is not None:
