@@ -308,10 +308,11 @@ class ViewTracked(commands.Cog):
     @commands.command(aliases=['myw', 'watchlist', "mywatchlist"])
     async def my_watchlist(self, ctx, member=None):
         """ Get your or someone else's watch list """
-        try:
-            member = await convert_member(ctx, member)
-        except commands.BadArgument:
-            member = None
+        if member is not None:
+            try:
+                member = await convert_member(ctx, member)
+            except commands.BadArgument:
+                member = None
 
         if member is not None:
             user_ = member
@@ -343,10 +344,11 @@ class ViewTracked(commands.Cog):
     @commands.command(aliases=['myf', 'favourites', 'myfavourites'])
     async def my_favourites(self, ctx, member=None):
         """ Get your or someone else's favourites list """
-        try:
-            member = await convert_member(ctx, member)
-        except commands.BadArgument:
-            member = None
+        if member is not None:
+            try:
+                member = await convert_member(ctx, member)
+            except commands.BadArgument:
+                member = None
 
         if member is not None:
             user_ = member
@@ -379,10 +381,11 @@ class ViewTracked(commands.Cog):
     @commands.command(aliases=['myr', 'recommended', "myrecommended"])
     async def my_recommended(self, ctx, member=None):
         """ Get your or someone else's recommended list """
-        try:
-            member = await convert_member(ctx, member)
-        except commands.BadArgument:
-            member = None
+        if member is not None:
+            try:
+                member = await convert_member(ctx, member)
+            except commands.BadArgument:
+                member = None
 
         if member is not None:
             user_ = member
