@@ -18,6 +18,13 @@ from logger import Logger
 from data import guild_config
 from resources.archieve.anime_examples import WATCHLIST
 
+try:
+    import uvloop
+
+    uvloop.install()
+except ImportError:
+    pass
+
 # logging.basicConfig(level=logging.INFO)
 
 with open('config.json', 'r') as file:
@@ -98,7 +105,7 @@ class CrunchyBot(commands.AutoShardedBot):
             await asyncio.sleep(30)
             self.allow_connections = True
 
-    async def on_shard_ready(self, shard_id):
+    async def on_shard_ready(self, shard_id=1):
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
