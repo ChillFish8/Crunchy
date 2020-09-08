@@ -273,6 +273,11 @@ class UserSettings(commands.Cog):
                 " or give me a channel Id for this command.")
 
 
+async def convert_member(ctx: commands.Context, member_str: str):
+    converter = commands.MemberConverter()
+    return await converter.convert(ctx, member_str)
+
+
 class ViewTracked(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -301,11 +306,16 @@ class ViewTracked(commands.Cog):
         return embeds
 
     @commands.command(aliases=['myw', 'watchlist', "mywatchlist"])
-    async def my_watchlist(self, ctx, user: discord.Member = None):
+    async def my_watchlist(self, ctx, member=None):
         """ Get your or someone else's watch list """
-        if user is not None:
-            user_ = user
-            user_area = UserWatchlist(user_id=user.id, database=self.bot.database)
+        try:
+            member = await convert_member(ctx, member)
+        except commands.BadArgument:
+            member = None
+
+        if member is not None:
+            user_ = member
+            user_area = UserWatchlist(user_id=member.id, database=self.bot.database)
             if not user_area.is_public:
                 return await ctx.send("Oops! This user has their watchlist firewalled (Private).")
         else:
@@ -314,8 +324,8 @@ class ViewTracked(commands.Cog):
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
-            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in {'your' if user is None else 'their'} watchlist,\n lets get filling it!"
+            embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                f"have anything in {'your' if member is None else 'their'} watchlist,\n lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
@@ -331,11 +341,16 @@ class ViewTracked(commands.Cog):
                 return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myf', 'favourites', 'myfavourites'])
-    async def my_favourites(self, ctx, user: discord.Member = None):
+    async def my_favourites(self, ctx, member=None):
         """ Get your or someone else's favourites list """
-        if user is not None:
-            user_ = user
-            user_area = UserFavourites(user_id=user.id, database=self.bot.database)
+        try:
+            member = await convert_member(ctx, member)
+        except commands.BadArgument:
+            member = None
+
+        if member is not None:
+            user_ = member
+            user_area = UserFavourites(user_id=member.id, database=self.bot.database)
             if not user_area.is_public:
                 return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         else:
@@ -344,8 +359,8 @@ class ViewTracked(commands.Cog):
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
-            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in {'your' if user is None else 'their'} favourites,\n" \
+            embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                f"have anything in {'your' if member is None else 'their'} favourites,\n" \
                                 f" lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
@@ -362,11 +377,16 @@ class ViewTracked(commands.Cog):
                 return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myr', 'recommended', "myrecommended"])
-    async def my_recommended(self, ctx, user: discord.Member = None):
+    async def my_recommended(self, ctx, member=None):
         """ Get your or someone else's recommended list """
-        if user is not None:
-            user_ = user
-            user_area = UserRecommended(user_id=user.id, database=self.bot.database)
+        try:
+            member = await convert_member(ctx, member)
+        except commands.BadArgument:
+            member = None
+
+        if member is not None:
+            user_ = member
+            user_area = UserRecommended(user_id=member.id, database=self.bot.database)
             if not user_area.is_public:
                 return await ctx.send("Oops! This user has their recommended firewalled (Private).")
         else:
@@ -375,8 +395,8 @@ class ViewTracked(commands.Cog):
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
-            embed.description = f"Oops! {'You' if user is None else 'They'} dont " \
-                                f"have anything in {'your' if user is None else 'their'} recommended,\n" \
+            embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                f"have anything in {'your' if member is None else 'their'} recommended,\n" \
                                 f" lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
@@ -396,52 +416,6 @@ class ViewTracked(commands.Cog):
 class RemoveTracked(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    async def generate_embeds(self, user: discord.User, area, ctx):
-        pages, rem = divmod(area.amount_of_items, 10)
-        if rem != 0:
-            pages += 1
-
-        embeds = []
-        for i, chunk in enumerate(area.get_blocks()):
-            embed = discord.Embed(color=self.bot.colour,
-                                  timestamp=datetime.now(),
-                                  description="**You need to specify a number to remove a item.**\n"
-                                              f"do `{ctx.prefix}help remove` for more info.") \
-                .set_footer(text=f"Page {i + 1} / {pages}")
-            for x, item in enumerate(chunk):
-                if item['url'] is not None:
-                    embed.add_field(value=f"** {x + 1} ) - [{item['name']}]({item['url']})**",
-                                    name="\u200b",
-                                    inline=False)
-                else:
-                    embed.add_field(value=f"** {x + 1} ) - {item['name']}**",
-                                    name="\u200b",
-                                    inline=False)
-            embed.set_thumbnail(url=random.choice(HAPPY_URL))
-            embed.set_author(name=f"{user.name}'s {area.type}", icon_url=user.avatar_url)
-            embeds.append(embed)
-        return embeds
-
-    async def show_area(self, ctx, area):
-        if area.amount_of_items <= 0:
-            embed = discord.Embed(color=self.bot.colour) \
-                .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
-            embed.description = f"Oops! you dont " \
-                                f"have anything in your recommended,\n lets get them filling it!"
-            embed.set_thumbnail(url=random.choice(SAD_URL))
-            embed.set_author(name=f"{ctx.author.name}'s {area.type}", icon_url=ctx.author.avatar_url)
-            return await ctx.send(embed=embed)
-        else:
-            embeds = await self.generate_embeds(user=ctx.author, area=area, ctx=ctx)
-            if len(embeds) > 1:
-                pager = Paginator(embed_list=embeds,
-                                  bot=self.bot,
-                                  message=ctx.message,
-                                  colour=self.bot.colour)
-                return self.bot.loop.create_task(pager.start())
-            else:
-                return await ctx.send(embed=embeds[0])
 
     @commands.command(name="removewatchlist", aliases=['rw'])
     async def remove_watchlist(self, ctx: commands.Context, index=None):
@@ -467,7 +441,7 @@ class RemoveTracked(commands.Cog):
             return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
     @commands.command(name="removefavourite", aliases=['rf'])
-    async def remove_favourites(self, ctx, index=None):
+    async def remove_favourites(self, ctx: commands.Context, index=None):
         """ Remove something from favourites list """
         user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
@@ -493,6 +467,7 @@ class RemoveTracked(commands.Cog):
     @commands.command(name="removerecommended", aliases=['rr'])
     async def remove_recommended(self, ctx, index=None):
         """ Remove something from recommended list """
+
         user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
             await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
