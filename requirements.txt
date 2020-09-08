@@ -1,7 +1,8 @@
 colorama~=0.4.3
 pymongo~=3.10.1
-git+https://github.com/Rapptz/discord.py.git#egg=discord.py
+discord.py>=1.4.1
 aiohttp~=3.6.2
 dblpy
 Pillow~=7.1.2
 requests
+uvloop
