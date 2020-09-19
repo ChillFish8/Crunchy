@@ -338,8 +338,7 @@ class ViewTracked(commands.Cog):
                                   message=ctx.message,
                                   colour=self.bot.colour)
                 return self.bot.loop.create_task(pager.start())
-            else:
-                return await ctx.send(embed=embeds[0])
+            return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myf', 'favourites', 'myfavourites'])
     async def my_favourites(self, ctx, member=None):
@@ -375,8 +374,7 @@ class ViewTracked(commands.Cog):
                                   message=ctx.message,
                                   colour=self.bot.colour)
                 return self.bot.loop.create_task(pager.start())
-            else:
-                return await ctx.send(embed=embeds[0])
+            return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myr', 'recommended', "myrecommended"])
     async def my_recommended(self, ctx, member=None):
@@ -412,8 +410,7 @@ class ViewTracked(commands.Cog):
                                   message=ctx.message,
                                   colour=self.bot.colour)
                 return self.bot.loop.create_task(pager.start())
-            else:
-                return await ctx.send(embed=embeds[0])
+            return await ctx.send(embed=embeds[0])
 
 
 class RemoveTracked(commands.Cog):
