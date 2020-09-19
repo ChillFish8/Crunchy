@@ -34,20 +34,10 @@ class BasicTracker:
                                                                                'firewall': self.public})
         return temp
 
-    def _generate_block(self):
-        """ This turns a list of X amount of side into 10 block chunks. """
-        pages, rem = divmod(len(self._contents), 10)
-        chunks, i = [], 0
-        for i in range(0, pages, 10):
-            chunks.append(self._contents[i:i + 10])
-        if rem != 0:
-            chunks.append(self._contents[i:i + rem])
-        return chunks
-
     def get_blocks(self):
         """ A generator to allow the bot to paginate large sets. """
-        for block in self._generate_block():
-            yield block
+        for i in range(0, len(self._contents), 5):
+            yield self._contents[i:i + 5]
 
     @property
     def amount_of_items(self):

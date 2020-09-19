@@ -102,20 +102,10 @@ class UserCharacters:
                 return self._expires_in
         return self._expires_in
 
-    def _generate_block(self):
-        """ This turns a list of X amount of side into 10 block chunks. """
-        pages, rem = divmod(len(self.characters), 10)
-        chunks, i = [], 0
-        for i in range(0, pages):
-            chunks.append(self.characters[i:i + 10])
-        if rem != 0:
-            chunks.append(self.characters[i:i + rem])
-        return chunks
-
     def get_blocks(self):
         """ A generator to allow the bot to paginate large sets. """
-        for block in self._generate_block():
-            yield block
+        for i in range(0, len(self.characters), 5):
+            yield self.characters[i:i + 5]
 
     @property
     def amount_of_items(self):
