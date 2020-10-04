@@ -106,6 +106,7 @@ class CrunchyBot(commands.AutoShardedBot):
             self.allow_connections = True
 
     async def on_shard_ready(self, shard_id=1):
+        print("Users Cached: ", len(self.users))
         """ Log any shard connects """
         Logger.log_shard_connect(shard_id=shard_id)
         if not self.started:
@@ -281,11 +282,22 @@ async def change_presence(bot: CrunchyBot):
 
 
 if __name__ == "__main__":
+    intents = discord.Intents.default()
+    intents.members = False
+    intents.emojis = False
+    intents.integrations = False
+    intents.webhooks = False
+    intents.invites = False
+    intents.voice_states = False
+    intents.presences = False
+    intents.typing = False
+
     crunchy = CrunchyBot(
         case_insensitive=True,
         fetch_offline_member=False,
         shard_count=SHARD_COUNT,
         heartbeat_timeout=60,
+        intents=intents
     )
     crunchy.startup()
     change_presence.start(crunchy)
