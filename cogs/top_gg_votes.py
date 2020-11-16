@@ -38,7 +38,11 @@ class TopGG(commands.Cog):
             await self.dblpy.post_guild_count()
             Logger.log_dbl('Posted server count ({})'.format(self.dblpy.guild_count()))
         except Exception as e:
-            Logger.log_dbl(Fore.RED + 'Failed to post server count\n{}: {}'.format(type(e).__name__, e), error=True)
+            import traceback
+            traceback.print_exc()
+            Logger.log_dbl(
+                Fore.RED + 'Failed to post server count\n{}: {}'.format(type(e).__name__, e),
+                error=True)
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):

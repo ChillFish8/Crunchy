@@ -2,6 +2,9 @@ import random
 import discord
 import asyncio
 import json
+import typing
+
+from collections import deque
 from discord.ext import commands
 from datetime import datetime
 
@@ -305,14 +308,114 @@ class ViewTracked(commands.Cog):
             embeds.append(embed)
         return embeds
 
-    @commands.command(aliases=['myw', 'watchlist', "mywatchlist"])
-    async def my_watchlist(self, ctx, member=None):
-        """ Get your or someone else's watch list """
-        if member is not None:
+    async def cycle_items(
+            self,
+            ctx: commands.Context,
+            items: typing.Union[UserWatchlist, UserFavourites, UserRecommended],
+    ):
+        title = f"{ctx.author.name}'s"
+        if isinstance(items, UserWatchlist):
+            title += " watchlist"
+        elif isinstance(items, UserFavourites):
+            title += " favourites"
+        elif isinstance(items, UserRecommended):
+            title += " recommended"
+        else:
+            raise TypeError(f"No corresponding message for type: {items!r}")
+
+        pages = []
+        for item in items.contents:
+            embed = discord.Embed(color=self.bot.colour, title=f"Name - {item['name']}")
+            embed.set_author(name=title, icon_url=ctx.author.avatar_url)
+            embed.url = item['url']
+            embed.description = "React with the \🔍 icon to search for details\n"
+            pages.append((embed, item))
+
+        pages = deque(pages)
+
+        current = pages[0]
+        msg = await ctx.send(embed=current[0])
+
+        emojis = ("◀️", "🔍", "▶️")
+        try:
+            for reaction in emojis:
+                await msg.add_reaction(reaction)
+        except discord.Forbidden:
+            return await ctx.send("Oops! Im missing the permission to add reactions.")
+
+        def check(r: discord.Reaction, u: discord.User):
+            return (
+                    str(r.emoji) in emojis
+                    and u.id == ctx.author.id
+                    and r.message.id == msg.id
+            )
+
+        while True:
             try:
-                member = await convert_member(ctx, member)
+                reaction, _ = await self.bot.wait_for('reaction_add', timeout=30, check=check)
+                reaction = str(reaction.emoji)
+            except asyncio.TimeoutError:
+                break
+
+            if reaction not in emojis:
+                print("not in?")
+                continue
+
+            if reaction == emojis[0]:  # left shift
+                pages.rotate(-1)
+            elif reaction == emojis[2]:  # right shift
+                pages.rotate(1)
+            elif reaction == emojis[1]:  # search
+                command: commands.Command = self.bot.get_command("animedetails")
+                try:
+                    await msg.delete()
+                except discord.Forbidden:
+                    return
+                return await command(ctx, *current[1]['name'].split(" "))
+
+            current = pages[0]
+            await msg.edit(embed=current[0])
+
+    @commands.command(aliases=['myw', 'watchlist', "mywatchlist"])
+    async def my_watchlist(self, ctx, option=None):
+        """
+        Get your or someone else's watch list,
+
+        args:
+            option - This can be any string but can only be valid as a bool
+                     or a member to be used by the member converter but not Both.
+                     In this case Member will always be picked over the cycle option.
+
+
+        """
+
+        cycle = False
+        member = None
+
+        if option is not None:
+            cycle = option.lower() == "--cycle" or option.lower() == "-c"
+
+            try:
+                member = await convert_member(ctx, option)
             except commands.BadArgument:
                 member = None
+
+        if cycle:
+            user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
+            if user_area.amount_of_items <= 0:
+                embed = discord.Embed(color=self.bot.colour)
+                embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                    f"have anything in {'your' if member is None else 'their'} " \
+                                    f"watchlist,\n lets get filling it!"
+                embed.set_thumbnail(url=random.choice(SAD_URL))
+                embed.set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+                embed.set_author(
+                    name=f"{ctx.author.name}'s {user_area.type}",
+                    icon_url=ctx.author.avatar_url
+                )
+                return await ctx.send(embed=embed)
+
+            return await self.cycle_items(ctx, user_area)
 
         if member is not None:
             user_ = member
@@ -322,11 +425,13 @@ class ViewTracked(commands.Cog):
         else:
             user_ = ctx.author
             user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
+
         if user_area.amount_of_items <= 0:
             embed = discord.Embed(color=self.bot.colour) \
                 .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
             embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
-                                f"have anything in {'your' if member is None else 'their'} watchlist,\n lets get filling it!"
+                                f"have anything in {'your' if member is None else 'their'} " \
+                                f"watchlist,\n lets get filling it!"
             embed.set_thumbnail(url=random.choice(SAD_URL))
             embed.set_author(name=f"{user_.name}'s {user_area.type}", icon_url=user_.avatar_url)
             return await ctx.send(embed=embed)
@@ -341,13 +446,40 @@ class ViewTracked(commands.Cog):
             return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myf', 'favourites', 'myfavourites'])
-    async def my_favourites(self, ctx, member=None):
-        """ Get your or someone else's favourites list """
-        if member is not None:
+    async def my_favourites(self, ctx, option=None):
+        """ Get your or someone else's favourites list
+            args:
+                option - This can be any string but can only be valid as a bool
+                         or a member to be used by the member converter but not Both.
+                         In this case Member will always be picked over the cycle option.
+        """
+
+        cycle = False
+        member = None
+
+        if option is not None:
+            cycle = option.lower() == "--cycle" or option.lower() == "-c"
+
             try:
-                member = await convert_member(ctx, member)
+                member = await convert_member(ctx, option)
             except commands.BadArgument:
                 member = None
+
+        if cycle:
+            user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
+            if user_area.amount_of_items <= 0:
+                embed = discord.Embed(color=self.bot.colour) \
+                    .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+                embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                    f"have anything in {'your' if member is None else 'their'} favourites,\n" \
+                                    f" lets get filling it!"
+                embed.set_thumbnail(url=random.choice(SAD_URL))
+                embed.set_author(
+                    name=f"{ctx.author.name}'s {user_area.type}",
+                    icon_url=ctx.author.avatar_url
+                )
+                return await ctx.send(embed=embed)
+            return await self.cycle_items(ctx, user_area)
 
         if member is not None:
             user_ = member
@@ -377,13 +509,40 @@ class ViewTracked(commands.Cog):
             return await ctx.send(embed=embeds[0])
 
     @commands.command(aliases=['myr', 'recommended', "myrecommended"])
-    async def my_recommended(self, ctx, member=None):
-        """ Get your or someone else's recommended list """
-        if member is not None:
+    async def my_recommended(self, ctx, option=None):
+        """ Get your or someone else's recommended list
+            args:
+                option - This can be any string but can only be valid as a bool
+                         or a member to be used by the member converter but not Both.
+                         In this case Member will always be picked over the cycle option.
+        """
+
+        cycle = False
+        member = None
+
+        if option is not None:
+            cycle = option.lower() == "--cycle" or option.lower() == "-c"
+
             try:
-                member = await convert_member(ctx, member)
+                member = await convert_member(ctx, option)
             except commands.BadArgument:
                 member = None
+
+        if cycle:
+            user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
+            if user_area.amount_of_items <= 0:
+                embed = discord.Embed(color=self.bot.colour) \
+                    .set_footer(text="Hint: Vote for Crunchy on top.gg to get more perks!")
+                embed.description = f"Oops! {'You' if member is None else 'They'} dont " \
+                                    f"have anything in {'your' if member is None else 'their'} recommended,\n" \
+                                    f" lets get filling it!"
+                embed.set_thumbnail(url=random.choice(SAD_URL))
+                embed.set_author(
+                    name=f"{ctx.author.name}'s {user_area.type}",
+                    icon_url=ctx.author.avatar_url
+                )
+                return await ctx.send(embed=embed)
+            return await self.cycle_items(ctx, user_area)
 
         if member is not None:
             user_ = member

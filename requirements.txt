@@ -1,8 +1,7 @@
 colorama~=0.4.3
 pymongo~=3.10.1
-discord.py>=1.5.0
+discord.py>=1.5.1
 aiohttp~=3.6.2
 dblpy
 Pillow~=7.1.2
 requests
-uvloop

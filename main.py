@@ -25,7 +25,7 @@ try:
 except ImportError:
     pass
 
-# logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.DEBUG)
 
 with open('config.json', 'r') as file:
     config = json.load(file)
@@ -71,7 +71,9 @@ class CrunchyBot(commands.AutoShardedBot):
         self.allow_connections = False
 
     def startup(self):
-        """ Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one """
+        """
+            Loads all the commands listed in cogs folder, if there isn't a cogs folder it makes one
+        """
         if not os.path.exists('cogs'):
             os.mkdir('cogs')
 
@@ -291,6 +293,7 @@ if __name__ == "__main__":
     intents.voice_states = False
     intents.presences = False
     intents.typing = False
+    intents.reactions = True
 
     crunchy = CrunchyBot(
         case_insensitive=True,

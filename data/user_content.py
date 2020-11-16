@@ -24,20 +24,30 @@ class BasicTracker:
 
     def add_content(self, data: dict):
         self._contents.append(data)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
-                                                                               'firewall': self.public})
+        self._db.set_user_data(
+            area=self.type,
+            user_id=self.user_id,
+            contents={'contents': self._contents,
+                      'firewall': self.public})
         return self._contents
 
     def remove_content(self, index: int):
         temp = self._contents.pop(index)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
-                                                                               'firewall': self.public})
+        self._db.set_user_data(
+            area=self.type,
+            user_id=self.user_id,
+            contents={'contents': self._contents,
+                      'firewall': self.public})
         return temp
 
     def get_blocks(self):
         """ A generator to allow the bot to paginate large sets. """
         for i in range(0, len(self._contents), 5):
             yield self._contents[i:i + 5]
+
+    @property
+    def contents(self):
+        return self._contents
 
     @property
     def amount_of_items(self):
@@ -48,8 +58,9 @@ class BasicTracker:
 
     def toggle_public(self):
         self.public = not self.public
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
-                                                                               'firewall': self.public})
+        self._db.set_user_data(area=self.type, user_id=self.user_id,
+                               contents={'contents': self._contents,
+                                         'firewall': self.public})
         return self.public
 
     @property
@@ -73,14 +84,16 @@ class UserRecommended(BasicTracker):
 
     def add_content(self, data: dict):
         self._contents.append(data)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
-                                                                               'firewall': self.public})
+        self._db.set_user_data(area=self.type, user_id=self.user_id,
+                               contents={'contents': self._contents,
+                                         'firewall': self.public})
         return self._contents
 
     def remove_content(self, index: int):
         deleted = self._contents.pop(index)
-        self._db.set_user_data(area=self.type, user_id=self.user_id, contents={'contents': self._contents,
-                                                                               'firewall': self.public})
+        self._db.set_user_data(area=self.type, user_id=self.user_id,
+                               contents={'contents': self._contents,
+                                         'firewall': self.public})
         return deleted
 
 
