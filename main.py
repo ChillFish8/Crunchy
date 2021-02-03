@@ -166,8 +166,12 @@ class CrunchyBot(commands.AutoShardedBot):
         if message.guild is not None and self.user.id != 641590528026083338:
             guild_data = self.cache.get("guilds", message.guild.id)
             if guild_data is None:
-                guild_data = await self.loop.run_in_executor(pool, guild_config.GuildConfig, message.guild.id,
-                                                             self.database)
+                guild_data = await self.loop.run_in_executor(
+                    pool,
+                    guild_config.GuildConfig,
+                    message.guild.id,
+                    self.database
+                )
                 self.cache.store("guilds", message.guild.id, guild_data)
             return guild_data.prefix
         else:
@@ -199,7 +203,9 @@ class CrunchyBot(commands.AutoShardedBot):
                 await message.channel.send(embed=embed)
             except discord.Forbidden:
                 try:
-                    await message.author.send("Oops! I dont have the permissions to speak in that channel.")
+                    await message.author.send(
+                        "Oops! I dont have the permissions to speak in that channel."
+                    )
                 except discord.Forbidden:
                     pass
 
