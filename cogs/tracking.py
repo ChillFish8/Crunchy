@@ -36,18 +36,21 @@ RANDOM_EMOJIS = [
 
 async def add_watchlist(ctx, bot, name, url):
     user_tracker: UserWatchlist = UserWatchlist(user_id=ctx.author.id, database=bot.database)
-    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted(ctx.author.id) == 0):
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (
+            ctx.has_voted(ctx.author.id) == 0):
         return {'content': "<:HimeMad:676087826827444227> Oh no! "
                            "You dont have enough space in your watchlist "
                            "to add this, get more storage by voting here "
                            "https://top.gg/bot/656598065532239892/vote"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted(ctx.author.id) == 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (
+            ctx.has_voted(ctx.author.id) == 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh no! "
                            f"You seem to have maxed out your watchlist, you can get more by"
                            f" buying premium here to help support my development: {PREMIUM_URL}"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted(ctx.author.id) > 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (
+            ctx.has_voted(ctx.author.id) > 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
                            f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your watchlist area! "
                            f"However, you'll need to either delete some to add more or contact my developer"
@@ -66,23 +69,29 @@ async def add_watchlist(ctx, bot, name, url):
 
 async def add_favourites(ctx, bot, name, url):
     user_tracker: UserFavourites = UserFavourites(user_id=ctx.author.id, database=bot.database)
-    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (ctx.has_voted(ctx.author.id) == 0):
+    if (user_tracker.amount_of_items >= FALSE_PREMIUM_MAX_IN_STORE) and (
+            ctx.has_voted(ctx.author.id) == 0):
         return {'content': "<:HimeMad:676087826827444227> Oh no! "
                            "You dont have enough space in your favourites "
                            "to add this, get more storage by voting here "
                            "https://top.gg/bot/656598065532239892/vote"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (ctx.has_voted(ctx.author.id) == 1):
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[0]) and (
+            ctx.has_voted(ctx.author.id) == 1):
         return {'content': f"<:HimeMad:676087826827444227> Oh no! "
                            f"You seem to have maxed out your favourites, you can get more by"
                            f" buying premium here to help support my development: {PREMIUM_URL}"
                 }
-    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (ctx.has_voted(ctx.author.id) > 1):
-        return {'content': f"<:HimeMad:676087826827444227> Oh wow! "
-                           f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to your favourites area! "
-                           f"However, you'll need to either delete some to add more or contact my developer"
-                           f" you can find him here: https://discord.gg/tJmEzWM"
-                }
+    elif (user_tracker.amount_of_items >= TRUE_PREMIUM_MAX_IN_STORE[1]) and (
+            ctx.has_voted(ctx.author.id) > 1):
+        return {
+            'content': f"<:HimeMad:676087826827444227> Oh wow! "
+                       f"You've managed to add over {TRUE_PREMIUM_MAX_IN_STORE[1]} things to "
+                       f"your favourites area! "
+                       f"However, you'll need to either delete some to add more or "
+                       f"contact my developer"
+                       f" you can find him here: https://discord.gg/tJmEzWM"
+        }
     else:
         try:
             user_tracker.add_content({'name': name, 'url': url})
@@ -144,7 +153,8 @@ class AddingAnime(commands.Cog):
             await message.add_reaction(emoji)
 
         def check(r: discord.Reaction, u: discord.User):
-            return (str(r.emoji) in BASE_EMOJIS) and (u.id == ctx.author.id) and (r.message.id == message.id)
+            return (str(r.emoji) in BASE_EMOJIS) and (u.id == ctx.author.id) and (
+                    r.message.id == message.id)
 
         try:
             reaction, _ = await self.bot.wait_for('reaction_add', check=check, timeout=30)
@@ -152,12 +162,14 @@ class AddingAnime(commands.Cog):
             await message.delete()
             return await ctx.send(content="The selection period has expired.")
 
-        results = await self.options[BASE_EMOJIS.index(str(reaction.emoji))](ctx, self.bot, name, url)
+        results = await self.options[BASE_EMOJIS.index(str(reaction.emoji))](ctx, self.bot, name,
+                                                                             url)
         if not isinstance(results, tuple):
             if not results:
                 await message.delete()
                 return await ctx.send(
-                    "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to your list!")
+                    "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to "
+                    "your list!")
             else:
                 await message.delete()
                 return await ctx.send(**results)
@@ -165,32 +177,41 @@ class AddingAnime(commands.Cog):
             if not results[0] or not results[1]:
                 await message.delete()
                 return await ctx.send(
-                    "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to your list!")
+                    "<:HimeSad:676087829557936149> Oh no! Something went wrong adding that to "
+                    "your list!")
             else:
                 for res in results:
                     if not res['content'].startswith("<:HimeHappy:677852789074034691>"):
                         return await ctx.send(**res)
                 else:
                     await message.delete()
-                    return await ctx.send(f"<:HimeHappy:677852789074034691> Success!"
-                                          f""" I've added "{name}" to both your watchlist and favourites!""")
+                    return await ctx.send(
+                        f"<:HimeHappy:677852789074034691> Success!"
+                        f""" I've added "{name}" to both your watchlist and favourites!"""
+                    )
 
-    @commands.command(aliases=['recc'])
+    @commands.command(aliases=['recc', 'rec', 'reccomend', 'reccommend'])
     async def recommend(self, ctx, user: discord.Member = None, *, argument: str = None):
         """ Add Anime to to someone's recommended list """
         if user is None:
-            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
-                                  f"You didnt mention the person you wanted to recommend an Anime to.")
+            return await ctx.send(
+                f"<:HimeMad:676087826827444227> Oops! "
+                f"You didnt mention the person you wanted to recommend an Anime to."
+            )
 
         user_area = UserRecommended(user_id=user.id, database=self.bot.database)
         if not user_area.is_public:
-            return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
-                                  f"The user you mentioned has their recommended list set to private.")
+            return await ctx.send(
+                f"<:HimeMad:676087826827444227> Oops! "
+                f"The user you mentioned has their recommended list set to private."
+            )
 
         if argument is None:
-            return await ctx.send(f"<:HimeMad:676087826827444227> Oh no! "
-                                  f"You didnt give me anything to add to {user.display_name}'s recommended list."
-                                  f" Do `{ctx.prefix}help recommended` for more info.")
+            return await ctx.send(
+                f"<:HimeMad:676087826827444227> Oh no! "
+                f"You didnt give me anything to add to {user.display_name}'s recommended list."
+                f" Do `{ctx.prefix}help recommended` for more info."
+            )
 
         items = argument.split("url=", 1)
         if len(items) > 1:
@@ -200,9 +221,11 @@ class AddingAnime(commands.Cog):
                 if len(split) > 1:  # Reverse the order in case someone is a moron
                     name, url = split[1], split[0]
                 else:
-                    return await ctx.send(f"<:HimeMad:676087826827444227> Oops! "
-                                          f"You didnt give a title but gave a url, "
-                                          f"please do `{ctx.prefix}help addanime` for more info.")
+                    return await ctx.send(
+                        f"<:HimeMad:676087826827444227> Oops! "
+                        f"You didnt give a title but gave a url, "
+                        f"please do `{ctx.prefix}help addanime` for more info."
+                    )
             if not url.startswith("http"):
                 url = None
         else:
@@ -231,7 +254,8 @@ class UserSettings(commands.Cog):
     # async def allow(self, ctx, user: discord.Member):
     #    """ Allow a user to bypass the public/private system """
     #    if ctx.author.id == user.id:
-    #        return await ctx.send(f"<:HimeMad:676087826827444227> You can't whitelist yourself silly!")
+    #        return await ctx.send(
+    #           f"<:HimeMad:676087826827444227> You can't whitelist yourself silly!")
     #    user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
     #    user_area.bypass(user.id)
     #    return await ctx.send(f"<:HimeHappy:677852789074034691> User {user.name} is now"
@@ -296,9 +320,10 @@ class ViewTracked(commands.Cog):
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
                 if item['url'] is not None:
-                    embed.add_field(value=f"** {x + i * 5 + 1} ) - [{item['name']}]({item['url']})**",
-                                    name="\u200b",
-                                    inline=False)
+                    embed.add_field(
+                        value=f"** {x + i * 5 + 1} ) - [{item['name']}]({item['url']})**",
+                        name="\u200b",
+                        inline=False)
                 else:
                     embed.add_field(value=f"** {x + i * 5 + 1} ) - {item['name']}**",
                                     name="\u200b",
@@ -508,7 +533,8 @@ class ViewTracked(commands.Cog):
                 return self.bot.loop.create_task(pager.start())
             return await ctx.send(embed=embeds[0])
 
-    @commands.command(aliases=['myr', 'recommended', "myrecommended"])
+    @commands.command(
+        aliases=['myr', 'recommended', 'myrecommended', 'reccomended', 'reccommended'])
     async def my_recommended(self, ctx, option=None):
         """ Get your or someone else's recommended list
             args:
@@ -581,72 +607,85 @@ class RemoveTracked(commands.Cog):
         """ Remove something from watch list """
         user_area = UserWatchlist(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            await ctx.send(
+                "Oops! You haven't given me a number that matches to your list, check your list here:")
             command: commands.Command = self.bot.get_command("my_watchlist")
             return await command.invoke(ctx)
         try:
             index = int(index)
         except ValueError:
-            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
-                           "a item specify the number that is listed next to the item.\n"
-                           f"Example command: `{ctx.prefix}rw 1`")
+            await ctx.send(
+                "Oops! You appear to have given me something that is not a number, to remove "
+                "a item specify the number that is listed next to the item.\n"
+                f"Example command: `{ctx.prefix}rw 1`")
             command: commands.Command = self.bot.get_command("my_watchlist")
             return await command.invoke(ctx)
 
         if index < 0:
-            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
             deleted = user_area.remove_content(index - 1)
-            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
+            return await ctx.send(
+                f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
     @commands.command(name="removefavourite", aliases=['rf'])
     async def remove_favourites(self, ctx: commands.Context, index=None):
         """ Remove something from favourites list """
         user_area = UserFavourites(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            await ctx.send(
+                "Oops! You haven't given me a number that matches to your list, check your list here:")
             command: commands.Command = self.bot.get_command("my_favourites")
             return await command.invoke(ctx)
 
         try:
             index = int(index)
         except ValueError:
-            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
-                           "a item specify the number that is listed next to the item.\n"
-                           f"Example command: `{ctx.prefix}rf 1`")
+            await ctx.send(
+                "Oops! You appear to have given me something that is not a number, to remove "
+                "a item specify the number that is listed next to the item.\n"
+                f"Example command: `{ctx.prefix}rf 1`")
             command: commands.Command = self.bot.get_command("my_favourites")
             return await command.invoke(ctx)
 
         if index < 0:
-            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
             deleted = user_area.remove_content(index - 1)
-            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
+            return await ctx.send(
+                f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
-    @commands.command(name="removerecommended", aliases=['rr'])
+    @commands.command(name="removerecommended",
+                      aliases=['rr', 'removereccommended', 'removereccomended'])
     async def remove_recommended(self, ctx, index=None):
         """ Remove something from recommended list """
 
         user_area = UserRecommended(user_id=ctx.author.id, database=self.bot.database)
         if index is None:
-            await ctx.send("Oops! You haven't given me a number that matches to your list, check your list here:")
+            await ctx.send(
+                "Oops! You haven't given me a number that matches to your list, check your list here:")
             command: commands.Command = self.bot.get_command("my_recommended")
             return await command.invoke(ctx)
 
         try:
             index = int(index)
         except ValueError:
-            await ctx.send("Oops! You appear to have given me something that is not a number, to remove "
-                           "a item specify the number that is listed next to the item.\n"
-                           f"Example command: `{ctx.prefix}rr 1`")
+            await ctx.send(
+                "Oops! You appear to have given me something that is not a number, to remove "
+                "a item specify the number that is listed next to the item.\n"
+                f"Example command: `{ctx.prefix}rr 1`")
             command: commands.Command = self.bot.get_command("my_recommended")
             return await command.invoke(ctx)
 
         if index < 0:
-            return await ctx.send("<:cheeky:717784139226546297> You cant remove a negative number silly!")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> You cant remove a negative number silly!")
         if index - 1 in range(0, user_area.amount_of_items):
             deleted = user_area.remove_content(index - 1)
-            return await ctx.send(f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
+            return await ctx.send(
+                f"{random.choice(RANDOM_EMOJIS)} All done! Ive removed {deleted['name']}")
 
 
 def setup(bot):
