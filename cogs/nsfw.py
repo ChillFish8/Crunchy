@@ -4,7 +4,6 @@ import discord
 
 from discord.ext import commands
 
-
 CRUNCHY_API_BASE = "https://crunchy-bot.live/api"
 NEKO_API_BASE = "https://nekobot.xyz/api"  # todo replace with Crunchy api
 THUMB_IMG = "https://cdn.discordapp.com/emojis/717784142053507082.png?v=1"
@@ -31,6 +30,7 @@ class ApiCollectors:
             result = await r.json()
             return result
 
+
 class NSFW(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -48,15 +48,19 @@ class NSFW(commands.Cog):
         ]
 
     @commands.command()
-    async def hentai(self, ctx, tag: str=None):
+    async def hentai(self, ctx, tag: str = None):
         if not ctx.channel.is_nsfw():
-            return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> Oops! NSFW comm"
+                "ands can only be used in NSFW channels.")
 
         if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
-                    return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
-                                          " ask a admin to run `togglensfw` if this should be enabled.")
+                    return await ctx.send(
+                        "<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
+                        " ask a admin to run `togglensfw` if"
+                        " this should be enabled.")
 
             resp = await self.collector.get_from_crunchy(tag=tag)
             embed = discord.Embed(color=self.bot.colour)
@@ -69,13 +73,15 @@ class NSFW(commands.Cog):
     @commands.command()
     async def ass(self, ctx):
         if not ctx.channel.is_nsfw():
-            return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
+            return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be "
+                                  "used in NSFW channels.")
 
         if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
-                    return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
-                                          " ask a admin to run `togglensfw` if this should be enabled.")
+                    return await ctx.send(
+                        "<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
+                        " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="ass")
             await self.send_embed(ctx, resp['message'])
         else:
@@ -84,13 +90,16 @@ class NSFW(commands.Cog):
     @commands.command()
     async def pussy(self, ctx):
         if not ctx.channel.is_nsfw():
-            return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> Oops! NSFW commands c"
+                "an only be used in NSFW channels.")
 
         if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
-                    return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
-                                          " ask a admin to run `togglensfw` if this should be enabled.")
+                    return await ctx.send(
+                        "<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
+                        " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="pussy")
             await self.send_embed(ctx, resp['message'])
         else:
@@ -99,13 +108,16 @@ class NSFW(commands.Cog):
     @commands.command(name="gonewild")
     async def gone_wild(self, ctx):
         if not ctx.channel.is_nsfw():
-            return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW commands can only be used in NSFW channels.")
+            return await ctx.send(
+                "<:cheeky:717784139226546297> Oops! NSFW comma"
+                "nds can only be used in NSFW channels.")
 
         if ctx.has_voted(ctx.author.id) >= 1:
             if ctx.guild is not None:
                 if not ctx.guild_config.nsfw_enabled:
-                    return await ctx.send("<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
-                                          " ask a admin to run `togglensfw` if this should be enabled.")
+                    return await ctx.send(
+                        "<:cheeky:717784139226546297> Oops! NSFW is disabled in this server,"
+                        " ask a admin to run `togglensfw` if this should be enabled.")
             resp = await self.collector.get_from_neko(type_="gonewild")
             await self.send_embed(ctx, resp['message'])
         else:
@@ -118,10 +130,11 @@ class NSFW(commands.Cog):
         await ctx.send(embed=embed)
 
     async def send_vote(self, ctx):
-        embed = discord.Embed(color=self.bot.colour,
-                              title="Vote to support us! ",
-                              description="Vote here to get access to NSFW and more for 24 hours:\n"
-                                          "**[Vote for me](https://top.gg/bot/656598065532239892/vote)**\n")
+        embed = discord.Embed(
+            color=self.bot.colour,
+            title="Vote to support us! ",
+            description="Vote here to get access to NSFW and more for 24 hours:\n"
+                        "**[Vote for me](https://top.gg/bot/656598065532239892/vote)**\n")
         embed.set_thumbnail(url=THUMB_IMG)
         return await ctx.send(embed=embed)
 
