@@ -4,7 +4,7 @@ import random
 
 from discord.ext import commands
 
-BASE_URL = "https://crunchy-bot.live/api"
+BASE_URL = "https://legacy.crunchy.gg/api"
 RANDOM_THUMBS = [
     'https://cdn.discordapp.com/attachments/680350705038393344/717784208075915274/exitment.png',
     'https://cdn.discordapp.com/attachments/680350705038393344/717784643117777006/wow.png',

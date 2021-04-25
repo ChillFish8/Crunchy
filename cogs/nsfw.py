@@ -65,7 +65,7 @@ class NSFW(commands.Cog):
             resp = await self.collector.get_from_crunchy(tag=tag)
             embed = discord.Embed(color=self.bot.colour)
             embed.set_image(url=resp['url'])
-            embed.set_footer(text="https://crunchy-bot.live/api/endpoints")
+            embed.set_footer(text="https://legacy.crunchy.gg/api/endpoints")
             await ctx.send(embed=embed)
         else:
             await self.send_vote(ctx)
