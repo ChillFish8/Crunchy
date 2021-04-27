@@ -4,7 +4,7 @@ import discord
 
 from discord.ext import commands
 
-CRUNCHY_API_BASE = "https://crunchy-bot.live/api"
+CRUNCHY_API_BASE = "https://legacy.crunchy.gg/api"
 NEKO_API_BASE = "https://nekobot.xyz/api"  # todo replace with Crunchy api
 THUMB_IMG = "https://cdn.discordapp.com/emojis/717784142053507082.png?v=1"
 
