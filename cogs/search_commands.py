@@ -63,7 +63,10 @@ class Search(commands.Cog):
             icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
-        embed.set_image(url=img_url)
+
+        if img_url is not None:
+            embed.set_image(url=img_url)
+
         embed.set_footer(
             text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
             icon_url=ctx.author.avatar_url,
@@ -97,7 +100,7 @@ class Search(commands.Cog):
                                           "I couldn't find what you are searching for.")
 
         first = details[0]
-        title = first['title_english'] or first['title']
+        title = first['title']
         description = first['description'] or "No Description."
         genres = first['genres']
         rating = int(first['rating'] / 2)
@@ -112,7 +115,10 @@ class Search(commands.Cog):
             icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
-        embed.set_image(url=img_url)
+
+        if img_url is not None:
+            embed.set_image(url=img_url)
+
         embed.set_footer(
             text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
             icon_url=ctx.author.avatar_url,
