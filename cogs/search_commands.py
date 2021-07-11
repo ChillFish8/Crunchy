@@ -48,12 +48,15 @@ class Search(commands.Cog):
         rating = int(first['rating'] / 2)
         img_url = first['img_url']
 
-        stars = "⭐" * rating
+        stars = "⭐ " * rating
         genres = ", ".join(genres)
 
         embed = discord.Embed(
-            title=f"{textwrap.shorten(title, width=80)}",
             color=self.bot.colour
+        )
+        embed.set_author(
+            name=f"{textwrap.shorten(title, width=80)}",
+            icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
         embed.set_image(url=img_url)
@@ -99,9 +102,10 @@ class Search(commands.Cog):
         stars = "⭐" * rating
         genres = ", ".join(genres)
 
-        embed = discord.Embed(
-            title=f"{textwrap.shorten(title, width=80)}",
-            color=self.bot.colour
+        embed = discord.Embed(color=self.bot.colour)
+        embed.set_author(
+            name=f"{textwrap.shorten(title, width=80)}",
+            icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
         embed.set_image(url=img_url)

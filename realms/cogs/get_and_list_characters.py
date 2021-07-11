@@ -156,9 +156,10 @@ class CharacterGets(commands.Cog):
             embed = discord.Embed(color=self.bot.colour, timestamp=datetime.now()) \
                 .set_footer(text=f"Page {i + 1} / {pages}")
             for x, item in enumerate(chunk):
-                embed.add_field(value=f"** {x + i * 5 + 1} ) - {item['name']} ( Level {item.get('level', 1)} )**",
-                                name="\u200b",
-                                inline=False)
+                embed.add_field(
+                    value=f"** {x + i * 5 + 1} ) - {item['name']} ( Level {item.get('level', 1)} )**",
+                    name="\u200b",
+                    inline=False)
             embed.set_thumbnail(url=random.choice(HAPPY_URL))
             embed.set_author(name=f"{user.name}'s collected characters", icon_url=user.avatar_url)
             embeds.append(embed)
