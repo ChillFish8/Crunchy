@@ -99,7 +99,7 @@ class Search(commands.Cog):
         rating = int(first['rating'] / 2)
         img_url = first['img_url']
 
-        stars = "⭐" * rating
+        stars = "⭐ " * rating
         genres = ", ".join(genres)
 
         embed = discord.Embed(color=self.bot.colour)
