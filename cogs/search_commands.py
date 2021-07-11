@@ -65,10 +65,10 @@ class Search(commands.Cog):
             icon_url=ctx.author.avatar_url,
         )
 
-        embed.description = f"**Rating:** {stars}\n" \
-                            f"**Genres:** {genres}\n" \
-                            f"\n" \
-                            f"**Description:**\n {textwrap.shorten(description, width=300)}\n"
+        embed.add_field(name="About this Anime",
+                        value=f"**Rating:** {stars}\n**Genres:** {genres}\n", inline=False)
+        embed.add_field(name="Description", value=textwrap.shorten(description, width=500),
+                        inline=False)
         return await ctx.send(embed=embed)
 
     @commands.command(name="mangadetails", aliases=['md', 'manga'])
@@ -113,11 +113,10 @@ class Search(commands.Cog):
             text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
             icon_url=ctx.author.avatar_url,
         )
-
-        embed.description = f"**Rating:** {stars}\n" \
-                            f"**Genres:** {genres}\n" \
-                            f"\n" \
-                            f"**Description:**\n {textwrap.shorten(description, width=300)}\n"
+        embed.add_field(name="About this Manga",
+                        value=f"**Rating:** {stars}\n**Genres:** {genres}\n", inline=False)
+        embed.add_field(name="Description", value=textwrap.shorten(description, width=500),
+                        inline=False)
         return await ctx.send(embed=embed)
 
     @commands.command(name="webtoondetails", aliases=['wtd', 'wt', 'webtoon'])
