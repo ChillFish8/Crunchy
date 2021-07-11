@@ -28,7 +28,7 @@ class Search(commands.Cog):
         async with aiohttp.ClientSession() as sess:
             async with sess.get(
                     "https://api.crunchy.gg/v0/data/anime/search",
-                    params={"search": query, "limit": "1"}
+                    params={"query": query, "limit": "1"}
             ) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
@@ -78,7 +78,7 @@ class Search(commands.Cog):
         async with aiohttp.ClientSession() as sess:
             async with sess.get(
                     "https://api.crunchy.gg/v0/data/manga/search",
-                    params={"search": query, "limit": "1"},
+                    params={"query": query, "limit": "1"},
             ) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
