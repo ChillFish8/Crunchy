@@ -1,9 +1,9 @@
 import discord
 import aiohttp
 import random
+import textwrap
 
 from discord.ext import commands
-
 
 BASE_URL = "https://legacy.crunchy.gg/api"
 RANDOM_THUMBS = [
@@ -19,85 +19,109 @@ class Search(commands.Cog):
         self.bot = bot
 
     @commands.command(name="animedetails", aliases=['ad', 'anime'])
-    async def anime_details(self, ctx, *args):
-        if len(args) <= 0:
-            return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
-                                  "You need to give me something to search for!")
+    async def anime_details(self, ctx, *, query=None):
+        if query is None:
+            return await ctx.send(
+                "<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
+                "You need to give me something to search for!")
 
-        details_url = BASE_URL + "/anime/details?terms={}&legacy=True"
         async with aiohttp.ClientSession() as sess:
-            async with sess.get(details_url.format("+".join(args))) as resp:
+            async with sess.get(
+                    "https://api.crunchy.gg/v0/data/anime/search",
+                    params={"search": query, "limit": "1"}
+            ) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                           "Something seems to have gone wrong when searching for that."
                                           " Please try again later!")
-                else:
-                    details = await resp.json()
-                    if len(details) >= 1:
-                        title = details[0]['title']
-                        details = details[0]['data']
-                    else:
-                        return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
-                                              "I couldn't find what you are searching for.")
+                details = (await resp.json())['data']['hits']
+                if len(details) == 0:
+                    return await ctx.send(
+                        "<:HimeSad:676087829557936149> Oh no! "
+                        "I couldn't find what you are searching for."
+                    )
+
+        first = details[0]
+        title = first['title_english'] or first['title']
+        description = first['description'] or "No Description."
+        genres = first['genres']
+        rating = int(first['rating'] / 2)
+        img_url = first['img_url']
+
+        stars = "⭐" * rating
+        genres = ", ".join(genres)
+
         embed = discord.Embed(
-            title=f"<:CrunchyRollLogo:676087821596885013>  {title}  <:CrunchyRollLogo:676087821596885013>",
-            url=f"https://www.crunchyroll.com/{title.lower().replace(' ', '-')}",
+            title=f"{textwrap.shorten(title, width=80)}",
             color=self.bot.colour
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
-        embed.set_image(url=details['thumb_img'])
-        embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
-                         icon_url=ctx.author.avatar_url)
+        embed.set_image(url=img_url)
+        embed.set_footer(
+            text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
+            icon_url=ctx.author.avatar_url,
+        )
 
-        embed.description = f"⭐ **Rating** {details['reviews']} / 5 stars\n" \
+        embed.description = f"**Rating:** {stars}\n" \
+                            f"**Genres:** {genres}\n" \
                             f"\n" \
-                            f"__**Description:**__\n {details.get('desc_long', details.get('desc_short', 'No Description.'))}\n"
+                            f"**Description:**\n {textwrap.shorten(description, width=300)}\n"
         return await ctx.send(embed=embed)
 
     @commands.command(name="mangadetails", aliases=['md', 'manga'])
-    async def manga_details(self, ctx, *args):
-        if len(args) <= 0:
-            return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
-                                  "You need to give me something to search for!")
+    async def manga_details(self, ctx, *, query=None):
+        if query is None:
+            return await ctx.send(
+                "<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
+                "You need to give me something to search for!")
 
-        details_url = BASE_URL + "/manga/details?terms={}&legacy=True"
-        url = details_url.format("+".join(args))
         async with aiohttp.ClientSession() as sess:
-            async with sess.get(url) as resp:
+            async with sess.get(
+                    "https://api.crunchy.gg/v0/data/manga/search",
+                    params={"search": query, "limit": "1"},
+            ) as resp:
                 if resp.status != 200:
                     return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
                                           "Something seems to have gone wrong when searching for that."
                                           " Please try again later!")
-                else:
-                    details = await resp.json()
-                    if len(details) >= 1:
-                        details = details[0]
-                    else:
-                        return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
-                                              "I couldn't find what you are searching for.")
+                details = (await resp.json())['data']['hits']
+                if len(details) == 0:
+                    return await ctx.send("<:HimeSad:676087829557936149> Oh no! "
+                                          "I couldn't find what you are searching for.")
+
+        first = details[0]
+        title = first['title_english'] or first['title']
+        description = first['description'] or "No Description."
+        genres = first['genres']
+        rating = int(first['rating'] / 2)
+        img_url = first['img_url']
+
+        stars = "⭐" * rating
+        genres = ", ".join(genres)
+
         embed = discord.Embed(
-            title=f"{details['title']}",
-            url=details.get('url'),
+            title=f"{textwrap.shorten(title, width=80)}",
             color=self.bot.colour
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
-        if details.get('img_src'):
-            embed.set_image(url=details.get('img_src'))
-        embed.set_footer(text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
-                         icon_url=ctx.author.avatar_url)
+        embed.set_image(url=img_url)
+        embed.set_footer(
+            text="Part of Crunchy, the Crunchyroll Discord bot. Powered by CF8",
+            icon_url=ctx.author.avatar_url,
+        )
 
-        embed.description = f"⭐ **Rating** {details.get('score', 'unknown')} / 10\n" \
-                            f"📖 **Volumes** {details.get('volumes', 'unknown')}\n"
-        embed.add_field(name="Genres", value=', '.join(details.get('Genres', ['unknown'])), inline=False)
-        embed.add_field(name="Description", value=details.get('description', 'No Description.')[:500], inline=False)
-
+        embed.description = f"**Rating:** {stars}\n" \
+                            f"**Genres:** {genres}\n" \
+                            f"\n" \
+                            f"**Description:**\n {textwrap.shorten(description, width=300)}\n"
         return await ctx.send(embed=embed)
 
     @commands.command(name="webtoondetails", aliases=['wtd', 'wt', 'webtoon'])
     async def webtoon_details(self, ctx, *args):
         if len(args) <= 0:
-            return await ctx.send("<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
-                                  "You need to give me something to search for!")
+            return await ctx.send(
+                "<:HimeMad:676087826827444227> Oh no! You cant expect me to read your mind! "
+                "You need to give me something to search for!")
 
         details_url = BASE_URL + "/webtoon/details?terms={}"
         url = details_url.format("+".join(args))
@@ -130,7 +154,8 @@ class Search(commands.Cog):
                             f"📖 **Subscribers** {details.get('subscribers', '0')}\n\n"
         embed.add_field(
             name="Description",
-            value=details.get('summary', 'No Description.')[:500] + f" [read now]({details.get('first_ep_url', '')})",
+            value=details.get('summary', 'No Description.')[
+                  :500] + f" [read now]({details.get('first_ep_url', '')})",
             inline=False)
 
         return await ctx.send(embed=embed)
