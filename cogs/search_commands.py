@@ -43,19 +43,23 @@ class Search(commands.Cog):
 
         first = details[0]
         title = first['title_english'] or first['title']
+
+        if first['title_japanese'] is not None:
+            title = f"{title} ({first['title_japanese']})"
+
         description = first['description'] or "No Description."
         genres = first['genres']
         rating = int(first['rating'] / 2)
         img_url = first['img_url']
 
-        stars = "⭐ " * rating
+        stars = "\⭐" * rating
         genres = ", ".join(genres)
 
         embed = discord.Embed(
             color=self.bot.colour
         )
         embed.set_author(
-            name=f"{textwrap.shorten(title, width=80)}",
+            name=f"{textwrap.shorten(title.strip(' '), width=100)}",
             icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
@@ -66,7 +70,7 @@ class Search(commands.Cog):
         )
 
         embed.add_field(name="About this Anime",
-                        value=f"**Rating:** {stars}\n**Genres:** {genres}\n", inline=False)
+                        value=f"Rating - {stars}\nGenres - *{genres}*\n", inline=False)
         embed.add_field(name="Description", value=textwrap.shorten(description, width=500),
                         inline=False)
         return await ctx.send(embed=embed)
@@ -99,12 +103,12 @@ class Search(commands.Cog):
         rating = int(first['rating'] / 2)
         img_url = first['img_url']
 
-        stars = "⭐ " * rating
+        stars = "\⭐" * rating
         genres = ", ".join(genres)
 
         embed = discord.Embed(color=self.bot.colour)
         embed.set_author(
-            name=f"{textwrap.shorten(title, width=80)}",
+            name=f"{textwrap.shorten(title.strip(' '), width=80)}",
             icon_url="https://cdn.discordapp.com/emojis/676087821596885013.png?v=1",
         )
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
@@ -114,7 +118,7 @@ class Search(commands.Cog):
             icon_url=ctx.author.avatar_url,
         )
         embed.add_field(name="About this Manga",
-                        value=f"**Rating:** {stars}\n**Genres:** {genres}\n", inline=False)
+                        value=f"Rating - {stars}\nGenres - *{genres}*\n", inline=False)
         embed.add_field(name="Description", value=textwrap.shorten(description, width=500),
                         inline=False)
         return await ctx.send(embed=embed)
