@@ -53,7 +53,7 @@ class Search(commands.Cog):
         img_url = first['img_url']
 
         stars = "\⭐" * rating
-        genres = ", ".join(genres)
+        genres = ", ".join(genres or ["None"])
 
         embed = discord.Embed(
             color=self.bot.colour
@@ -107,7 +107,7 @@ class Search(commands.Cog):
         img_url = first['img_url']
 
         stars = "\⭐" * rating
-        genres = ", ".join(genres)
+        genres = ", ".join(genres or ["None"])
 
         embed = discord.Embed(color=self.bot.colour)
         embed.set_author(
