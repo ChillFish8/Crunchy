@@ -119,8 +119,8 @@ class LiveFeedCommands(commands.Cog):
                 status = await self.set_webhook("releases", ctx.guild.id, hook.url)
                 if status != 200:
                     return await to_edit.edit(
-                        "<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
-                        " Please try again later."
+                        content="<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
+                                " Please try again later."
                     )
 
                 await hook.send(
@@ -136,21 +136,21 @@ class LiveFeedCommands(commands.Cog):
                                               "I need the permission `MANAGE_WEBHOOKS`.")
         except AttributeError:
             return await to_edit.edit(
-                "Sorry but something went wrong when trying to make this webhook."
-                " Please try a different channel."
+                content="Sorry but something went wrong when trying to make this webhook."
+                        " Please try a different channel."
             )
 
         status = await self.set_webhook("releases", ctx.guild.id, webhook.url)
         if status != 200:
             return await to_edit.edit(
-                "<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
-                " Please try again later."
+                content="<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
+                        " Please try again later."
             )
 
         await webhook.send(
             random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
         return await to_edit.edit(
-            f'All set! I will now send releases to <#{webhook.channel_id}>')
+            content=f'All set! I will now send releases to <#{webhook.channel_id}>')
 
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
@@ -181,14 +181,14 @@ class LiveFeedCommands(commands.Cog):
                 status = await self.set_webhook("news", ctx.guild.id, hook.url)
                 if status != 200:
                     return await to_edit.edit(
-                        "<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
-                        " Please try again later."
+                        content="<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
+                                " Please try again later."
                     )
 
                 await hook.send(
                     random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
                 return await to_edit.edit(
-                    f'All set! I will now send news to <#{hook.channel_id}>')
+                    content=f'All set! I will now send news to <#{hook.channel_id}>')
 
         to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
         try:
@@ -198,21 +198,21 @@ class LiveFeedCommands(commands.Cog):
                                               "I need the permission `MANAGE_WEBHOOKS`.")
         except AttributeError:
             return await to_edit.edit(
-                "Sorry but something went wrong when trying to make this webhook."
-                " Please try a different channel."
+                content="Sorry but something went wrong when trying to make this webhook."
+                        " Please try a different channel."
             )
 
         status = await self.set_webhook("news", ctx.guild.id, webhook.url)
         if status != 200:
             return await to_edit.edit(
-                "<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
-                " Please try again later."
+                content="<:HimeSad:676087829557936149> Sorry, something went wrong on our end >-<."
+                        " Please try again later."
             )
 
         await webhook.send(
             random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
         return await to_edit.edit(
-            f'All set! I will now send news to <#{webhook.channel_id}>')
+            content=f'All set! I will now send news to <#{webhook.channel_id}>')
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
