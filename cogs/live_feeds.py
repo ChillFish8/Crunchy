@@ -126,9 +126,9 @@ class LiveFeedCommands(commands.Cog):
                 await hook.send(
                     random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
                 return await to_edit.edit(
-                    f'All set! I will now send releases to <#{hook.channel_id}>')
+                    content=f'All set! I will now send releases to <#{hook.channel_id}>')
 
-        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+        to_edit: discord.Message = await ctx.send("<:cheeky:717784139226546297> One moment...")
         try:
             webhook = await make_webhook(ctx.author, channel, feed_type="releases")
         except discord.Forbidden:
@@ -190,7 +190,7 @@ class LiveFeedCommands(commands.Cog):
                 return await to_edit.edit(
                     content=f'All set! I will now send news to <#{hook.channel_id}>')
 
-        to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
+        to_edit: discord.Message = await ctx.send("<:cheeky:717784139226546297> One moment...")
         try:
             webhook = await make_webhook(ctx.author, channel, feed_type="news")
         except discord.Forbidden:
