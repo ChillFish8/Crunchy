@@ -7,7 +7,6 @@ import asyncio
 import random
 
 from discord.ext import commands
-from data.guild_config import GuildWebhooks
 
 # Urls
 RELEASE_RSS = "http://feeds.feedburner.com/crunchyroll/rss/anime"
@@ -88,6 +87,9 @@ class LiveFeedCommands(commands.Cog):
                 json=payload,
                 headers=headers,
         ) as resp:
+            if resp.status != 200:
+                print(
+                    f"error handling webhook upload: {resp} API KEY: {os.getenv('NEW_API_KEY')}", )
             return resp.status
 
     @commands.guild_only()
