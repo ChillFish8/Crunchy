@@ -237,9 +237,9 @@ class LiveFeedCommands(commands.Cog):
     async def clear_events(self, ctx: commands.Context):
         msg = await ctx.send(
             "Remove the set event channels, this will remove the webhooks **stopping any updates going to your server.**\n"
-            "- Select the <:CrunchyRollLogo:676087821596885013> emoji to remove the release channel.\n"
-            "- Select the 🗞️ emoji to remove the news channel.\n"
-            "- Select the ⚠️ emoji to remove both.\n"
+            "**-** Select the <:CrunchyRollLogo:676087821596885013> emoji to remove the release channel.\n"
+            "**-** Select the 🗞️ emoji to remove the news channel.\n"
+            "**-** Select the ⚠️ emoji to remove both.\n"
         )
 
         emojis = ("<:CrunchyRollLogo:676087821596885013>", "🗞️", "⚠️")
