@@ -176,7 +176,7 @@ class LiveFeedCommands(commands.Cog):
             except asyncio.TimeoutError:
                 return await ctx.send(
                     f"<:HimeSad:676087829557936149> The selection period has timed out, "
-                    f"Please delete the webhook manually if you haven't already.")
+                    f"please delete the webhook manually if you haven't already.")
             else:
                 await message.delete()
                 to_edit = await ctx.send("<:cheeky:717784139226546297> One moment...")
@@ -215,6 +215,73 @@ class LiveFeedCommands(commands.Cog):
             random.choice(RANDOM_EMOJIS) + "Hello world! *phew* i got through!")
         return await to_edit.edit(
             content=f'All set! I will now send news to <#{webhook.channel_id}>')
+
+    async def remove_event(self, target: str, guild_id: int):
+        headers = {
+            "Authorization": os.getenv("NEW_API_KEY")
+        }
+
+        session = await self.ensure_session()
+        async with session.delete(
+                f"{NEW_API}/{target}/{guild_id}",
+                headers=headers,
+        ) as resp:
+            if resp.status != 200:
+                print(
+                    f"error handling webhook delete: {resp} API KEY: {os.getenv('NEW_API_KEY')}", )
+            return resp.status
+
+    @commands.guild_only()
+    @commands.has_guild_permissions(administrator=True)
+    @commands.command(name="clearevents")
+    async def clear_events(self, ctx: commands.Context):
+        msg = await ctx.send(
+            "Remove the set event channels, this will remove the webhooks **stopping any updates going to your server.**\n"
+            "- Select the <:CrunchyRollLogo:676087821596885013> emoji to remove the release channel.\n"
+            "- Select the 🗞️ emoji to remove the news channel.\n"
+            "- Select the ⚠️ emoji to remove both.\n"
+        )
+
+        emojis = ("<:CrunchyRollLogo:676087821596885013>", "🗞️", "⚠️")
+
+        for emoji in emojis:
+            await msg.add_reaction(emoji)
+
+        def check(rp: discord.RawReactionActionEvent):
+            return (
+                    str(rp.emoji) in emojis
+                    and rp.user_id == ctx.author.id
+                    and rp.message_id == msg.id
+            )
+
+        try:
+            payload: discord.RawReactionActionEvent = await self.bot.wait_for(
+                "raw_reaction_add", timeout=30, check=check)
+        except asyncio.TimeoutError:
+            return await ctx.send(
+                f"<:HimeSad:676087829557936149> The selection period has timed out, "
+                f"please run this command again to continue the operation.")
+
+        emoji = str(payload.emoji)
+        try:
+            if emoji == emojis[0]:  # remove releases
+                assert await self.remove_event("releases",
+                                               ctx.guild.id) == 200, "failed to remove release webhook"
+            elif emoji == emojis[1]:  # remove news
+                assert await self.remove_event("news",
+                                               ctx.guild.id) == 200, "failed to remove news webhook"
+            elif emoji == emojis[2]:  # remove both
+                assert await self.remove_event("releases",
+                                               ctx.guild.id) == 200, "failed to remove release webhook"
+                assert await self.remove_event("news",
+                                               ctx.guild.id) == 200, "failed to remove news webhook"
+        except AssertionError as e:
+            return await ctx.send(
+                f"Oops! Something went wrong when doing that, it seems I {str(e)}")
+        finally:
+            await msg.delete()
+
+        await ctx.send("Webhooks removed, operation success! <:thank_you:717784142053507082>")
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
