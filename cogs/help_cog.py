@@ -32,6 +32,7 @@ class HelpCog(commands.Cog):
     LIVE_COMMANDS = [
         "`addreleasechannel` **-** Get anime releases to a channel.",
         "`addnewschannel` **-** Get Crunchyroll Anime news to a channel.",
+        "`clearevents` **-** Remove both or a specific live feed.",
     ]
 
     TRACKING_COMMANDS = [
