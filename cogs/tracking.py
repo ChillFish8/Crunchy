@@ -1,12 +1,12 @@
-import random
-import discord
 import asyncio
 import json
+import random
 import typing
-
 from collections import deque
-from discord.ext import commands
 from datetime import datetime
+
+import discord
+from discord.ext import commands
 
 from data.user_content import UserFavourites, UserRecommended, UserWatchlist
 from utils.paginator import Paginator

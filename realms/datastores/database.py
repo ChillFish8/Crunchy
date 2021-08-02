@@ -1,4 +1,6 @@
 import json
+
+import aioredis
 import pymongo
 
 from realms.datastores.events_db import EventsStore
@@ -34,11 +36,13 @@ class MongoDatabase(EventsStore):
         pas = self.config.get('password', 'root')
         host = f"mongodb://{usr}:{pas}@{addr}:{port}/"
 
+        self.redis = aioredis.from_url("redis://keydb:6379/4")
         self.client = pymongo.MongoClient(host)
         system_info = self.client.server_info()
         version = system_info['version']
         git_ver = system_info['gitVersion']
-        print(f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
+        print(
+            f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
 
         self.db = self.client["Crunchy"]
         self.characters = self.db["collected_characters"]
@@ -64,7 +68,8 @@ class MongoDatabase(EventsStore):
             return self.characters.insert_one({'_id': user_id}, **kwargs)
 
     def update_characters(self, user_id: int, characters: list):
-        return self.characters.find_one_and_update({'_id': user_id}, {'$set': {'characters': characters}})
+        return self.characters.find_one_and_update({'_id': user_id},
+                                                   {'$set': {'characters': characters}})
 
     def add_characters(self, user_id: int, data: dict):
         self.characters.insert_one({'_id': user_id, **data})

@@ -1,14 +1,14 @@
-import discord
 import asyncio
-import re
 import itertools
-
+import re
 from random import randint, choice
+
+import discord
 from discord.ext import commands
 
-from realms.parties import Party
-from realms.generation.monsters import MonsterManual, Monster
 from realms.character import Character
+from realms.generation.monsters import MonsterManual, Monster
+from realms.parties import Party
 
 HIME_CHEEK = "https://cdn.discordapp.com/emojis/717784139226546297.png?v=1"
 dice_regex = re.compile("^([1-9]*)[dD]([1-9][0-9]*)")
@@ -74,6 +74,7 @@ class Deck:
             attacks.append(self._stacked[atk])
         return attacks
 
+
 class Encounter:
     def __init__(self, bot, ctx, party: Party, submit, user_area):
         self.bot = bot
@@ -118,7 +119,7 @@ class Encounter:
         def check(msg: discord.Message):
             return (msg.author.id == self.ctx.author.id) and \
                    (msg.channel.id == self.ctx.channel.id) and \
-                    msg.content.startswith(self.ctx.prefix)
+                   msg.content.startswith(self.ctx.prefix)
 
         content = await self.get_content(start=True)
         await self.ctx.send(content)
@@ -276,7 +277,8 @@ class Encounter:
                 multiplier = len(attack)
                 damage = character.roll_damage() * multiplier
                 deck.character_xp_area[character.id] += (damage * 5)
-                rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}, Damage {damage}.` **HIT!**\n")
+                rolls.append(
+                    f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}, Damage {damage}.` **HIT!**\n")
                 total_damage += damage
             else:
                 rolls.append(f"`⚔️• Attack {i + 1}, rolled {roll_to_hit}.` **MISS!**\n")

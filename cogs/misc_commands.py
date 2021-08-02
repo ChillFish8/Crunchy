@@ -1,7 +1,7 @@
-import discord
-import aiohttp
 import random
 
+import aiohttp
+import discord
 from discord.ext import commands
 
 BASE_URL = "https://legacy.crunchy.gg/api"
@@ -18,12 +18,13 @@ class Misc(commands.Cog):
         self.bot = bot
 
     @commands.command(name="todayspicks", aliases=['picks', 'dailyanime', 'tp'])
-    async def anime_details(self, ctx):
+    async def today_picks(self, ctx):
         async with aiohttp.ClientSession() as sess:
             async with sess.get(f"{BASE_URL}/anime/daily") as resp:
                 if resp.status != 200:
-                    return await ctx.send("<:HimeSad:676087829557936149> Oh no! Something seems to have gone wrong,"
-                                          " please try again later.")
+                    return await ctx.send(
+                        "<:HimeSad:676087829557936149> Oh no! Something seems to have gone wrong,"
+                        " please try again later.")
                 else:
                     listed_items = await resp.json()
 
@@ -31,7 +32,8 @@ class Misc(commands.Cog):
         for i, anime in enumerate(listed_items):
             url_safe = anime.get('title').replace(" ", "-").replace(".", "").replace(":", "")
             url = "https://www.crunchyroll.com/{}".format(url_safe)
-            embed.add_field(name="\u200b", value=f"**{i + 1} ) - [{anime.get('title')}]({url})**", inline=False)
+            embed.add_field(name="\u200b", value=f"**{i + 1} ) - [{anime.get('title')}]({url})**",
+                            inline=False)
         embed.set_thumbnail(url=random.choice(RANDOM_THUMBS))
         embed.set_footer(text="Part of Crunchy, Powered by CF8")
         embed.set_author(name="Today's Anime Picks!", icon_url=ctx.author.avatar_url)

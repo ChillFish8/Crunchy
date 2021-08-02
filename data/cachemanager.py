@@ -1,9 +1,11 @@
-from datetime import datetime, timedelta
 import asyncio
+from datetime import datetime, timedelta
+
 from logger import Logger
 
+
 class Store:
-    def __init__(self, name: str, max_time: timedelta=timedelta(minutes=15)):
+    def __init__(self, name: str, max_time: timedelta = timedelta(minutes=15)):
         self.name = name
         self._cache = {}
         self._temp = {}

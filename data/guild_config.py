@@ -1,10 +1,11 @@
 import json
+
 import discord
 
 from data.database import MongoDatabase
 
-
 SETTINGS_PATH = 'default_settings.json'
+
 
 class Settings:
     with open(SETTINGS_PATH, 'r') as file:

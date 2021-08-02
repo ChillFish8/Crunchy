@@ -1,4 +1,5 @@
 from discord.ext import commands
+
 from data.database import MongoDatabase
 
 
@@ -19,6 +20,7 @@ class OwnerCommands(commands.Cog):
             await ctx.send("Reloaded module {}".format(query))
         except Exception as e:
             await ctx.send(str(e))
+
 
 def setup(bot):
     bot.add_cog(OwnerCommands(bot))

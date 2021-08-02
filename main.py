@@ -1,21 +1,20 @@
-import discord
-import os
-import json
 import asyncio
-import aiohttp
+import json
+import os
 import traceback
-import logging
+from concurrent import futures
+from datetime import timedelta
+from random import choice
 
+import aiohttp
+import discord
 from discord import Webhook, AsyncWebhookAdapter
 from discord.ext import commands, tasks
-from datetime import timedelta, datetime
-from random import choice
-from concurrent import futures
 
-from data.database import MongoDatabase
-from data.cachemanager import CacheManager, Store
-from logger import Logger
 from data import guild_config
+from data.cachemanager import CacheManager, Store
+from data.database import MongoDatabase
+from logger import Logger
 from resources.archieve.anime_examples import WATCHLIST
 
 try:
@@ -150,7 +149,8 @@ class CrunchyBot(commands.AutoShardedBot):
         if context.guild is not None:
             guild_data = self.cache.get("guilds", context.guild.id)
             if guild_data is None:
-                guild_data = await self.loop.run_in_executor(pool, guild_config.GuildConfig, context.guild.id,
+                guild_data = await self.loop.run_in_executor(pool, guild_config.GuildConfig,
+                                                             context.guild.id,
                                                              self.database)
                 self.cache.store("guilds", context.guild.id, guild_data)
             setattr(context, 'guild_config', guild_data)
@@ -195,7 +195,8 @@ class CrunchyBot(commands.AutoShardedBot):
             message.content = message.content[len(f"<@!{self.user.id}> "):]
             await self.process_commands(message=message)
 
-        elif message.content.startswith(f"<@{self.user.id}>") or message.content.startswith(f"<@!{self.user.id}>"):
+        elif message.content.startswith(f"<@{self.user.id}>") or message.content.startswith(
+                f"<@!{self.user.id}>"):
             embed = discord.Embed(color=self.colour)
             embed.set_author(name=f"My prefix is \"{prefix}\" do \"{prefix}help\" to get started.",
                              icon_url=message.author.avatar_url)
@@ -220,7 +221,8 @@ class ErrorHandler:
         if self.session is None:
             self.session = aiohttp.ClientSession()
             if self.webhook is None:
-                self.webhook = Webhook.from_url(self.ERROR_WEBHOOK_URL, adapter=AsyncWebhookAdapter(self.session))
+                self.webhook = Webhook.from_url(self.ERROR_WEBHOOK_URL,
+                                                adapter=AsyncWebhookAdapter(self.session))
         error = getattr(error, 'original', error)
 
         if isinstance(error, commands.CommandNotFound):
@@ -261,14 +263,16 @@ class ErrorHandler:
 
         elif ctx.command.name not in (
                 'addreleasechannel', 'addnewschannel', 'server_settings',
-                'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall', 'stack'):
+                'setprefix', 'resetprefix', 'togglensfw', 'add_anime', 'recommend', 'firewall',
+                'stack'):
             err = error
             if str(type(err).__name__) == "Forbidden" and "403" in str(err):
                 return
 
             _traceback = traceback.format_tb(err.__traceback__)
             _traceback = ''.join(_traceback)
-            full_error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content, _traceback, err)
+            full_error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content,
+                                                          _traceback, err)
 
             embed = discord.Embed(description=f"Command: {ctx.command}\n"
                                               f"Full Message: {ctx.message.content}\n"

@@ -1,5 +1,6 @@
-import discord
 import asyncio
+
+import discord
 
 
 class Paginator:
@@ -36,7 +37,7 @@ class Paginator:
     async def pager(self):
         def check(r, u):
             return (u.id == self.message.author.id) and \
-                   (str(r.emoji) in self.PAGINATION_EMOJI) and\
+                   (str(r.emoji) in self.PAGINATION_EMOJI) and \
                    (r.message.id == self.old_message.id)
 
         running = True

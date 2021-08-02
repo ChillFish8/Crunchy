@@ -1,10 +1,9 @@
-import json
-import aiohttp
 import asyncio
+import json
 
-from discord.ext import commands
+import aiohttp
 from discord import Webhook, AsyncWebhookAdapter
-
+from discord.ext import commands
 
 with open("config.json") as file:
     config = json.load(file)
@@ -24,9 +23,12 @@ class WebhookLogging(commands.Cog):
 
     async def boot(self):
         self.session = aiohttp.ClientSession()
-        self.guild_webhook = Webhook.from_url(self.GUILD_URL, adapter=AsyncWebhookAdapter(self.session))
-        self.vote_webhook = Webhook.from_url(self.VOTE_URL, adapter=AsyncWebhookAdapter(self.session))
-        self.command_webhook = Webhook.from_url(self.COMMAND_URL, adapter=AsyncWebhookAdapter(self.session))
+        self.guild_webhook = Webhook.from_url(self.GUILD_URL,
+                                              adapter=AsyncWebhookAdapter(self.session))
+        self.vote_webhook = Webhook.from_url(self.VOTE_URL,
+                                             adapter=AsyncWebhookAdapter(self.session))
+        self.command_webhook = Webhook.from_url(self.COMMAND_URL,
+                                                adapter=AsyncWebhookAdapter(self.session))
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
@@ -65,6 +67,7 @@ class WebhookLogging(commands.Cog):
             return
         await self.vote_webhook.send(
             f"**New Upvote**  |  User: `{data['user']}`")
+
 
 def setup(bot):
     bot.add_cog(WebhookLogging(bot))

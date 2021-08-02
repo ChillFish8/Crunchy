@@ -5,3 +5,5 @@ aiohttp~=3.6.2
 dblpy
 Pillow~=7.1.2
 requests
+humanize
+aioredis

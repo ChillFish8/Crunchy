@@ -1,12 +1,12 @@
-import random
 import json
-import time
+import random
 
 from utils.id_maker import get_id
 
 BASE_HEARTS = 5
 BASE_FOOD = 5
 BASE_TREATS = 5
+
 
 class CharacterRef:
     with open(r"resources/archieve/main_characters.json", "r") as file:

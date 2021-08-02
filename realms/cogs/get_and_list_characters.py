@@ -1,15 +1,15 @@
 import json
 import random
-import discord
-
 from datetime import datetime
+
+import discord
+import humanize
 from discord.ext import commands
 from discord.ext import tasks
 
 from realms.character import Character
-from realms.user_characters import UserCharacters
 from realms.static import Database
-
+from realms.user_characters import UserCharacters
 from utils.paginator import Paginator
 
 NON_VOTE_ROLLS = 15
@@ -79,28 +79,31 @@ class CharacterGets(commands.Cog):
         if user_characters is None:
             user_characters: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
             if user_characters is not None:
-                rolls, expires = user_characters.rolls_left, user_characters.expires_in
+                rolls = user_characters.rolls_left
             else:
                 if ctx.has_voted(user_id=ctx.author.id):
-                    rolls, expires = NON_VOTE_ROLLS + VOTE_ROLLS_MOD, None
+                    rolls = NON_VOTE_ROLLS + VOTE_ROLLS_MOD
                 else:
-                    rolls, expires = NON_VOTE_ROLLS, None
+                    rolls = NON_VOTE_ROLLS
             user_characters = UserCharacters(user_id=ctx.author.id,
                                              database=self.database,
                                              rolls=rolls,
-                                             expires_in=expires,
                                              callback=self.callback)
             self.bot.cache.store('characters', ctx.author.id, user_characters)
 
-        if not Checks.has_rolls(user_characters):
+        if user_characters.expires_in is None:
             if not ctx.has_voted(user_id=ctx.author.id, force_db=True):
-                return await ctx.send("<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
-                                      " upvote Crunchy to get more rolls and other awesome perks!\n"
-                                      "https://top.gg/bot/656598065532239892/vote")
+                return await ctx.send(
+                    "<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                    " upvote Crunchy to get more rolls and other awesome perks!\n"
+                    "https://top.gg/bot/656598065532239892/vote")
             else:
-                if self.cool_down_checks.get(ctx.author.id):
-                    return await ctx.send(f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
-                                          f" come back in {user_characters.expires_in} hours when ive found some more characters!")
+                if not self.cool_down_checks.get(ctx.author.id):
+                    expires = user_characters.expires_in
+                    if expires is not None:
+                        return await ctx.send(
+                            f"<:HimeSad:676087829557936149> Oops! You dont have any more rolls left,"
+                            f" come back in {humanize.precisedelta(expires)} when ive found some more characters!")
                 else:
                     user_characters.update_rolls(VOTE_ROLLS_MOD)
 
@@ -180,7 +183,6 @@ class CharacterGets(commands.Cog):
             user_characters = UserCharacters(user_id=user.id,
                                              database=self.database,
                                              rolls=rolls,
-                                             expires_in=self.cool_down_checks.get('expires_in', None),
                                              callback=self.callback)
             self.bot.cache.store('characters', user.id, user_characters)
 
@@ -191,7 +193,6 @@ class CharacterGets(commands.Cog):
                 user_characters: UserCharacters = self.cool_down_checks.get(ctx.author.id, None)
                 if user_characters is not None:
                     rolls = user_characters.rolls_left
-                    expires = user_characters.expires_in
                 else:
                     if ctx.has_voted(user_id=ctx.author.id):
                         rolls, expires = NON_VOTE_ROLLS + VOTE_ROLLS_MOD, None
@@ -200,7 +201,6 @@ class CharacterGets(commands.Cog):
                 user_characters = UserCharacters(user_id=ctx.author.id,
                                                  database=self.database,
                                                  rolls=rolls,
-                                                 expires_in=expires,
                                                  callback=self.callback)
                 self.bot.cache.store('characters', ctx.author.id, user_characters)
 

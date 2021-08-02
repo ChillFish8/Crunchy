@@ -1,5 +1,8 @@
 {
   "premium_url": null,
   "nopremium_max_per_storage": 25,
-  "premium_max_per_storage": [50, 500]
+  "premium_max_per_storage": [
+    50,
+    500
+  ]
 }

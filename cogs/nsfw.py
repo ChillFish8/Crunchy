@@ -1,7 +1,7 @@
-import aiohttp
 import asyncio
-import discord
 
+import aiohttp
+import discord
 from discord.ext import commands
 
 CRUNCHY_API_BASE = "https://legacy.crunchy.gg/api"

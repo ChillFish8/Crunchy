@@ -1,7 +1,5 @@
 import asyncio
-import discord
 
-from discord.ext import commands
 from datetime import datetime, timedelta
 
 
@@ -39,8 +37,10 @@ class NewTimeout:
         self.time_outs = {}  # Used for mapping members timeouts
         self.severity = kwargs.get('severity', 2)  # Changes how sharply the time increases
         self.max_time = kwargs.get('max_time', (0, 0, 0, 5, 0))  # Max time (tuple) (D, H, M, S, MS)
-        self.start_timeout = kwargs.get('base_timeout', (0, 0, 0, 0, 500))  # timeout starts with (D, H, M, S, MS) time
-        self.alert_enabled = kwargs.get('alert_on_spam', False)  # Bool, triggers an alert event if spam detected
+        self.start_timeout = kwargs.get('base_timeout', (
+            0, 0, 0, 0, 500))  # timeout starts with (D, H, M, S, MS) time
+        self.alert_enabled = kwargs.get('alert_on_spam',
+                                        False)  # Bool, triggers an alert event if spam detected
         self.max_offences = kwargs.get('max_offences', 5)  # Amount of limits they get before event
         self.call_func = kwargs.get('alert_func', None)
 
@@ -79,11 +79,12 @@ class NewTimeout:
                     return True, selected_timeout['time_stamp']
 
                 else:  # they're not on a timeout lets reset that timestamp and return false
-                    self.time_outs[id_]['time_stamp'] = datetime.now() + timedelta(days=self.start_timeout[0],
-                                                                                   hours=self.start_timeout[1],
-                                                                                   minutes=self.start_timeout[2],
-                                                                                   seconds=self.start_timeout[3],
-                                                                                   milliseconds=self.start_timeout[4])
+                    self.time_outs[id_]['time_stamp'] = datetime.now() + timedelta(
+                        days=self.start_timeout[0],
+                        hours=self.start_timeout[1],
+                        minutes=self.start_timeout[2],
+                        seconds=self.start_timeout[3],
+                        milliseconds=self.start_timeout[4])
                     self.time_outs[id_]['repeated_offence_no'] = 0
                     return False, selected_timeout['time_stamp']
             else:  # User is not in the existing timeout list, return false after adding them to it
@@ -110,7 +111,6 @@ class NewTimeout:
 
     def __repr__(self):
         return self.name
-
 
 
 if __name__ == "__main__":  # Use this for testing

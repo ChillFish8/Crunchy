@@ -1,10 +1,9 @@
 import discord
-
 from discord.ext import commands
 
 from realms.character import Character
-from realms.user_characters import UserCharacters
 from realms.static import Database
+from realms.user_characters import UserCharacters
 
 NON_VOTE_ROLLS = 15
 VOTE_ROLLS_MOD = +25
@@ -29,14 +28,16 @@ class ViewCharacters(commands.Cog):
     async def character_details(self, ctx, *, character_name: str = None):
         if character_name is None:
             command = self.bot.get_command("viewcharacters")
-            await ctx.send("<:HimeSad:676087829557936149> You didnt give me anyone to get. Check your list here:")
+            await ctx.send(
+                "<:HimeSad:676087829557936149> You didnt give me anyone to get. Check your list here:")
             return await command.invoke(ctx)
 
         user_area = UserCharacters(user_id=ctx.author.id, database=self.database)
         character_dict = user_area.get_character(search=character_name)
         if character_dict is None:
-            return await ctx.send("<:HimeSad:676087829557936149> Sorry! >_< I couldn't find that character "
-                                  "in your area, Time to get rolling and collecting more!")
+            return await ctx.send(
+                "<:HimeSad:676087829557936149> Sorry! >_< I couldn't find that character "
+                "in your area, Time to get rolling and collecting more!")
 
         character = Character().from_dict(character_dict)
         details = Display(self.bot, character, ctx)
@@ -60,6 +61,7 @@ class Display:
         embed.set_author(name=f"{self.character.name} - Level {self.character.level}",
                          icon_url=self.ctx.author.avatar_url)
         return embed
+
 
 def setup(bot):
     bot.add_cog(ViewCharacters(bot))

@@ -1,8 +1,8 @@
-import discord
-import aiohttp
 import random
 import textwrap
 
+import aiohttp
+import discord
 from discord.ext import commands
 
 BASE_URL = "https://legacy.crunchy.gg/api"

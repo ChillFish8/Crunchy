@@ -1,4 +1,6 @@
-from datetime import datetime, timedelta
+import time
+from datetime import timedelta
+from typing import Optional
 
 from realms.character import Character
 from realms.datastores.database import MongoDatabase
@@ -13,7 +15,7 @@ class UserCharacters:
         :returns UserCharacters object:
     """
 
-    def __init__(self, user_id, database, rolls=None, expires_in=None, callback=None):
+    def __init__(self, user_id, database, rolls=None, callback=None):
         """
         :param user_id:
         :param rolls:
@@ -24,17 +26,20 @@ class UserCharacters:
         """
         self.user_id = user_id
         self._db: MongoDatabase = database
+        self._redis = self._db.redis
+
         data = self._db.get_characters(user_id=user_id)
 
         self.characters = data.pop('characters', [])  # Emergency safe guard
         self.rank = data.pop('rank', {'ranking': 0, 'power': 0, 'total_character': 0})
         self.bank = data.pop('balance', {'copper': 50, 'gold': 10, 'platinum': 0})
         self._rolls = rolls
-        self._expires_in = data.pop('expires_in', expires_in)
+        # self._expires_in = data.pop('expires_in', expires_in)
         self.mod_callback = callback
 
     def update_on_db(self):
-        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, balance=self.bank)
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank,
+                            balance=self.bank)
 
     def submit_character(self, character: Character):
         if self._db.characters.find_one({'_id': self.user_id}) is not None:
@@ -43,7 +48,8 @@ class UserCharacters:
         else:
             self.characters.append(character.to_dict())
             self._db.add_characters(self.user_id,
-                                    {'characters': self.characters, 'rank': self.rank, 'balance': self.bank})
+                                    {'characters': self.characters, 'rank': self.rank,
+                                     'balance': self.bank})
 
     def dump_character(self, character: Character):
         id_ = character.id
@@ -56,7 +62,7 @@ class UserCharacters:
             self._db.reset_characters(user_id=self.user_id)
         return self.characters
 
-    def get_character(self, search: str=None, id_: int=None) -> [dict, None]:
+    def get_character(self, search: str = None, id_: int = None) -> [dict, None]:
         for character in self.characters:
             if search is not None:
                 if character['name'].lower() == search.lower():
@@ -80,27 +86,25 @@ class UserCharacters:
     def update_rolls(self, modifier: int):
         self._rolls += modifier
         if self.rolls_left <= 0:
-            self._expires_in = (datetime.now() + timedelta(hours=12)).timestamp()
+            offset = timedelta(hours=12)
+            await self._redis.set(self.cache_key, time.time() + offset.total_seconds(), ex=offset)
         self.mod_callback(self.user_id, self)
 
     @property
     def rolls_left(self):
         return self._rolls
 
-    def get_time_obj(self):
-        return datetime.fromtimestamp(int(self._expires_in)) if self._expires_in is not None else self._expires_in
+    @property
+    def cache_key(self):
+        return f"characters:timeouts_{self.user_id}"
 
     @property
-    def expires_in(self):
-        if self._expires_in is not None:
-            try:
-                delta = datetime.fromtimestamp(float(self._expires_in)) - datetime.now()
-                hours, seconds = divmod(delta.total_seconds(), 3600)
-                minutes, seconds = divmod(seconds, 60)
-                return f"{int(hours)}h, {int(minutes)}m, {int(seconds)}s"
-            except ValueError:
-                return self._expires_in
-        return self._expires_in
+    def expires_in(self) -> Optional[timedelta]:
+        val = await self._redis.get(self.cache_key)
+        if val is None:
+            return None
+
+        return timedelta(seconds=int(val))
 
     def get_blocks(self):
         """ A generator to allow the bot to paginate large sets. """
@@ -115,7 +119,8 @@ class UserCharacters:
         self.bank['platinum'] += platinum
         self.bank['gold'] += gold
         self.bank['copper'] += copper
-        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank, balance=self.bank)
+        self._db.update_any(self.user_id, characters=self.characters, rank=self.rank,
+                            balance=self.bank)
         return self.bank
 
     @property
@@ -129,4 +134,3 @@ class UserCharacters:
     @property
     def copper(self):
         return self.bank['copper']
-

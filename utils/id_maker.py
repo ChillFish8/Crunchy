@@ -1,8 +1,9 @@
+import base64
 import random
 from string import ascii_letters, punctuation
-import base64
 
 characters = list(ascii_letters) + list(punctuation)
+
 
 def get_id():
     random.shuffle(characters)

@@ -1,7 +1,9 @@
-from colorama import Fore, Style
-from datetime import datetime
-import colorama
 import time
+from datetime import datetime
+
+import colorama
+from colorama import Fore, Style
+
 colorama.init()
 
 
@@ -104,4 +106,5 @@ class Timer:
             end_time = time.time()
             cls.timings[str(func.__qualname__)] = end_time - start_time
             return output
+
         return wrapper

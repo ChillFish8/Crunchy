@@ -1,11 +1,10 @@
+import asyncio
 import os
-from typing import Union, Any, Optional
+import random
+from typing import Optional
 
 import aiohttp
 import discord
-import asyncio
-import random
-
 from discord.ext import commands
 
 # Urls
@@ -308,4 +307,3 @@ class LiveFeedCommands(commands.Cog):
 
 def setup(bot):
     bot.add_cog(LiveFeedCommands(bot))
-

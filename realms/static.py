@@ -1,8 +1,7 @@
 from datetime import timedelta
 
-from realms.datastores.database import MongoDatabase
 from realms.datastores.cachemanager import CacheManager, Store
-
+from realms.datastores.database import MongoDatabase
 
 REQUIRED_CACHE = [
     ['top_global', timedelta(hours=1)],

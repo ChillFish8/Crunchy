@@ -1,5 +1,7 @@
-import pymongo
 import json
+
+import pymongo
+
 from logger import Logger, Timer
 
 
@@ -17,7 +19,8 @@ class GuildData:
 
     def set_guild_config(self, guild_id: int, config: dict) -> [dict, int]:
         current_data = self.guild_configs.find_one({'_id': guild_id})
-        Logger.log_database("SET-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+        Logger.log_database(
+            "SET-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
         if current_data is not None:
             QUERY = {'_id': guild_id}
             new_data = {'config': config}
@@ -31,7 +34,8 @@ class GuildData:
     def reset_guild_config(self, guild_id: int):
         current_data = self.guild_configs.find_one_and_delete({'_id': guild_id})
         Logger.log_database(
-            "DELETE-GUILD: Guild with Id: {} returned with results: {}".format(guild_id, current_data))
+            "DELETE-GUILD: Guild with Id: {} returned with results: {}".format(guild_id,
+                                                                               current_data))
         return "COMPLETE"
 
     def get_guild_config(self, guild_id: int) -> dict:
@@ -49,8 +53,10 @@ class GuildWebhooks:
 
     @Timer.timeit
     def set_guild_webhooks(self, guild_id: int, config: dict) -> [dict, int]:
-        current_data = self.guild_web_hooks.find_one({'_id': "{guild_id}".format(guild_id=guild_id)})
-        Logger.log_database("SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
+        current_data = self.guild_web_hooks.find_one(
+            {'_id': "{guild_id}".format(guild_id=guild_id)})
+        Logger.log_database(
+            "SET-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         if current_data is not None:
             QUERY = {'_id': f"{guild_id}"}
             new_data = {'config': config}
@@ -63,14 +69,16 @@ class GuildWebhooks:
 
     @Timer.timeit
     def delete_guild_webhooks(self, guild_id: int):
-        _ = self.guild_web_hooks.find_one_and_delete({'_id': "{guild_id}".format(guild_id=guild_id)})
+        _ = self.guild_web_hooks.find_one_and_delete(
+            {'_id': "{guild_id}".format(guild_id=guild_id)})
         Logger.log_database(
             "DELETE-WEBHOOK: Guild with Id: {} returned with results: {}".format(guild_id, None))
         return "COMPLETE"
 
     @Timer.timeit
     def get_guild_webhooks(self, guild_id: int) -> dict:
-        current_data = self.guild_web_hooks.find_one({'_id': "{guild_id}".format(guild_id=guild_id)})
+        current_data = self.guild_web_hooks.find_one(
+            {'_id': "{guild_id}".format(guild_id=guild_id)})
         return current_data['config'] if current_data is not None else {'user_id': guild_id,
                                                                         'news': None,
                                                                         'release': None
@@ -109,7 +117,8 @@ class UserTracking:
 
     def get_user_data(self, area: str, user_id: int) -> dict:
         current_data = self.collections[area].find_one({'_id': user_id})
-        return current_data if current_data is not None else {'_id': user_id, 'firewall': True, 'contents': []}
+        return current_data if current_data is not None else {'_id': user_id, 'firewall': True,
+                                                              'contents': []}
 
 
 class Votes:
@@ -174,7 +183,8 @@ class MongoDatabase(GuildData, UserTracking, GuildWebhooks, Votes):
         system_info = self.client.server_info()
         version = system_info['version']
         git_ver = system_info['gitVersion']
-        print(f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
+        print(
+            f"Connected to {addr}:{port} from {self.client.HOST}, Version: {version}, Git Version: {git_ver}")
 
         self.db = self.client["Crunchy"]
         self.collections = {
